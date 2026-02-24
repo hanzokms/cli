@@ -14,10 +14,10 @@ test -z "$BASH_SOURCE" && {
 tmp_log=$(mktemp .s3_setup_XXXXXXXXX)
 
 # Environment variables that can be set
-PKG_URL=${PKG_URL:-"https://artifacts-cli.infisical.com"}
+PKG_URL=${PKG_URL:-"https://artifacts-cli.kms.com"}
 PKG_PATH=${PKG_PATH:-"deb"}
-PACKAGE_NAME=${PACKAGE_NAME:-"infisical"}
-GPG_KEY_URL=${GPG_KEY_URL:-"${PKG_URL}/infisical.gpg"}
+PACKAGE_NAME=${PACKAGE_NAME:-"kms"}
+GPG_KEY_URL=${GPG_KEY_URL:-"${PKG_URL}/kms.gpg"}
 
 colours=$(tput colors 2>/dev/null || echo "256")
 no_colour="\e[39;49m"

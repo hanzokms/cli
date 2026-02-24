@@ -11,12 +11,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Infisical/infisical-merge/packages/api"
-	"github.com/Infisical/infisical-merge/packages/config"
-	"github.com/Infisical/infisical-merge/packages/gateway"
-	gatewayv2 "github.com/Infisical/infisical-merge/packages/gateway-v2"
-	"github.com/Infisical/infisical-merge/packages/pam/session"
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/api"
+	"github.com/hanzokms/cli/packages/config"
+	"github.com/hanzokms/cli/packages/gateway"
+	gatewayv2 "github.com/hanzokms/cli/packages/gateway-v2"
+	"github.com/hanzokms/cli/packages/pam/session"
+	"github.com/hanzokms/cli/packages/util"
 	infisicalSdk "github.com/infisical/go-sdk"
 	"github.com/pkg/errors"
 	"github.com/posthog/posthog-go"
@@ -82,18 +82,18 @@ func getInfisicalSdkInstance(cmd *cobra.Command) (infisicalSdk.InfisicalClientIn
 
 var gatewayCmd = &cobra.Command{
 	Use:   "gateway",
-	Short: "Run the Infisical gateway or manage its systemd service",
-	Long:  "Run the Infisical gateway in the foreground or manage its systemd service installation. Use 'gateway install' to set up the systemd service.",
-	Example: `infisical gateway --token=<token>
-  sudo infisical gateway install --token=<token> --domain=<domain>`,
+	Short: "Run the KMS gateway or manage its systemd service",
+	Long:  "Run the KMS gateway in the foreground or manage its systemd service installation. Use 'gateway install' to set up the systemd service.",
+	Example: `kms gateway --token=<token>
+  sudo kms gateway install --token=<token> --domain=<domain>`,
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Info().Msg("DEPRECATION NOTICE: The 'infisical gateway' command will be deprecated in a future version. Please use 'infisical gateway start'.\nNOTE: This requires manually updating your existing resources to point to the new gateway.")
+		log.Info().Msg("DEPRECATION NOTICE: The 'kms gateway' command will be deprecated in a future version. Please use 'kms gateway start'.\nNOTE: This requires manually updating your existing resources to point to the new gateway.")
 
 		infisicalClient, cancelSdk, err := getInfisicalSdkInstance(cmd)
 		if err != nil {
-			util.HandleError(err, "unable to get infisical client")
+			util.HandleError(err, "unable to get KMS client")
 		}
 		defer cancelSdk()
 
@@ -204,9 +204,9 @@ var gatewayCmd = &cobra.Command{
 
 var gatewayStartCmd = &cobra.Command{
 	Use:                   "start",
-	Short:                 "Start the new Infisical gateway",
-	Long:                  "Start the new Infisical gateway component.",
-	Example:               "infisical gateway start --name=<name> --token=<token>",
+	Short:                 "Start the new KMS gateway",
+	Long:                  "Start the new KMS gateway component.",
+	Example:               "kms gateway start --name=<name> --token=<token>",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -222,7 +222,7 @@ var gatewayStartCmd = &cobra.Command{
 
 		infisicalClient, cancelSdk, err := getInfisicalSdkInstance(cmd)
 		if err != nil {
-			util.HandleError(err, "unable to get infisical client")
+			util.HandleError(err, "unable to get KMS client")
 		}
 		defer cancelSdk()
 
@@ -310,7 +310,7 @@ var gatewayInstallCmd = &cobra.Command{
 	Use:                   "install",
 	Short:                 "Install and enable systemd service for the gateway (requires sudo)",
 	Long:                  "Install and enable systemd service for the gateway. Must be run with sudo on Linux.",
-	Example:               "sudo infisical gateway install --token=<token> --domain=<domain>",
+	Example:               "sudo kms gateway install --token=<token> --domain=<domain>",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -340,13 +340,13 @@ var gatewayInstallCmd = &cobra.Command{
 			util.HandleError(err, "Failed to install systemd service")
 		}
 
-		enableCmd := exec.Command("systemctl", "enable", "infisical-gateway")
+		enableCmd := exec.Command("systemctl", "enable", "kms-gateway")
 		if err := enableCmd.Run(); err != nil {
 			util.HandleError(err, "Failed to enable systemd service")
 		}
 
-		log.Info().Msg("Successfully installed and enabled infisical-gateway service")
-		log.Info().Msg("To start the service, run: sudo systemctl start infisical-gateway")
+		log.Info().Msg("Successfully installed and enabled kms-gateway service")
+		log.Info().Msg("To start the service, run: sudo systemctl start kms-gateway")
 	},
 }
 
@@ -354,7 +354,7 @@ var gatewayUninstallCmd = &cobra.Command{
 	Use:                   "uninstall",
 	Short:                 "Uninstall and remove systemd service for the gateway (requires sudo)",
 	Long:                  "Uninstall and remove systemd service for the gateway. Must be run with sudo on Linux.",
-	Example:               "sudo infisical gateway uninstall",
+	Example:               "sudo kms gateway uninstall",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -374,10 +374,10 @@ var gatewayUninstallCmd = &cobra.Command{
 
 var gatewaySystemdCmd = &cobra.Command{
 	Use:   "systemd",
-	Short: "Manage systemd service for Infisical gateway",
-	Long:  "Manage systemd service for Infisical gateway. Use 'systemd install' to install and enable the service.",
-	Example: `sudo infisical gateway systemd install --token=<token> --domain=<domain> --name=<name>
-  sudo infisical gateway systemd uninstall`,
+	Short: "Manage systemd service for KMS gateway",
+	Long:  "Manage systemd service for KMS gateway. Use 'systemd install' to install and enable the service.",
+	Example: `sudo kms gateway systemd install --token=<token> --domain=<domain> --name=<name>
+  sudo kms gateway systemd uninstall`,
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 }
@@ -386,7 +386,7 @@ var gatewaySystemdInstallCmd = &cobra.Command{
 	Use:                   "install",
 	Short:                 "Install and enable systemd service for the gateway (v2) (requires sudo)",
 	Long:                  "Install and enable systemd service for the new gateway (v2). Must be run with sudo on Linux.",
-	Example:               "sudo infisical gateway systemd install --token=<token> --domain=<domain> --name=<name>",
+	Example:               "sudo kms gateway systemd install --token=<token> --domain=<domain> --name=<name>",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -439,13 +439,13 @@ var gatewaySystemdInstallCmd = &cobra.Command{
 			util.HandleError(err, "Unable to install systemd service")
 		}
 
-		enableCmd := exec.Command("systemctl", "enable", "infisical-gateway")
+		enableCmd := exec.Command("systemctl", "enable", "kms-gateway")
 		if err := enableCmd.Run(); err != nil {
 			util.HandleError(err, "Failed to enable systemd service")
 		}
 
-		log.Info().Msg("Successfully installed and enabled infisical-gateway service")
-		log.Info().Msg("To start the service, run: sudo systemctl start infisical-gateway")
+		log.Info().Msg("Successfully installed and enabled kms-gateway service")
+		log.Info().Msg("To start the service, run: sudo systemctl start kms-gateway")
 	},
 }
 
@@ -453,7 +453,7 @@ var gatewaySystemdUninstallCmd = &cobra.Command{
 	Use:                   "uninstall",
 	Short:                 "Uninstall and remove systemd service for the gateway (requires sudo)",
 	Long:                  "Uninstall and remove systemd service for the gateway. Must be run with sudo on Linux.",
-	Example:               "sudo infisical gateway systemd uninstall",
+	Example:               "sudo kms gateway systemd uninstall",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -472,8 +472,8 @@ var gatewaySystemdUninstallCmd = &cobra.Command{
 }
 
 var gatewayRelayCmd = &cobra.Command{
-	Example:               `infisical gateway relay`,
-	Short:                 "Used to run infisical gateway relay",
+	Example:               `kms gateway relay`,
+	Short:                 "Used to run kms gateway relay",
 	Use:                   "relay",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
@@ -500,7 +500,7 @@ var gatewayRelayCmd = &cobra.Command{
 
 func init() {
 	// Legacy gateway command flags (v1)
-	gatewayCmd.Flags().String("token", "", "connect with Infisical using machine identity access token. if not provided, you must set the auth-method flag")
+	gatewayCmd.Flags().String("token", "", "connect with Hanzo KMS using machine identity access token. if not provided, you must set the auth-method flag")
 	gatewayCmd.Flags().String("auth-method", "", "login method [universal-auth, kubernetes, azure, gcp-id-token, gcp-iam, aws-iam, oidc-auth]. if not provided, you must set the token flag")
 	gatewayCmd.Flags().String("client-id", "", "client id for universal auth")
 	gatewayCmd.Flags().String("client-secret", "", "client secret for universal auth")
@@ -513,7 +513,7 @@ func init() {
 	gatewayStartCmd.Flags().String("relay", "", "name of the relay to connect to (deprecated, use --target-relay-name)") // Deprecated, use --target-relay-name instead
 	gatewayStartCmd.Flags().String("target-relay-name", "", "name of the relay to connect to")
 	gatewayStartCmd.Flags().String("name", "", "name of the gateway")
-	gatewayStartCmd.Flags().String("token", "", "connect with Infisical using machine identity access token. if not provided, you must set the auth-method flag")
+	gatewayStartCmd.Flags().String("token", "", "connect with Hanzo KMS using machine identity access token. if not provided, you must set the auth-method flag")
 	gatewayStartCmd.Flags().String("auth-method", "", "login method [universal-auth, kubernetes, azure, gcp-id-token, gcp-iam, aws-iam, oidc-auth]. if not provided, you must set the token flag")
 	gatewayStartCmd.Flags().String("organization-slug", "", "When set, this will scope the login session to the specified sub-organization the machine identity has access to. If left empty, the session defaults to the organization where the machine identity was created in.")
 	gatewayStartCmd.Flags().String("client-id", "", "client id for universal auth")
@@ -522,19 +522,19 @@ func init() {
 	gatewayStartCmd.Flags().String("service-account-token-path", "", "service account token path for kubernetes auth")
 	gatewayStartCmd.Flags().String("service-account-key-file-path", "", "service account key file path for GCP IAM auth")
 	gatewayStartCmd.Flags().String("jwt", "", "JWT for jwt-based auth methods [oidc-auth, jwt-auth]")
-	gatewayStartCmd.Flags().String("pam-session-recording-path", "", "directory path for PAM session recordings (defaults to /var/lib/infisical/session_recordings)")
+	gatewayStartCmd.Flags().String("pam-session-recording-path", "", "directory path for PAM session recordings (defaults to /var/lib/hanzo-kms/session_recordings)")
 
 	// Legacy install command flags (v1)
-	gatewayInstallCmd.Flags().String("token", "", "Connect with Infisical using machine identity access token")
-	gatewayInstallCmd.Flags().String("domain", "", "Domain of your self-hosted Infisical instance")
+	gatewayInstallCmd.Flags().String("token", "", "Connect with Hanzo KMS using machine identity access token")
+	gatewayInstallCmd.Flags().String("domain", "", "Domain of your self-hosted Hanzo KMS instance")
 
 	// Systemd install command flags (v2)
-	gatewaySystemdInstallCmd.Flags().String("token", "", "Connect with Infisical using machine identity access token")
-	gatewaySystemdInstallCmd.Flags().String("domain", "", "Domain of your self-hosted Infisical instance")
+	gatewaySystemdInstallCmd.Flags().String("token", "", "Connect with Hanzo KMS using machine identity access token")
+	gatewaySystemdInstallCmd.Flags().String("domain", "", "Domain of your self-hosted Hanzo KMS instance")
 	gatewaySystemdInstallCmd.Flags().String("name", "", "The name of the gateway")
 	gatewaySystemdInstallCmd.Flags().String("relay", "", "The name of the relay (deprecated, use --target-relay-name)") // Deprecated, use --target-relay-name instead
 	gatewaySystemdInstallCmd.Flags().String("target-relay-name", "", "The name of the relay")
-	gatewaySystemdInstallCmd.Flags().String("log-file", "", "The file to write the service logs to. Example: /var/log/infisical/gateway.log. If not provided, logs will not be written to a file.")
+	gatewaySystemdInstallCmd.Flags().String("log-file", "", "The file to write the service logs to. Example: /var/log/hanzo-kms/gateway.log. If not provided, logs will not be written to a file.")
 
 	// Gateway relay command flags
 	gatewayRelayCmd.Flags().String("config", "", "Relay config yaml file path")

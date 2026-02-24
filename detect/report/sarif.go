@@ -27,7 +27,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/Infisical/infisical-merge/detect/config"
+	"github.com/hanzokms/cli/detect/config"
 )
 
 type SarifReporter struct {

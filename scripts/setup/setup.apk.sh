@@ -1,15 +1,15 @@
 #!/bin/sh
 #
-# Infisical CLI Alpine Repository Setup Script
+# Hanzo KMS CLI Alpine Repository Setup Script
 # The core commands execute start from the "MAIN" section below.
 #
 
 set -e
 
 # Environment variables that can be set
-PKG_URL="${PKG_URL:-https://artifacts-cli.infisical.com}"
-PACKAGE_NAME="${PACKAGE_NAME:-infisical}"
-RSA_KEY_URL="${RSA_KEY_URL:-${PKG_URL}/apk/infisical.rsa.pub}"
+PKG_URL="${PKG_URL:-https://artifacts-cli.kms.com}"
+PACKAGE_NAME="${PACKAGE_NAME:-kms}"
+RSA_KEY_URL="${RSA_KEY_URL:-${PKG_URL}/apk/kms.rsa.pub}"
 
 # Colors (basic POSIX-compatible)
 RED='\033[0;31m'
@@ -34,7 +34,7 @@ die() {
     printf "${RED}${BOLD}Error:${NC} %s\n" "$1"
     echo
     printf "${BOLD}For assistance, please visit:${NC}\n"
-    echo "  https://github.com/Infisical/infisical"
+    echo "  https://github.com/Hanzo KMS/kms"
     echo
     exit 1
 }
@@ -122,8 +122,8 @@ Options:
   -r, --remove   Remove the repository configuration
 
 Environment variables:
-  PKG_URL        Base URL for packages (default: https://artifacts-cli.infisical.com)
-  PACKAGE_NAME   Package name (default: infisical)
+  PKG_URL        Base URL for packages (default: https://artifacts-cli.kms.com)
+  PACKAGE_NAME   Package name (default: kms)
 
 EOF
     exit 0

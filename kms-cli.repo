@@ -1,0 +1,5 @@
+[hanzokms]
+name=Hanzo KMS CLI
+baseurl=https://yum.fury.io/hanzokms/
+enabled=1
+gpgcheck=0

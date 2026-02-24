@@ -3,7 +3,7 @@ package cmd
 import (
 	"testing"
 
-	"github.com/Infisical/infisical-merge/packages/models"
+	"github.com/hanzokms/cli/packages/models"
 )
 
 func TestFilterReservedEnvVars(t *testing.T) {

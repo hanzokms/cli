@@ -3,9 +3,9 @@ package util
 import (
 	"fmt"
 
-	"github.com/Infisical/infisical-merge/packages/api"
-	"github.com/Infisical/infisical-merge/packages/config"
-	"github.com/Infisical/infisical-merge/packages/models"
+	"github.com/hanzokms/cli/packages/api"
+	"github.com/hanzokms/cli/packages/config"
+	"github.com/hanzokms/cli/packages/models"
 )
 
 func GetOrganizationsNameList(organizationResponse api.GetOrganizationsResponse) []string {

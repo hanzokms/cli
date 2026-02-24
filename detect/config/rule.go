@@ -26,7 +26,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Infisical/infisical-merge/detect/regexp"
+	"github.com/hanzokms/cli/detect/regexp"
 )
 
 // Rules contain information that define details on how to detect secrets

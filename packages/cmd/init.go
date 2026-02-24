@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2023 Infisical Inc.
+Copyright (c) 2024 Hanzo AI Inc.
 */
 package cmd
 
@@ -7,9 +7,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/Infisical/infisical-merge/packages/api"
-	"github.com/Infisical/infisical-merge/packages/models"
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/api"
+	"github.com/hanzokms/cli/packages/models"
+	"github.com/hanzokms/cli/packages/util"
 	"github.com/manifoldco/promptui"
 	"github.com/posthog/posthog-go"
 	"github.com/rs/zerolog/log"
@@ -19,9 +19,9 @@ import (
 // runCmd represents the run command
 var initCmd = &cobra.Command{
 	Use:                   "init",
-	Short:                 "Used to connect your local project with Infisical project",
+	Short:                 "Used to connect your local project with Hanzo KMS project",
 	DisableFlagsInUseLine: true,
-	Example:               "infisical init",
+	Example:               "kms init",
 	Args:                  cobra.ExactArgs(0),
 	PreRun: func(cmd *cobra.Command, args []string) {
 		util.RequireLogin()
@@ -140,7 +140,7 @@ var initCmd = &cobra.Command{
 		filteredWorkspaces, workspaceNames := util.GetWorkspacesInOrganization(workspaceResponse, selectedOrganization.ID)
 
 		prompt = promptui.Select{
-			Label: "Which of your Infisical projects would you like to connect this project to?",
+			Label: "Which of your Hanzo KMS projects would you like to connect this project to?",
 			Items: workspaceNames,
 			Size:  7,
 		}

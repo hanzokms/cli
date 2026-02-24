@@ -7,9 +7,9 @@ Type=notify
 NotifyAccess=all
 EnvironmentFile={{ .EnvironmentFile }}
 {{ if .ServiceLogFile }}
-ExecStart=/bin/bash -c 'infisical {{ .ServiceType }} start 2>&1 | tee {{ .ServiceLogFile | printf "%q" }}'
+ExecStart=/bin/bash -c 'kms {{ .ServiceType }} start 2>&1 | tee {{ .ServiceLogFile | printf "%q" }}'
 {{ else }}
-ExecStart=infisical {{ .ServiceType }} start
+ExecStart=kms {{ .ServiceType }} start
 {{ end }}
 Restart=on-failure
 InaccessibleDirectories=/home

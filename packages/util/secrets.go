@@ -10,9 +10,9 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/Infisical/infisical-merge/packages/api"
-	"github.com/Infisical/infisical-merge/packages/crypto"
-	"github.com/Infisical/infisical-merge/packages/models"
+	"github.com/hanzokms/cli/packages/api"
+	"github.com/hanzokms/cli/packages/crypto"
+	"github.com/hanzokms/cli/packages/models"
 	"github.com/rs/zerolog/log"
 	"github.com/zalando/go-keyring"
 	"gopkg.in/yaml.v3"
@@ -281,7 +281,7 @@ func GetAllEnvironmentVariables(params models.GetAllSecretsParameters, projectCo
 			if projectConfigFilePath == "" {
 				_, err := GetWorkSpaceFromFile()
 				if err != nil {
-					PrintErrorMessageAndExit("Please either run infisical init to connect to a project or pass in project id with --projectId flag")
+					PrintErrorMessageAndExit("Please either run kms init to connect to a project or pass in project id with --projectId flag")
 				}
 			} else {
 				ValidateWorkspaceFile(projectConfigFilePath)
@@ -296,7 +296,7 @@ func GetAllEnvironmentVariables(params models.GetAllSecretsParameters, projectCo
 		isConnected := ValidateInfisicalAPIConnection()
 
 		if isConnected {
-			log.Debug().Msg("GetAllEnvironmentVariables: Connected to Infisical instance, checking logged in creds")
+			log.Debug().Msg("GetAllEnvironmentVariables: Connected to Hanzo KMS instance, checking logged in creds")
 		}
 
 		if err != nil {
@@ -313,7 +313,7 @@ func GetAllEnvironmentVariables(params models.GetAllSecretsParameters, projectCo
 			if projectConfigFilePath == "" {
 				projectConfig, err := GetWorkSpaceFromFile()
 				if err != nil {
-					PrintErrorMessageAndExit("Please either run infisical init to connect to a project or pass in project id with --projectId flag")
+					PrintErrorMessageAndExit("Please either run kms init to connect to a project or pass in project id with --projectId flag")
 				}
 
 				infisicalDotJson = projectConfig
@@ -433,7 +433,7 @@ func GetBackupEncryptionKey() ([]byte, error) {
 	encryptionKey, err := GetValueInKeyring(INFISICAL_BACKUP_SECRET_ENCRYPTION_KEY)
 	if err != nil {
 		if err == keyring.ErrUnsupportedPlatform {
-			return nil, errors.New("your OS does not support keyring. Consider using a service token https://infisical.com/docs/documentation/platform/token")
+			return nil, errors.New("your OS does not support keyring. Consider using a service token https://kms.hanzo.ai/docs/documentation/platform/token")
 		} else if err == keyring.ErrNotFound {
 			// generate a new key
 			randomizedKey := make([]byte, 16)

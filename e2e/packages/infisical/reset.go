@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/docker/go-connections/nat"
-	"github.com/infisical/cli/e2e-tests/packages/client"
+	"github.com/hanzokms/cli/e2e-tests/packages/client"
 	"github.com/testcontainers/testcontainers-go/modules/compose"
 )
 

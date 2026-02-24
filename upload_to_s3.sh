@@ -4,15 +4,15 @@ set -eo pipefail
 cd dist || { echo "Failed to cd into dist"; exit 1; }
 
 # Validate signing key ID is configured
-if [ -z "$INFISICAL_CLI_REPO_SIGNING_KEY_ID" ]; then
-    echo "Error: INFISICAL_CLI_REPO_SIGNING_KEY_ID not set"
+if [ -z "$KMS_CLI_REPO_SIGNING_KEY_ID" ]; then
+    echo "Error: KMS_CLI_REPO_SIGNING_KEY_ID not set"
     exit 1
 fi
 
 # Validate required environment variables for S3 uploads
 validate_s3_env() {
     local missing=()
-    [ -z "$INFISICAL_CLI_S3_BUCKET" ] && missing+=("INFISICAL_CLI_S3_BUCKET")
+    [ -z "$KMS_CLI_S3_BUCKET" ] && missing+=("KMS_CLI_S3_BUCKET")
     [ -z "$AWS_ACCESS_KEY_ID" ] && missing+=("AWS_ACCESS_KEY_ID")
     [ -z "$AWS_SECRET_ACCESS_KEY" ] && missing+=("AWS_SECRET_ACCESS_KEY")
     
@@ -64,7 +64,7 @@ if ls *.apk 1> /dev/null 2>&1; then
     
     # Sync existing packages from S3 (to preserve old versions)
     echo "Syncing existing APK packages from S3..."
-    aws s3 sync "s3://$INFISICAL_CLI_S3_BUCKET/apk/" apk-staging/ --exclude "*/APKINDEX.tar.gz"
+    aws s3 sync "s3://$KMS_CLI_S3_BUCKET/apk/" apk-staging/ --exclude "*/APKINDEX.tar.gz"
     
     # Validate APK private key exists
     if [ ! -f "$APK_PRIVATE_KEY_PATH" ]; then
@@ -79,7 +79,7 @@ if ls *.apk 1> /dev/null 2>&1; then
     echo "Generating APKINDEX.tar.gz using Alpine container..."
     docker run --rm \
         -v "$(pwd)/apk-staging:/repo" \
-        -v "$APK_PRIVATE_KEY_PATH:/keys/infisical.rsa:ro" \
+        -v "$APK_PRIVATE_KEY_PATH:/keys/kms.rsa:ro" \
         alpine:3.21 sh -c '
             set -e
             echo "Installing alpine-sdk..."
@@ -99,7 +99,7 @@ if ls *.apk 1> /dev/null 2>&1; then
                     apk index --allow-untrusted -o APKINDEX.tar.gz *.apk
                     
                     # Sign the index
-                    abuild-sign -k /keys/infisical.rsa APKINDEX.tar.gz
+                    abuild-sign -k /keys/kms.rsa APKINDEX.tar.gz
                     echo "${arch_name} APKINDEX signed successfully"
                 fi
             }
@@ -110,14 +110,14 @@ if ls *.apk 1> /dev/null 2>&1; then
     
     # Upload everything to S3
     echo "Uploading APK repository to S3..."
-    aws s3 sync apk-staging/ "s3://$INFISICAL_CLI_S3_BUCKET/apk/"
+    aws s3 sync apk-staging/ "s3://$KMS_CLI_S3_BUCKET/apk/"
     
     echo "APK packages uploaded successfully"
 fi
 
 for i in *.deb; do
     [ -f "$i" ] || break
-    deb-s3 upload --bucket=$INFISICAL_CLI_S3_BUCKET --prefix=deb --visibility=private --sign=$INFISICAL_CLI_REPO_SIGNING_KEY_ID --preserve-versions $i
+    deb-s3 upload --bucket=$KMS_CLI_S3_BUCKET --prefix=deb --visibility=private --sign=$KMS_CLI_REPO_SIGNING_KEY_ID --preserve-versions $i
 done
 
 
@@ -128,18 +128,18 @@ for i in *.rpm; do
     [ -f "$i" ] || break
     
     # Sign the RPM package
-    rpmsign --addsign --key-id="$INFISICAL_CLI_REPO_SIGNING_KEY_ID" "$i"
+    rpmsign --addsign --key-id="$KMS_CLI_REPO_SIGNING_KEY_ID" "$i"
     
     # Upload to S3
-    aws s3 cp "$i" "s3://$INFISICAL_CLI_S3_BUCKET/rpm/Packages/"
+    aws s3 cp "$i" "s3://$KMS_CLI_S3_BUCKET/rpm/Packages/"
 done
 
 # Regenerate RPM repository metadata with mkrepo
 # Note: mkrepo uses boto3 which automatically reads AWS_ACCESS_KEY_ID and
 # AWS_SECRET_ACCESS_KEY from environment variables set in the workflow
 if ls *.rpm 1> /dev/null 2>&1; then
-    export GPG_SIGN_KEY=$INFISICAL_CLI_REPO_SIGNING_KEY_ID
-    mkrepo "s3://$INFISICAL_CLI_S3_BUCKET/rpm" \
+    export GPG_SIGN_KEY=$KMS_CLI_REPO_SIGNING_KEY_ID
+    mkrepo "s3://$KMS_CLI_S3_BUCKET/rpm" \
         --s3-region="us-east-1" \
         --sign
 fi

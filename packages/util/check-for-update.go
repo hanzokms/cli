@@ -25,7 +25,7 @@ func CheckForUpdateWithWriter(w io.Writer) {
 	if checkEnv := os.Getenv("INFISICAL_DISABLE_UPDATE_CHECK"); checkEnv != "" {
 		return
 	}
-	latestVersion, _, isUrgent, err := getLatestTag("Infisical", "cli")
+	latestVersion, _, isUrgent, err := getLatestTag("hanzokms", "cli")
 	if err != nil {
 		log.Debug().Err(err)
 		// do nothing and continue
@@ -38,7 +38,7 @@ func CheckForUpdateWithWriter(w io.Writer) {
 
 	// Only prompt if the user's current version is at least 48 hours old, unless urgent.
 	// This avoids nagging users who recently updated.
-	currentVersionPublishedAt, err := getReleasePublishedAt("Infisical", "cli", CLI_VERSION)
+	currentVersionPublishedAt, err := getReleasePublishedAt("hanzokms", "cli", CLI_VERSION)
 	if err == nil && !isUrgent && time.Since(currentVersionPublishedAt).Hours() < 48 {
 		return
 	}
@@ -48,7 +48,7 @@ func CheckForUpdateWithWriter(w io.Writer) {
 	black := color.New(color.FgBlack).SprintFunc()
 
 	msg := fmt.Sprintf("%s %s %s %s",
-		yellow("A new release of infisical is available:"),
+		yellow("A new release of kms is available:"),
 		blue(CLI_VERSION),
 		black("->"),
 		blue(latestVersion),
@@ -79,7 +79,7 @@ func DisplayAptInstallationChangeBannerWithWriter(isSilent bool, w io.Writer) {
 		if isApt {
 			yellow := color.New(color.FgYellow).SprintFunc()
 			msg := fmt.Sprintf("%s",
-				yellow("Update Required: Your current package installation script is outdated and will no longer receive updates.\nPlease update to the new installation script which can be found here https://infisical.com/docs/cli/overview#installation debian section\n"),
+				yellow("Update Required: Your current package installation script is outdated and will no longer receive updates.\nPlease update to the new installation script which can be found here https://kms.hanzo.ai/docs/cli/overview#installation debian section\n"),
 			)
 
 			fmt.Fprintln(w, msg)
@@ -167,20 +167,20 @@ func GetUpdateInstructions() string {
 	os := runtime.GOOS
 	switch os {
 	case "darwin":
-		return "To update, run: brew update && brew upgrade infisical"
+		return "To update, run: brew update && brew upgrade kms"
 	case "windows":
-		return "To update, run: scoop update infisical"
+		return "To update, run: scoop update kms"
 	case "linux":
 		pkgManager := getLinuxPackageManager()
 		switch pkgManager {
 		case "apt-get":
-			return "To update, run: sudo apt-get update && sudo apt-get install infisical"
+			return "To update, run: sudo apt-get update && sudo apt-get install kms"
 		case "yum":
-			return "To update, run: sudo yum update infisical"
+			return "To update, run: sudo yum update kms"
 		case "apk":
-			return "To update, run: sudo apk update && sudo apk upgrade infisical"
+			return "To update, run: sudo apk update && sudo apk upgrade kms"
 		case "yay":
-			return "To update, run: yay -Syu infisical"
+			return "To update, run: yay -Syu kms"
 		default:
 			return ""
 		}

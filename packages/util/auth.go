@@ -78,16 +78,16 @@ func EstablishUserLoginSession() LoggedInUserDetails {
 
 	err = loginCmd.Run()
 	if err != nil {
-		PrintErrorMessageAndExit(fmt.Sprintf("Failed to automatically trigger login flow. Please run [infisical login] manually to login."))
+		PrintErrorMessageAndExit(fmt.Sprintf("Failed to automatically trigger login flow. Please run [kms login] manually to login."))
 	}
 
 	loggedInUserDetails, err := GetCurrentLoggedInUserDetails(true)
 	if err != nil {
-		PrintErrorMessageAndExit("You must be logged in to run this command. To login, run [infisical login]")
+		PrintErrorMessageAndExit("You must be logged in to run this command. To login, run [kms login]")
 	}
 
 	if loggedInUserDetails.LoginExpired {
-		PrintErrorMessageAndExit("Your login session has expired. Please run [infisical login]")
+		PrintErrorMessageAndExit("Your login session has expired. Please run [kms login]")
 	}
 
 	return loggedInUserDetails

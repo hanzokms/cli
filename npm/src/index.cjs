@@ -75,7 +75,7 @@ async function extractZip(buffer, targetPath) {
       zipfile.readEntry();
       zipfile.on("entry", (entry) => {
         const isExecutable =
-          entry.fileName === "infisical" || entry.fileName === "infisical.exe";
+          entry.fileName === "kms" || entry.fileName === "kms.exe";
 
         if (/\/$/.test(entry.fileName) || !isExecutable) {
           // Directory entry
@@ -88,9 +88,9 @@ async function extractZip(buffer, targetPath) {
             let fileName = entry.fileName;
 
             if (entry.fileName.endsWith(".exe")) {
-              fileName = "infisical.exe";
-            } else if (entry.fileName.includes("infisical")) {
-              fileName = "infisical";
+              fileName = "kms.exe";
+            } else if (entry.fileName.includes("kms")) {
+              fileName = "kms";
             }
 
             const outputPath = path.join(targetPath, fileName);
@@ -116,7 +116,7 @@ async function main() {
   const NUMERIC_RELEASE_VERSION = packageJSON.version;
   const LATEST_RELEASE_VERSION = `v${NUMERIC_RELEASE_VERSION}`;
   const EXTENSION = PLATFORM === "windows" ? "zip" : "tar.gz";
-  const downloadLink = `https://github.com/Infisical/cli/releases/download/${LATEST_RELEASE_VERSION}/cli_${NUMERIC_RELEASE_VERSION}_${PLATFORM}_${ARCH}.${EXTENSION}`;
+  const downloadLink = `https://github.com/hanzokms/cli/releases/download/${LATEST_RELEASE_VERSION}/cli_${NUMERIC_RELEASE_VERSION}_${PLATFORM}_${ARCH}.${EXTENSION}`;
 
   // Ensure the output directory exists
   if (!fs.existsSync(outputDir)) {
@@ -149,7 +149,7 @@ async function main() {
           .pipe(
             tar.x({
               C: path.join(outputDir),
-              filter: (path) => path === "infisical",
+              filter: (path) => path === "kms",
             })
           );
 
@@ -160,16 +160,14 @@ async function main() {
 
     // Platform-specific tasks
     if (PLATFORM === "windows") {
-      // We create an empty file called 'infisical'. This file has no functionality, except allowing NPM to correctly create the symlink.
-      // Reason why this doesn't work without the empty file, is because the files downloaded are a .ps1, .exe, and .cmd file. None of these match the binary name from the package.json['bin'] field.
-      // This is a bit hacky, but it assures that the symlink is correctly created.
-      fs.closeSync(fs.openSync(path.join(outputDir, "infisical"), "w"));
+      // We create an empty file called 'kms'. This file has no functionality, except allowing NPM to correctly create the symlink.
+      fs.closeSync(fs.openSync(path.join(outputDir, "kms"), "w"));
     } else {
       // Unix systems only need chmod
-      fs.chmodSync(path.join(outputDir, "infisical"), "755");
+      fs.chmodSync(path.join(outputDir, "kms"), "755");
     }
   } catch (error) {
-    console.error("Error downloading or extracting Infisical CLI:", error);
+    console.error("Error downloading or extracting Hanzo KMS CLI:", error);
     process.exit(1);
   }
 }

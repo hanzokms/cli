@@ -16,9 +16,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Infisical/infisical-merge/packages/proxy"
-	"github.com/Infisical/infisical-merge/packages/util"
-	"github.com/Infisical/infisical-merge/packages/util/cache"
+	"github.com/hanzokms/cli/packages/proxy"
+	"github.com/hanzokms/cli/packages/util"
+	"github.com/hanzokms/cli/packages/util/cache"
 	"github.com/awnumar/memguard"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -31,16 +31,16 @@ const (
 )
 
 var proxyCmd = &cobra.Command{
-	Example:               `infisical proxy start`,
-	Short:                 "Used to run Infisical proxy server",
+	Example:               `kms proxy start`,
+	Short:                 "Used to run Hanzo KMS proxy server",
 	Use:                   "proxy",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 }
 
 var proxyStartCmd = &cobra.Command{
-	Example:               `infisical proxy start --domain=https://app.infisical.com --listen-address=localhost:8081`,
-	Short:                 "Start the Infisical proxy server",
+	Example:               `kms proxy start --domain=https://kms.hanzo.ai --listen-address=localhost:8081`,
+	Short:                 "Start the Hanzo KMS proxy server",
 	Use:                   "start",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
@@ -48,7 +48,7 @@ var proxyStartCmd = &cobra.Command{
 }
 
 var proxyDebugCmd = &cobra.Command{
-	Example:               `infisical proxy debug --listen-address=localhost:8081`,
+	Example:               `kms proxy debug --listen-address=localhost:8081`,
 	Short:                 "Print cache debug information (dev mode only)",
 	Use:                   "debug",
 	DisableFlagsInUseLine: true,
@@ -499,9 +499,9 @@ func startProxyServer(cmd *cobra.Command, args []string) {
 	}()
 
 	if tlsEnabled {
-		log.Info().Msgf("Infisical proxy server starting on %s with TLS enabled", listenAddress)
+		log.Info().Msgf("Hanzo KMS proxy server starting on %s with TLS enabled", listenAddress)
 	} else {
-		log.Info().Msgf("Infisical proxy server starting on %s", listenAddress)
+		log.Info().Msgf("Hanzo KMS proxy server starting on %s", listenAddress)
 	}
 
 	log.Info().Msgf("Forwarding requests to %s", domain)
@@ -568,9 +568,9 @@ func isStreamingEndpoint(path string) bool {
 }
 
 func init() {
-	proxyStartCmd.Flags().String("domain", "", "Domain of your Infisical instance (e.g., https://app.infisical.com for cloud, https://my-self-hosted-instance.com for self-hosted)")
+	proxyStartCmd.Flags().String("domain", "", "Domain of your Hanzo KMS instance (e.g., https://kms.hanzo.ai for cloud, https://my-self-hosted-instance.com for self-hosted)")
 	proxyStartCmd.Flags().String("listen-address", "localhost:8081", "The address for the proxy server to listen on. Defaults to localhost:8081")
-	proxyStartCmd.Flags().String("eviction-strategy", string(CacheEvictionStrategyOptimistic), "Cache eviction strategy. 'optimistic' keeps cached data when Infisical is unreachable for high availability. Currently only 'optimistic' is supported.")
+	proxyStartCmd.Flags().String("eviction-strategy", string(CacheEvictionStrategyOptimistic), "Cache eviction strategy. 'optimistic' keeps cached data when KMS is unreachable for high availability. Currently only 'optimistic' is supported.")
 	proxyStartCmd.Flags().String("access-token-check-interval", "5m", "How often to validate that access tokens are still valid (e.g., 5m, 1h). Defaults to 5m.")
 	proxyStartCmd.Flags().String("static-secrets-refresh-interval", "1h", "How often to refresh cached secrets (e.g., 30m, 1h, 1d). Defaults to 1h.")
 	proxyStartCmd.Flags().String("tls-cert-file", "", "The path to the TLS certificate file for the proxy server. Required when `tls-enabled` is set to true (default)")

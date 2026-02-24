@@ -28,7 +28,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/Infisical/infisical-merge/detect/report"
+	"github.com/hanzokms/cli/detect/report"
 )
 
 func IsNew(finding report.Finding, redact uint, baseline []report.Finding) bool {

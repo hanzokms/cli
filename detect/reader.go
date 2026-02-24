@@ -28,7 +28,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/Infisical/infisical-merge/detect/report"
+	"github.com/hanzokms/cli/detect/report"
 )
 
 // DetectReader accepts an io.Reader and a buffer size for the reader in KB

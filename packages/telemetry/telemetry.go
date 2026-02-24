@@ -1,7 +1,7 @@
 package telemetry
 
 import (
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/util"
 	"github.com/denisbrodbeck/machineid"
 	"github.com/posthog/posthog-go"
 	"github.com/rs/zerolog/log"

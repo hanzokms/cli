@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Infisical/infisical-merge/packages/util/cache"
+	"github.com/hanzokms/cli/packages/util/cache"
 	"github.com/rs/zerolog/log"
 )
 

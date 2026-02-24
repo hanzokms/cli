@@ -16,7 +16,7 @@ import (
 	"strconv"
 	"syscall"
 
-	"github.com/Infisical/infisical-merge/packages/systemd"
+	"github.com/hanzokms/cli/packages/systemd"
 	"github.com/pion/dtls/v3"
 	"github.com/pion/logging"
 	"github.com/pion/turn/v4"

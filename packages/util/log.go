@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Infisical/infisical-merge/packages/api"
+	"github.com/hanzokms/cli/packages/api"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/fatih/color"
 )
@@ -260,7 +260,7 @@ func printPrettyAPIError(apiErr api.APIError) {
 		Foreground(accentColor).
 		Underline(true)
 
-	supportMsg := supportStyle.Render("If this issue continues, get support at ") + linkStyle.Render("https://infisical.com/slack")
+	supportMsg := supportStyle.Render("If this issue continues, get support at ") + linkStyle.Render("https://kms.hanzo.ai/slack")
 	content.WriteString(supportMsg)
 
 	PrintlnStderr(content.String())

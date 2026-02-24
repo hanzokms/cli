@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2023 Infisical Inc.
+Copyright (c) 2024 Hanzo AI Inc.
 */
 package cmd
 
@@ -14,17 +14,17 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 
-	"github.com/Infisical/infisical-merge/packages/config"
-	"github.com/Infisical/infisical-merge/packages/telemetry"
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/config"
+	"github.com/hanzokms/cli/packages/telemetry"
+	"github.com/hanzokms/cli/packages/util"
 )
 
 var Telemetry *telemetry.Telemetry
 
 var RootCmd = &cobra.Command{
-	Use:               "infisical",
-	Short:             "Infisical CLI is used to inject environment variables into any process",
-	Long:              `Infisical is a simple, end-to-end encrypted service that enables teams to sync and manage their environment variables across their development life cycle.`,
+	Use:               "kms",
+	Short:             "Hanzo KMS CLI is used to inject secrets and environment variables into any process",
+	Long:              `Hanzo KMS is a simple, end-to-end encrypted service that enables teams to sync and manage their secrets across their development life cycle.`,
 	CompletionOptions: cobra.CompletionOptions{HiddenDefaultCmd: true},
 	Version:           util.CLI_VERSION,
 }
@@ -75,8 +75,8 @@ func init() {
 	util.GetStdoutWriter = RootCmdStdoutWriter
 	cobra.OnInitialize(initLog)
 	RootCmd.PersistentFlags().StringP("log-level", "l", "", "log level (trace, debug, info, warn, error, fatal)")
-	RootCmd.PersistentFlags().Bool("telemetry", true, "Infisical collects non-sensitive telemetry data to enhance features and improve user experience. Participation is voluntary")
-	RootCmd.PersistentFlags().StringVar(&config.INFISICAL_URL, "domain", fmt.Sprintf("%s/api", util.INFISICAL_DEFAULT_US_URL), "Point the CLI to your Infisical instance (e.g., https://eu.infisical.com for EU Cloud, or https://your-instance.com for self-hosted). Can also set via INFISICAL_API_URL environment variable. Required for non-US Cloud users.")
+	RootCmd.PersistentFlags().Bool("telemetry", true, "Hanzo KMS collects non-sensitive telemetry data to enhance features and improve user experience. Participation is voluntary")
+	RootCmd.PersistentFlags().StringVar(&config.INFISICAL_URL, "domain", fmt.Sprintf("%s/api", util.INFISICAL_DEFAULT_US_URL), "Point the CLI to your Hanzo KMS instance (e.g., https://eu.kms.hanzo.ai for EU, or https://your-instance.com for self-hosted). Can also set via INFISICAL_API_URL environment variable.")
 	RootCmd.PersistentFlags().Bool("silent", false, "Disable output of tip/info messages. Useful when running in scripts or CI/CD pipelines.")
 	RootCmd.PersistentPreRun = func(cmd *cobra.Command, args []string) {
 		silent, err := cmd.Flags().GetBool("silent")

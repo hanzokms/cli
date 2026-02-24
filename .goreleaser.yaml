@@ -1,11 +1,4 @@
-# This is an example .goreleaser.yml file with some sensible defaults.
-# Make sure to check the documentation at https://goreleaser.com
-# before:
-#   hooks:
-#     # You may remove this if you don't use go modules.
-#     - cd cli && go mod tidy
-#     # you may remove this if you don't need go generate
-#     - cd cli && go generate ./...
+# GoReleaser config for Hanzo KMS CLI
 before:
   hooks:
     - ./scripts/completions.sh
@@ -13,10 +6,10 @@ before:
 
 builds:
   - id: darwin-build
-    binary: infisical
+    binary: kms
     ldflags:
-      - -X github.com/Infisical/infisical-merge/packages/util.CLI_VERSION={{ .Version }}
-      - -X github.com/Infisical/infisical-merge/packages/telemetry.POSTHOG_API_KEY_FOR_CLI={{ .Env.POSTHOG_API_KEY_FOR_CLI }}
+      - -X github.com/hanzokms/cli/packages/util.CLI_VERSION={{ .Version }}
+      - -X github.com/hanzokms/cli/packages/telemetry.POSTHOG_API_KEY_FOR_CLI={{ .Env.POSTHOG_API_KEY_FOR_CLI }}
     flags:
       - -trimpath
     env:
@@ -32,10 +25,10 @@ builds:
   - id: all-other-builds
     env:
       - CGO_ENABLED=0
-    binary: infisical
+    binary: kms
     ldflags:
-      - -X github.com/Infisical/infisical-merge/packages/util.CLI_VERSION={{ .Version }}
-      - -X github.com/Infisical/infisical-merge/packages/telemetry.POSTHOG_API_KEY_FOR_CLI={{ .Env.POSTHOG_API_KEY_FOR_CLI }}
+      - -X github.com/hanzokms/cli/packages/util.CLI_VERSION={{ .Version }}
+      - -X github.com/hanzokms/cli/packages/telemetry.POSTHOG_API_KEY_FOR_CLI={{ .Env.POSTHOG_API_KEY_FOR_CLI }}
     flags:
       - -trimpath
     goos:
@@ -78,56 +71,49 @@ checksum:
 snapshot:
   name_template: "{{ .Version }}-devel"
 
-# publishers:
-#   - name: fury.io
-#     ids:
-#       - infisical
-#     dir: "{{ dir .ArtifactPath }}"
-#     cmd: curl -F package=@{{ .ArtifactName }} https://{{ .Env.FURY_TOKEN }}@push.fury.io/infisical/
-
 brews:
-  - name: infisical
+  - name: kms
     tap:
-      owner: Infisical
-      name: homebrew-get-cli
+      owner: hanzokms
+      name: homebrew-tap
     commit_author:
-      name: "Infisical"
-      email: ai@infisical.com
+      name: "Hanzo AI"
+      email: ai@hanzo.ai
     folder: Formula
-    homepage: "https://infisical.com"
-    description: "The official Infisical CLI"
+    homepage: "https://kms.hanzo.ai"
+    description: "The official Hanzo KMS CLI"
     install: |-
-      bin.install "infisical"
-      bash_completion.install "completions/infisical.bash" => "infisical"
-      zsh_completion.install "completions/infisical.zsh" => "_infisical"
-      fish_completion.install "completions/infisical.fish"
-      man1.install "manpages/infisical.1.gz"
-  - name: "infisical@{{.Version}}"
+      bin.install "kms"
+      bash_completion.install "completions/kms.bash" => "kms"
+      zsh_completion.install "completions/kms.zsh" => "_kms"
+      fish_completion.install "completions/kms.fish"
+      man1.install "manpages/kms.1.gz"
+  - name: "kms@{{.Version}}"
     tap:
-      owner: Infisical
-      name: homebrew-get-cli
+      owner: hanzokms
+      name: homebrew-tap
     commit_author:
-      name: "Infisical"
-      email: ai@infisical.com
+      name: "Hanzo AI"
+      email: ai@hanzo.ai
     folder: Formula
-    homepage: "https://infisical.com"
-    description: "The official Infisical CLI"
+    homepage: "https://kms.hanzo.ai"
+    description: "The official Hanzo KMS CLI"
     install: |-
-      bin.install "infisical"
-      bash_completion.install "completions/infisical.bash" => "infisical"
-      zsh_completion.install "completions/infisical.zsh" => "_infisical"
-      fish_completion.install "completions/infisical.fish"
-      man1.install "manpages/infisical.1.gz"
+      bin.install "kms"
+      bash_completion.install "completions/kms.bash" => "kms"
+      zsh_completion.install "completions/kms.zsh" => "_kms"
+      fish_completion.install "completions/kms.fish"
+      man1.install "manpages/kms.1.gz"
 
 nfpms:
-  - id: infisical
-    package_name: infisical
+  - id: kms
+    package_name: kms
     builds:
       - all-other-builds
-    vendor: Infisical, Inc
-    homepage: https://infisical.com/
-    maintainer: Infisical, Inc
-    description: The offical Infisical CLI
+    vendor: Hanzo AI Inc.
+    homepage: https://kms.hanzo.ai/
+    maintainer: Hanzo AI Inc.
+    description: The official Hanzo KMS CLI
     license: MIT
     formats:
       - rpm
@@ -136,68 +122,26 @@ nfpms:
       - archlinux
     bindir: /usr/bin
     contents:
-      - src: ./completions/infisical.bash
-        dst: /etc/bash_completion.d/infisical
-      - src: ./completions/infisical.fish
-        dst: /usr/share/fish/vendor_completions.d/infisical.fish
-      - src: ./completions/infisical.zsh
-        dst: /usr/share/zsh/site-functions/_infisical
-      - src: ./manpages/infisical.1.gz
-        dst: /usr/share/man/man1/infisical.1.gz
+      - src: ./completions/kms.bash
+        dst: /etc/bash_completion.d/kms
+      - src: ./completions/kms.fish
+        dst: /usr/share/fish/vendor_completions.d/kms.fish
+      - src: ./completions/kms.zsh
+        dst: /usr/share/zsh/site-functions/_kms
+      - src: ./manpages/kms.1.gz
+        dst: /usr/share/man/man1/kms.1.gz
 
 scoop:
-  name: infisical
+  name: kms
   bucket:
-    owner: Infisical
-    name: scoop-infisical
+    owner: hanzokms
+    name: scoop-kms
   commit_author:
-    name: "Infisical"
-    email: ai@infisical.com
-  homepage: "https://infisical.com"
-  description: "The official Infisical CLI"
+    name: "Hanzo AI"
+    email: ai@hanzo.ai
+  homepage: "https://kms.hanzo.ai"
+  description: "The official Hanzo KMS CLI"
   license: MIT
-
-winget:
-  - name: infisical
-    publisher: infisical
-    license: MIT
-    homepage: https://infisical.com
-    short_description: "The official Infisical CLI"
-    repository:
-      owner: infisical
-      name: winget-pkgs
-      branch: "infisical-{{.Version}}"
-      pull_request:
-        enabled: true
-        draft: false
-        base:
-          owner: microsoft
-          name: winget-pkgs
-          branch: master
-
-aurs:
-  - name: infisical-bin
-    homepage: "https://infisical.com"
-    description: "The official Infisical CLI"
-    maintainers:
-      - Infisical, Inc <support@infisical.com>
-    license: MIT
-    private_key: "{{ .Env.AUR_KEY }}"
-    git_url: "ssh://aur@aur.archlinux.org/infisical-bin.git"
-    package: |-
-      # bin
-      install -Dm755 "./infisical" "${pkgdir}/usr/bin/infisical"
-      # license
-      install -Dm644 "./LICENSE" "${pkgdir}/usr/share/licenses/infisical/LICENSE"
-      # completions
-      mkdir -p "${pkgdir}/usr/share/bash-completion/completions/"
-      mkdir -p "${pkgdir}/usr/share/zsh/site-functions/"
-      mkdir -p "${pkgdir}/usr/share/fish/vendor_completions.d/"
-      install -Dm644 "./completions/infisical.bash" "${pkgdir}/usr/share/bash-completion/completions/infisical"
-      install -Dm644 "./completions/infisical.zsh" "${pkgdir}/usr/share/zsh/site-functions/_infisical"
-      install -Dm644 "./completions/infisical.fish" "${pkgdir}/usr/share/fish/vendor_completions.d/infisical.fish"
-      # man pages
-      install -Dm644 "./manpages/infisical.1.gz" "${pkgdir}/usr/share/man/man1/infisical.1.gz"
 
 dockers:
   - dockerfile: docker/alpine
@@ -207,8 +151,8 @@ dockers:
     ids:
       - all-other-builds
     image_templates:
-      - "infisical/cli:{{ .Major }}.{{ .Minor }}.{{ .Patch }}-amd64"
-      - "infisical/cli:latest-amd64"
+      - "hanzokms/cli:{{ .Major }}.{{ .Minor }}.{{ .Patch }}-amd64"
+      - "hanzokms/cli:latest-amd64"
     build_flag_templates:
       - "--pull"
       - "--platform=linux/amd64"
@@ -219,18 +163,18 @@ dockers:
     ids:
       - all-other-builds
     image_templates:
-      - "infisical/cli:{{ .Major }}.{{ .Minor }}.{{ .Patch }}-arm64"
-      - "infisical/cli:latest-arm64"
+      - "hanzokms/cli:{{ .Major }}.{{ .Minor }}.{{ .Patch }}-arm64"
+      - "hanzokms/cli:latest-arm64"
     build_flag_templates:
       - "--pull"
       - "--platform=linux/arm64"
 
 docker_manifests:
-  - name_template: "infisical/cli:{{ .Major }}.{{ .Minor }}.{{ .Patch }}"
+  - name_template: "hanzokms/cli:{{ .Major }}.{{ .Minor }}.{{ .Patch }}"
     image_templates:
-      - "infisical/cli:{{ .Major }}.{{ .Minor }}.{{ .Patch }}-amd64"
-      - "infisical/cli:{{ .Major }}.{{ .Minor }}.{{ .Patch }}-arm64"
-  - name_template: "infisical/cli:latest"
+      - "hanzokms/cli:{{ .Major }}.{{ .Minor }}.{{ .Patch }}-amd64"
+      - "hanzokms/cli:{{ .Major }}.{{ .Minor }}.{{ .Patch }}-arm64"
+  - name_template: "hanzokms/cli:latest"
     image_templates:
-      - "infisical/cli:latest-amd64"
-      - "infisical/cli:latest-arm64"
+      - "hanzokms/cli:latest-amd64"
+      - "hanzokms/cli:latest-arm64"

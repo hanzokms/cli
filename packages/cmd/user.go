@@ -8,9 +8,9 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/Infisical/infisical-merge/packages/config"
-	"github.com/Infisical/infisical-merge/packages/models"
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/config"
+	"github.com/hanzokms/cli/packages/models"
+	"github.com/hanzokms/cli/packages/util"
 	"github.com/manifoldco/promptui"
 	"github.com/posthog/posthog-go"
 	"github.com/spf13/cobra"
@@ -20,7 +20,7 @@ var userCmd = &cobra.Command{
 	Use:                   "user",
 	Short:                 "Used to manage local user credentials",
 	DisableFlagsInUseLine: true,
-	Example:               "infisical user",
+	Example:               "kms user",
 	Args:                  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
@@ -29,9 +29,9 @@ var userCmd = &cobra.Command{
 
 var switchCmd = &cobra.Command{
 	Use:                   "switch",
-	Short:                 "Used to switch between Infisical profiles",
+	Short:                 "Used to switch between Hanzo KMS profiles",
 	DisableFlagsInUseLine: true,
-	Example:               "infisical switch",
+	Example:               "kms switch",
 	Args:                  cobra.ExactArgs(0),
 	PreRun: func(cmd *cobra.Command, args []string) {
 		util.RequireLogin()
@@ -40,19 +40,19 @@ var switchCmd = &cobra.Command{
 		//get previous logged in profiles
 		loggedInProfiles, err := getLoggedInUsers()
 		if err != nil {
-			util.HandleError(err, "[infisical user switch]: Unable to get logged Profiles")
+			util.HandleError(err, "[kms user switch]: Unable to get logged Profiles")
 		}
 
 		//prompt user
 		profile, err := LoggedInUsersPrompt(loggedInProfiles)
 		if err != nil {
-			util.HandleError(err, "[infisical user switch]: Prompt error")
+			util.HandleError(err, "[kms user switch]: Prompt error")
 		}
 
 		//write to config file
 		configFile, err := util.GetConfigFile()
 		if err != nil {
-			util.HandleError(err, "[infisical user switch]: Unable to get config file")
+			util.HandleError(err, "[kms user switch]: Unable to get config file")
 		}
 
 		configFile.LoggedInUserEmail = profile
@@ -90,9 +90,9 @@ var switchCmd = &cobra.Command{
 
 var userGetCmd = &cobra.Command{
 	Use:                   "get",
-	Short:                 "Used to get properties of an Infisical profile",
+	Short:                 "Used to get properties of a Hanzo KMS profile",
 	DisableFlagsInUseLine: true,
-	Example:               "infisical user get",
+	Example:               "kms user get",
 	Args:                  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
@@ -101,9 +101,9 @@ var userGetCmd = &cobra.Command{
 
 var userGetTokenCmd = &cobra.Command{
 	Use:                   "token",
-	Short:                 "Used to get the access token of an Infisical user",
+	Short:                 "Used to get the access token of a Hanzo KMS user",
 	DisableFlagsInUseLine: true,
-	Example:               "infisical user get token",
+	Example:               "kms user get token",
 	Args:                  cobra.ExactArgs(0),
 	PreRun: func(cmd *cobra.Command, args []string) {
 		util.RequireLogin()
@@ -116,28 +116,28 @@ var userGetTokenCmd = &cobra.Command{
 
 		plain, err := cmd.Flags().GetBool("plain")
 		if err != nil {
-			util.HandleError(err, "[infisical user get token]: Unable to get plain flag")
+			util.HandleError(err, "[kms user get token]: Unable to get plain flag")
 		}
 
 		if err != nil {
-			util.HandleError(err, "[infisical user get token]: Unable to get logged in user token")
+			util.HandleError(err, "[kms user get token]: Unable to get logged in user token")
 		}
 
 		tokenParts := strings.Split(loggedInUserDetails.UserCredentials.JTWToken, ".")
 		if len(tokenParts) != 3 {
-			util.HandleError(errors.New("invalid token format"), "[infisical user get token]: Invalid token format")
+			util.HandleError(errors.New("invalid token format"), "[kms user get token]: Invalid token format")
 		}
 
 		payload, err := base64.RawURLEncoding.DecodeString(tokenParts[1])
 		if err != nil {
-			util.HandleError(err, "[infisical user get token]: Unable to decode token payload")
+			util.HandleError(err, "[kms user get token]: Unable to decode token payload")
 		}
 
 		var tokenPayload struct {
 			TokenVersionId string `json:"tokenVersionId"`
 		}
 		if err := json.Unmarshal(payload, &tokenPayload); err != nil {
-			util.HandleError(err, "[infisical user get token]: Unable to parse token payload")
+			util.HandleError(err, "[kms user get token]: Unable to parse token payload")
 		}
 
 		if plain {
@@ -151,9 +151,9 @@ var userGetTokenCmd = &cobra.Command{
 
 var updateCmd = &cobra.Command{
 	Use:                   "update",
-	Short:                 "Used to update properties of an Infisical profile",
+	Short:                 "Used to update properties of a Hanzo KMS profile",
 	DisableFlagsInUseLine: true,
-	Example:               "infisical user update",
+	Example:               "kms user update",
 	Args:                  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
@@ -162,9 +162,9 @@ var updateCmd = &cobra.Command{
 
 var domainCmd = &cobra.Command{
 	Use:                   "domain",
-	Short:                 "Used to update the domain of an Infisical profile",
+	Short:                 "Used to update the domain of a Hanzo KMS profile",
 	DisableFlagsInUseLine: true,
-	Example:               "infisical user update domain",
+	Example:               "kms user update domain",
 	Args:                  cobra.ExactArgs(0),
 	PreRun: func(cmd *cobra.Command, args []string) {
 		util.RequireLogin()
@@ -173,13 +173,13 @@ var domainCmd = &cobra.Command{
 		//prompt for profiles selection
 		loggedInProfiles, err := getLoggedInUsers()
 		if err != nil {
-			util.HandleError(err, "[infisical user update domain]: Unable to get logged Profiles")
+			util.HandleError(err, "[kms user update domain]: Unable to get logged Profiles")
 		}
 
 		//prompt user
 		profile, err := LoggedInUsersPrompt(loggedInProfiles)
 		if err != nil {
-			util.HandleError(err, "[infisical user update domain]: Prompt error")
+			util.HandleError(err, "[kms user update domain]: Prompt error")
 		}
 
 		domain := ""
@@ -188,7 +188,7 @@ var domainCmd = &cobra.Command{
 
 			override, err := DomainOverridePrompt()
 			if err != nil {
-				util.HandleError(err, "[infisical user update domain]: Domain override prompt error")
+				util.HandleError(err, "[kms user update domain]: Domain override prompt error")
 			}
 
 			if !override {
@@ -202,14 +202,14 @@ var domainCmd = &cobra.Command{
 			//prompt to update domain
 			domain, err = NewDomainPrompt()
 			if err != nil {
-				util.HandleError(err, "[infisical user update domain]: Prompt error")
+				util.HandleError(err, "[kms user update domain]: Prompt error")
 			}
 		}
 
 		//write to config file
 		configFile, err := util.GetConfigFile()
 		if err != nil {
-			util.HandleError(err, "[infisical user update domain]: Unable to get config file")
+			util.HandleError(err, "[kms user update domain]: Unable to get config file")
 		}
 
 		//check if profile in logged in profiles
@@ -311,7 +311,7 @@ func NewDomainPrompt() (string, error) {
 }
 
 func LoggedInUsersPrompt(profiles []string) (string, error) {
-	prompt := promptui.Select{Label: "Which of your Infisical profiles would you like to use",
+	prompt := promptui.Select{Label: "Which of your Hanzo KMS profiles would you like to use",
 		Items: profiles,
 		Size:  7,
 	}

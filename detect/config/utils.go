@@ -23,7 +23,7 @@
 package config
 
 import (
-	"github.com/Infisical/infisical-merge/detect/regexp"
+	"github.com/hanzokms/cli/detect/regexp"
 )
 
 func anyRegexMatch(f string, res []*regexp.Regexp) bool {

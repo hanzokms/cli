@@ -33,10 +33,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/Infisical/infisical-merge/detect/config"
-	"github.com/Infisical/infisical-merge/detect/logging"
-	"github.com/Infisical/infisical-merge/detect/regexp"
-	"github.com/Infisical/infisical-merge/detect/report"
+	"github.com/hanzokms/cli/detect/config"
+	"github.com/hanzokms/cli/detect/logging"
+	"github.com/hanzokms/cli/detect/regexp"
+	"github.com/hanzokms/cli/detect/report"
 
 	ahocorasick "github.com/BobuSumisu/aho-corasick"
 	"github.com/fatih/semgroup"
@@ -684,7 +684,7 @@ func allTrue(bools []bool) bool {
 }
 
 func fileExists(fileName string) bool {
-	// check for a .infisicalignore file
+	// check for a .kmsignore file
 	info, err := os.Stat(fileName)
 	if err != nil && !os.IsNotExist(err) {
 		return false

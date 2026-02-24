@@ -3,8 +3,8 @@ package cmd
 import (
 	"time"
 
-	pam "github.com/Infisical/infisical-merge/packages/pam/local"
-	"github.com/Infisical/infisical-merge/packages/util"
+	pam "github.com/hanzokms/cli/packages/pam/local"
+	"github.com/hanzokms/cli/packages/util"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -12,7 +12,7 @@ import (
 var pamCmd = &cobra.Command{
 	Use:                   "pam",
 	Short:                 "PAM-related commands",
-	Long:                  "PAM-related commands for Infisical",
+	Long:                  "PAM-related commands for Hanzo KMS",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 }
@@ -22,7 +22,7 @@ var pamCmd = &cobra.Command{
 var pamDbCmd = &cobra.Command{
 	Use:                   "db",
 	Short:                 "Database-related PAM commands",
-	Long:                  "Database-related PAM commands for Infisical",
+	Long:                  "Database-related PAM commands for Hanzo KMS",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 }
@@ -30,8 +30,8 @@ var pamDbCmd = &cobra.Command{
 var pamDbAccessCmd = &cobra.Command{
 	Use:                   "access",
 	Short:                 "Access PAM database accounts",
-	Long:                  "Access PAM database accounts for Infisical. This starts a local database proxy server that you can use to connect to databases directly.",
-	Example:               "infisical pam db access --resource infisical-shared-cloud-instances --account infisical --project-id b38bef10-2685-43c4-9a2c-635206d60bec --duration 4h",
+	Long:                  "Access PAM database accounts for Hanzo KMS. This starts a local database proxy server that you can use to connect to databases directly.",
+	Example:               "kms pam db access --resource kms-shared-cloud-instances --account admin --project-id b38bef10-2685-43c4-9a2c-635206d60bec --duration 4h",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -52,7 +52,7 @@ var pamDbAccessCmd = &cobra.Command{
 		if projectID == "" {
 			workspaceFile, err := util.GetWorkSpaceFromFile()
 			if err != nil {
-				util.PrintErrorMessageAndExit("Please either run infisical init to connect to a project or pass in project id with --project-id flag")
+				util.PrintErrorMessageAndExit("Please either run kms init to connect to a project or pass in project id with --project-id flag")
 			}
 			projectID = workspaceFile.WorkspaceId
 		}
@@ -78,7 +78,7 @@ var pamDbAccessCmd = &cobra.Command{
 		isConnected := util.ValidateInfisicalAPIConnection()
 
 		if isConnected {
-			log.Debug().Msg("PAM Database Access: Connected to Infisical instance, checking logged in creds")
+			log.Debug().Msg("PAM Database Access: Connected to Hanzo KMS instance, checking logged in creds")
 		}
 
 		if err != nil {
@@ -101,7 +101,7 @@ var pamDbAccessCmd = &cobra.Command{
 var pamSshCmd = &cobra.Command{
 	Use:                   "ssh",
 	Short:                 "SSH-related PAM commands",
-	Long:                  "SSH-related PAM commands for Infisical",
+	Long:                  "SSH-related PAM commands for Hanzo KMS",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 }
@@ -109,8 +109,8 @@ var pamSshCmd = &cobra.Command{
 var pamSshAccessCmd = &cobra.Command{
 	Use:                   "access",
 	Short:                 "Start SSH session to PAM account",
-	Long:                  "Start an SSH session to a PAM-managed SSH account. This command automatically launches an SSH client connected through the Infisical Gateway.",
-	Example:               "infisical pam ssh access --resource prod-servers --account root --project-id b38bef10-2685-43c4-9a2c-635206d60bec --duration 1h",
+	Long:                  "Start an SSH session to a PAM-managed SSH account. This command automatically launches an SSH client connected through the KMS Gateway.",
+	Example:               "kms pam ssh access --resource prod-servers --account root --project-id b38bef10-2685-43c4-9a2c-635206d60bec --duration 1h",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -141,7 +141,7 @@ var pamSshAccessCmd = &cobra.Command{
 		if projectID == "" {
 			workspaceFile, err := util.GetWorkSpaceFromFile()
 			if err != nil {
-				util.PrintErrorMessageAndExit("Please either run infisical init to connect to a project or pass in project id with --project-id flag")
+				util.PrintErrorMessageAndExit("Please either run kms init to connect to a project or pass in project id with --project-id flag")
 			}
 			projectID = workspaceFile.WorkspaceId
 		}
@@ -152,7 +152,7 @@ var pamSshAccessCmd = &cobra.Command{
 		isConnected := util.ValidateInfisicalAPIConnection()
 
 		if isConnected {
-			log.Debug().Msg("PAM SSH Access: Connected to Infisical instance, checking logged in creds")
+			log.Debug().Msg("PAM SSH Access: Connected to Hanzo KMS instance, checking logged in creds")
 		}
 
 		if err != nil {
@@ -176,7 +176,7 @@ var pamKubernetesCmd = &cobra.Command{
 	Use:                   "kubernetes",
 	Aliases:               []string{"k8s"},
 	Short:                 "Kubernetes-related PAM commands",
-	Long:                  "Kubernetes-related PAM commands for Infisical",
+	Long:                  "Kubernetes-related PAM commands for Hanzo KMS",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 }
@@ -184,8 +184,8 @@ var pamKubernetesCmd = &cobra.Command{
 var pamKubernetesAccessCmd = &cobra.Command{
 	Use:                   "access",
 	Short:                 "Access Kubernetes PAM account",
-	Long:                  "Access Kubernetes via a PAM-managed Kubernetes account. This command automatically launches a proxy connected to your Kubernetes cluster through the Infisical Gateway.",
-	Example:               "infisical pam kubernetes access --resource prod-cluster --account developer --project-id b38bef10-2685-43c4-9a2c-635206d60bec --duration 4h",
+	Long:                  "Access Kubernetes via a PAM-managed Kubernetes account. This command automatically launches a proxy connected to your Kubernetes cluster through the KMS Gateway.",
+	Example:               "kms pam kubernetes access --resource prod-cluster --account developer --project-id b38bef10-2685-43c4-9a2c-635206d60bec --duration 4h",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -221,7 +221,7 @@ var pamKubernetesAccessCmd = &cobra.Command{
 		if projectID == "" {
 			workspaceFile, err := util.GetWorkSpaceFromFile()
 			if err != nil {
-				util.PrintErrorMessageAndExit("Please either run infisical init to connect to a project or pass in project id with --project-id flag")
+				util.PrintErrorMessageAndExit("Please either run kms init to connect to a project or pass in project id with --project-id flag")
 			}
 			projectID = workspaceFile.WorkspaceId
 		}
@@ -232,7 +232,7 @@ var pamKubernetesAccessCmd = &cobra.Command{
 		isConnected := util.ValidateInfisicalAPIConnection()
 
 		if isConnected {
-			log.Debug().Msg("PAM Kubernetes Access: Connected to Infisical instance, checking logged in creds")
+			log.Debug().Msg("PAM Kubernetes Access: Connected to Hanzo KMS instance, checking logged in creds")
 		}
 
 		if err != nil {
@@ -255,7 +255,7 @@ var pamKubernetesAccessCmd = &cobra.Command{
 var pamRedisCmd = &cobra.Command{
 	Use:                   "redis",
 	Short:                 "Redis-related PAM commands",
-	Long:                  "Redis-related PAM commands for Infisical",
+	Long:                  "Redis-related PAM commands for Hanzo KMS",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 }
@@ -263,8 +263,8 @@ var pamRedisCmd = &cobra.Command{
 var pamRedisAccessCmd = &cobra.Command{
 	Use:                   "access",
 	Short:                 "Access PAM Redis accounts",
-	Long:                  "Access PAM Redis accounts for Infisical. This starts a local Redis proxy server that you can use to connect to Redis directly.",
-	Example:               "infisical pam redis access --resource my-redis-resource --account redis-admin --duration 4h --port 6379 --project-id <project_uuid>",
+	Long:                  "Access PAM Redis accounts for Hanzo KMS. This starts a local Redis proxy server that you can use to connect to Redis directly.",
+	Example:               "kms pam redis access --resource my-redis-resource --account redis-admin --duration 4h --port 6379 --project-id <project_uuid>",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -285,7 +285,7 @@ var pamRedisAccessCmd = &cobra.Command{
 		if projectID == "" {
 			workspaceFile, err := util.GetWorkSpaceFromFile()
 			if err != nil {
-				util.PrintErrorMessageAndExit("Please either run infisical init to connect to a project or pass in project id with --project-id flag")
+				util.PrintErrorMessageAndExit("Please either run kms init to connect to a project or pass in project id with --project-id flag")
 			}
 			projectID = workspaceFile.WorkspaceId
 		}
@@ -311,7 +311,7 @@ var pamRedisAccessCmd = &cobra.Command{
 		isConnected := util.ValidateInfisicalAPIConnection()
 
 		if isConnected {
-			log.Debug().Msg("PAM Redis Access: Connected to Infisical instance, checking logged in creds")
+			log.Debug().Msg("PAM Redis Access: Connected to Hanzo KMS instance, checking logged in creds")
 		}
 
 		if err != nil {

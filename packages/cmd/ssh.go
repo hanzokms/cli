@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2023 Infisical Inc.
+Copyright (c) 2024 Hanzo AI Inc.
 */
 package cmd
 
@@ -13,9 +13,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Infisical/infisical-merge/packages/api"
-	"github.com/Infisical/infisical-merge/packages/config"
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/api"
+	"github.com/hanzokms/cli/packages/config"
+	"github.com/hanzokms/cli/packages/util"
 	infisicalSdk "github.com/infisical/go-sdk"
 	infisicalSdkUtil "github.com/infisical/go-sdk/packages/util"
 	"github.com/manifoldco/promptui"
@@ -25,7 +25,7 @@ import (
 )
 
 var sshCmd = &cobra.Command{
-	Example:               `infisical ssh`,
+	Example:               `kms ssh`,
 	Short:                 "Used to issue SSH credentials",
 	Use:                   "ssh",
 	DisableFlagsInUseLine: true,
@@ -58,7 +58,7 @@ var sshConnectCmd = &cobra.Command{
 
 var sshAddHostCmd = &cobra.Command{
 	Use:   "add-host",
-	Short: "Register a new SSH host with Infisical",
+	Short: "Register a new SSH host with Hanzo KMS",
 	Run:   sshAddHost,
 }
 
@@ -154,7 +154,7 @@ func addCredentialsToAgent(privateKeyContent, certContent string) error {
 	err = agentClient.Add(agent.AddedKey{
 		PrivateKey:   privateKey,
 		Certificate:  cert,
-		Comment:      "Added via Infisical CLI",
+		Comment:      "Added via Hanzo KMS CLI",
 		LifetimeSecs: lifetimeSecs,
 	})
 	if err != nil {

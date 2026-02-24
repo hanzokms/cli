@@ -30,8 +30,8 @@ import (
 
 	"github.com/fatih/semgroup"
 
-	"github.com/Infisical/infisical-merge/detect/config"
-	"github.com/Infisical/infisical-merge/detect/logging"
+	"github.com/hanzokms/cli/detect/config"
+	"github.com/hanzokms/cli/detect/logging"
 )
 
 type ScanTarget struct {

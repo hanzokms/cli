@@ -31,13 +31,13 @@ import (
 
 	"github.com/spf13/viper"
 
-	"github.com/Infisical/infisical-merge/detect/logging"
-	"github.com/Infisical/infisical-merge/detect/regexp"
+	"github.com/hanzokms/cli/detect/logging"
+	"github.com/hanzokms/cli/detect/regexp"
 )
 
 const DefaultScanConfigFileName = ".infisical-scan.toml"
 const DefaultScanConfigEnvName = "INFISICAL_SCAN_CONFIG"
-const DefaultInfisicalIgnoreFineName = ".infisicalignore"
+const DefaultKmsIgnoreFileName = ".kmsignore"
 
 var (
 	//go:embed gitleaks.toml

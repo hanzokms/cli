@@ -18,11 +18,11 @@ import (
 
 	_ "github.com/joho/godotenv/autoload"
 
-	"github.com/Infisical/infisical-merge/packages/cmd"
+	"github.com/hanzokms/cli/packages/cmd"
 	"github.com/compose-spec/compose-go/v2/types"
 	"github.com/go-faker/faker/v4"
-	"github.com/infisical/cli/e2e-tests/packages/client"
-	"github.com/infisical/cli/e2e-tests/packages/infisical"
+	"github.com/hanzokms/cli/e2e-tests/packages/client"
+	"github.com/hanzokms/cli/e2e-tests/packages/infisical"
 	"github.com/oapi-codegen/oapi-codegen/v2/pkg/securityprovider"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"

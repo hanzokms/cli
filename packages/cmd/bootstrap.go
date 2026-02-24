@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2023 Infisical Inc.
+Copyright (c) 2024 Hanzo AI Inc.
 */
 package cmd
 
@@ -12,9 +12,9 @@ import (
 	"os"
 	"text/template"
 
-	"github.com/Infisical/infisical-merge/packages/api"
-	"github.com/Infisical/infisical-merge/packages/templates"
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/api"
+	"github.com/hanzokms/cli/packages/templates"
+	"github.com/hanzokms/cli/packages/util"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	corev1 "k8s.io/api/core/v1"
@@ -130,9 +130,9 @@ func handleK8SecretOutput(bootstrapResponse api.BootstrapInstanceResponse, k8Sec
 
 var bootstrapCmd = &cobra.Command{
 	Use:                   "bootstrap",
-	Short:                 "Used to bootstrap your Infisical instance",
+	Short:                 "Used to bootstrap your Hanzo KMS instance",
 	DisableFlagsInUseLine: true,
-	Example:               "infisical bootstrap",
+	Example:               "kms bootstrap",
 	Args:                  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		email, _ := cmd.Flags().GetString("email")
@@ -267,7 +267,7 @@ var bootstrapCmd = &cobra.Command{
 }
 
 func init() {
-	bootstrapCmd.Flags().String("domain", "", "The domain of your self-hosted Infisical instance")
+	bootstrapCmd.Flags().String("domain", "", "The domain of your self-hosted Hanzo KMS instance")
 	bootstrapCmd.Flags().String("email", "", "The desired email address of the instance admin")
 	bootstrapCmd.Flags().String("password", "", "The desired password of the instance admin")
 	bootstrapCmd.Flags().String("organization", "", "The name of the organization to create for the instance")

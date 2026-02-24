@@ -33,9 +33,9 @@ import (
 
 	"github.com/h2non/filetype"
 
-	"github.com/Infisical/infisical-merge/detect/logging"
-	"github.com/Infisical/infisical-merge/detect/report"
-	"github.com/Infisical/infisical-merge/detect/sources"
+	"github.com/hanzokms/cli/detect/logging"
+	"github.com/hanzokms/cli/detect/report"
+	"github.com/hanzokms/cli/detect/sources"
 )
 
 const maxPeekSize = 25 * 1_000 // 10kb

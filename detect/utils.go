@@ -30,9 +30,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Infisical/infisical-merge/detect/cmd/scm"
-	"github.com/Infisical/infisical-merge/detect/logging"
-	"github.com/Infisical/infisical-merge/detect/report"
+	"github.com/hanzokms/cli/detect/cmd/scm"
+	"github.com/hanzokms/cli/detect/logging"
+	"github.com/hanzokms/cli/detect/report"
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/gitleaks/go-gitdiff/gitdiff"

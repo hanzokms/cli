@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Infisical CLI RPM Repository Setup Script
+# Hanzo KMS CLI RPM Repository Setup Script
 # The core commands execute start from the "MAIN" section below.
 #
 
@@ -15,9 +15,9 @@ test -z "$BASH_SOURCE" && {
 tmp_log=$(mktemp /tmp/.rpm_setup_XXXXXXXXX)
 
 # Environment variables that can be set
-PKG_URL=${PKG_URL:-"https://artifacts-cli.infisical.com"}
-PACKAGE_NAME=${PACKAGE_NAME:-"infisical"}
-GPG_KEY_URL=${GPG_KEY_URL:-"${PKG_URL}/infisical.gpg"}
+PKG_URL=${PKG_URL:-"https://artifacts-cli.kms.com"}
+PACKAGE_NAME=${PACKAGE_NAME:-"kms"}
+GPG_KEY_URL=${GPG_KEY_URL:-"${PKG_URL}/kms.gpg"}
 
 colours=$(tput colors 2>/dev/null || echo "256")
 no_colour="\e[39;49m"
@@ -54,9 +54,9 @@ function die {
 
     echo -e "$prefix: Oh no, your setup failed! :-( ... But we might be able to help. :-)"
     echo -e "$prefix: "
-    echo -e "$prefix: ${bold}You can contact Infisical for further assistance.${reset}"
+    echo -e "$prefix: ${bold}You can contact Hanzo KMS for further assistance.${reset}"
     echo -e "$prefix: "
-    echo -e "$prefix: ${bold}URL: https://github.com/Infisical/infisical${reset}"
+    echo -e "$prefix: ${bold}URL: https://github.com/Hanzo KMS/kms${reset}"
     echo -e "$prefix: "
 
     test -f "$tmp_log" && {
@@ -369,8 +369,8 @@ EOF
 
 function fetch_config {
     cat <<EOF
-[infisical-cli]
-name=Infisical CLI
+[kms-cli]
+name=Hanzo KMS CLI
 baseurl=${PKG_URL}/rpm
 enabled=1
 gpgcheck=1
@@ -490,7 +490,7 @@ function setup_repository {
         fi
     fi
 
-    local repofile="$tmpdir/infisical-cli.repo"
+    local repofile="$tmpdir/kms-cli.repo"
 
     local text="Fetching '${PACKAGE_NAME}' repository configuration ..."
     echo_running "$text"
@@ -512,10 +512,10 @@ function setup_repository {
             local rc=$?
         fi
     elif test "$manager" == "microdnf"; then
-        mv "$repofile" "/etc/yum.repos.d/infisical-cli.repo"
+        mv "$repofile" "/etc/yum.repos.d/kms-cli.repo"
         local rc=$?
     else
-        retry 3 "zypper ar -f $repofile infisical-cli" &>$tmp_log
+        retry 3 "zypper ar -f $repofile kms-cli" &>$tmp_log
         local rc=$?
     fi
 
@@ -525,7 +525,7 @@ function setup_repository {
     echo_running "$text"
 
     if test "$manager" == "yum" -o "$manager" == "dnf"; then
-        retry 3 "$manager -q makecache -y --disablerepo='*' --enablerepo='infisical-cli*'"
+        retry 3 "$manager -q makecache -y --disablerepo='*' --enablerepo='kms-cli*'"
         local rc=$?
     elif test "$manager" == "microdnf"; then
         local min_version="3.8.0"
@@ -533,10 +533,10 @@ function setup_repository {
         if [[ "$(printf "%s\n" $cur_version $min_version | sort -V | head -n 1)" != "$min_version" ]]; then
             $manager upgrade -y microdnf # v3.8+ required to use makecache
         fi
-        retry 3 "$manager makecache -y --disablerepo='*' --enablerepo='infisical-cli*'"
+        retry 3 "$manager makecache -y --disablerepo='*' --enablerepo='kms-cli*'"
         local rc=$?
     else
-        retry 3 "zypper --gpg-auto-import-keys --non-interactive refresh infisical-cli infisical-cli-source" &>$tmp_log
+        retry 3 "zypper --gpg-auto-import-keys --non-interactive refresh kms-cli kms-cli-source" &>$tmp_log
         local rc=$?
     fi
     echo_okfail_rc $rc "$text" || {

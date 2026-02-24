@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2023 Infisical Inc.
+Copyright (c) 2024 Hanzo AI Inc.
 */
 package cmd
 
@@ -15,8 +15,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Infisical/infisical-merge/packages/models"
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/models"
+	"github.com/hanzokms/cli/packages/util"
 	"github.com/fatih/color"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -28,10 +28,10 @@ var watcherWaitGroup = new(sync.WaitGroup)
 // runCmd represents the run command
 var runCmd = &cobra.Command{
 	Example: `
-	infisical run --env=dev -- npm run dev
-	infisical run --command "first-command && second-command; more-commands..."
+	kms run --env=dev -- npm run dev
+	kms run --command "first-command && second-command; more-commands..."
 	`,
-	Use:                   "run [any infisical run command flags] -- [your application start command]",
+	Use:                   "run [any kms run command flags] -- [your application start command]",
 	Short:                 "Used to inject environments variables into your application process",
 	DisableFlagsInUseLine: true,
 	Args: func(cmd *cobra.Command, args []string) error {
@@ -193,7 +193,7 @@ func filterReservedEnvVars(env map[string]models.SingleEnvironmentVariable) {
 	for _, reservedEnvName := range reservedEnvVars {
 		if _, ok := env[reservedEnvName]; ok {
 			delete(env, reservedEnvName)
-			util.PrintWarning(fmt.Sprintf("Infisical secret named [%v] has been removed because it is a reserved secret name", reservedEnvName))
+			util.PrintWarning(fmt.Sprintf("Hanzo KMS secret named [%v] has been removed because it is a reserved secret name", reservedEnvName))
 		}
 	}
 
@@ -201,7 +201,7 @@ func filterReservedEnvVars(env map[string]models.SingleEnvironmentVariable) {
 		for envName := range env {
 			if strings.HasPrefix(envName, reservedEnvPrefix) {
 				delete(env, envName)
-				util.PrintWarning(fmt.Sprintf("Infisical secret named [%v] has been removed because it contains a reserved prefix", envName))
+				util.PrintWarning(fmt.Sprintf("Hanzo KMS secret named [%v] has been removed because it contains a reserved prefix", envName))
 			}
 		}
 	}
@@ -221,7 +221,7 @@ func init() {
 	runCmd.Flags().StringP("command", "c", "", "chained commands to execute (e.g. \"npm install && npm run dev; echo ...\")")
 	runCmd.Flags().StringP("tags", "t", "", "filter secrets by tag slugs ")
 	runCmd.Flags().String("path", "/", "get secrets within a folder path")
-	runCmd.Flags().String("project-config-dir", "", "explicitly set the directory where the .infisical.json resides")
+	runCmd.Flags().String("project-config-dir", "", "explicitly set the directory where the .kms.json resides")
 }
 
 // Will execute a single command and pass in the given secrets into the process
@@ -229,7 +229,7 @@ func executeSingleCommandWithEnvs(args []string, secretsCount int, env []string)
 	command := args[0]
 	argsForCommand := args[1:]
 
-	log.Info().Msgf(color.GreenString("Injecting %v Infisical secrets into your application process", secretsCount))
+	log.Info().Msgf(color.GreenString("Injecting %v Hanzo KMS secrets into your application process", secretsCount))
 
 	cmd := exec.Command(command, argsForCommand...)
 	cmd.Stdin = os.Stdin
@@ -257,7 +257,7 @@ func executeMultipleCommandWithEnvs(fullCommand string, secretsCount int, env []
 	cmd.Stderr = os.Stderr
 	cmd.Env = env
 
-	log.Info().Msgf(color.GreenString("Injecting %v Infisical secrets into your application process", secretsCount))
+	log.Info().Msgf(color.GreenString("Injecting %v Hanzo KMS secrets into your application process", secretsCount))
 	log.Debug().Msgf("executing command: %s %s %s \n", shell[0], shell[1], fullCommand)
 
 	return execBasicCmd(cmd)
@@ -376,7 +376,7 @@ func executeCommandWithWatchMode(commandFlag string, args []string, watchModeInt
 		watcherWaitGroup.Add(1)
 
 		// start the process
-		log.Info().Msgf(color.GreenString("Injecting %v Infisical secrets into your application process", environmentVariables.SecretsCount))
+		log.Info().Msgf(color.GreenString("Injecting %v Hanzo KMS secrets into your application process", environmentVariables.SecretsCount))
 
 		cmd, err = util.RunCommand(commandFlag, args, environmentVariables.Variables, false)
 		if err != nil {
@@ -473,7 +473,7 @@ func fetchAndFormatSecretsForShell(request models.GetAllSecretsParameters, proje
 	// check to see if there are any reserved key words in secrets to inject
 	filterReservedEnvVars(secretsByKey)
 
-	// now add infisical secrets
+	// now add kms secrets
 	for k, v := range secretsByKey {
 		environmentVariables[k] = v.Value
 	}

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2023 Infisical Inc.
+Copyright (c) 2024 Hanzo AI Inc.
 */
 package cmd
 
@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/util"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
@@ -16,7 +16,7 @@ var tokenCmd = &cobra.Command{
 	Use:                   "token",
 	Short:                 "Manage your access tokens",
 	DisableFlagsInUseLine: true,
-	Example:               "infisical token",
+	Example:               "kms token",
 	Args:                  cobra.ExactArgs(0),
 	PreRun: func(cmd *cobra.Command, args []string) {
 		util.RequireLogin()
@@ -29,7 +29,7 @@ var tokenRenewCmd = &cobra.Command{
 	Use:                   "renew [token]",
 	Short:                 "Used to renew your universal auth access token",
 	DisableFlagsInUseLine: true,
-	Example:               "infisical token renew <access-token>",
+	Example:               "kms token renew <access-token>",
 	Args:                  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		// args[0] will be the <INSERT_TOKEN> from your command call

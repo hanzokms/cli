@@ -1,21 +1,21 @@
 /*
-Copyright (c) 2023 Infisical Inc.
+Copyright (c) 2024 Hanzo AI Inc.
 */
 package cmd
 
 import (
 	"os"
 
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/util"
 	"github.com/posthog/posthog-go"
 	"github.com/spf13/cobra"
 )
 
 var resetCmd = &cobra.Command{
 	Use:                   "reset",
-	Short:                 "Used to delete all Infisical related data on your machine",
+	Short:                 "Used to delete all Hanzo KMS related data on your machine",
 	DisableFlagsInUseLine: true,
-	Example:               "infisical reset",
+	Example:               "kms reset",
 	Args:                  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		// delete keyring item of current logged in user

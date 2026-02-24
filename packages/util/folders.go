@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Infisical/infisical-merge/packages/api"
-	"github.com/Infisical/infisical-merge/packages/models"
+	"github.com/hanzokms/cli/packages/api"
+	"github.com/hanzokms/cli/packages/models"
 	"github.com/rs/zerolog/log"
 )
 
@@ -30,7 +30,7 @@ func GetAllFolders(params models.GetAllFoldersParameters) ([]models.SingleFolder
 		if params.WorkspaceId == "" {
 			workspaceFile, err := GetWorkSpaceFromFile()
 			if err != nil {
-				PrintErrorMessageAndExit("Please either run infisical init to connect to a project or pass in project id with --projectId flag")
+				PrintErrorMessageAndExit("Please either run kms init to connect to a project or pass in project id with --projectId flag")
 			}
 			params.WorkspaceId = workspaceFile.WorkspaceId
 		}

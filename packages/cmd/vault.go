@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2023 Infisical Inc.
+Copyright (c) 2024 Hanzo AI Inc.
 */
 package cmd
 
@@ -7,7 +7,7 @@ import (
 	"encoding/base64"
 	"strings"
 
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/util"
 	"github.com/posthog/posthog-go"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -30,7 +30,7 @@ var AvailableVaults = []VaultBackendType{
 }
 
 var vaultSetCmd = &cobra.Command{
-	Example:               `infisical vault set file`,
+	Example:               `kms vault set file`,
 	Use:                   "set [file|auto]",
 	Short:                 "Used to configure the vault backends",
 	DisableFlagsInUseLine: true,
@@ -65,7 +65,7 @@ var vaultSetCmd = &cobra.Command{
 				return
 			}
 
-			util.PrintfStderr("\nSuccessfully, switched vault backend from [%s] to [%s]. Please login in again to store your login details in the new vault with [infisical login]\n", currentVaultBackend, wantedVaultTypeName)
+			util.PrintfStderr("\nSuccessfully, switched vault backend from [%s] to [%s]. Please login in again to store your login details in the new vault with [kms login]\n", currentVaultBackend, wantedVaultTypeName)
 
 			Telemetry.CaptureEvent("cli-command:vault set", posthog.NewProperties().Set("currentVault", currentVaultBackend).Set("wantedVault", wantedVaultTypeName).Set("version", util.CLI_VERSION))
 		} else {
@@ -81,7 +81,7 @@ var vaultSetCmd = &cobra.Command{
 // runCmd represents the run command
 var vaultCmd = &cobra.Command{
 	Use:                   "vault",
-	Short:                 "Used to manage where your Infisical login token is saved on your machine",
+	Short:                 "Used to manage where your Hanzo KMS login token is saved on your machine",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {

@@ -1,20 +1,22 @@
 {
-  "name": "@infisical/cli",
+  "name": "@hanzokms/cli",
   "private": false,
   "version": "0.0.0",
   "keywords": [
-    "infisical",
+    "hanzo",
+    "kms",
     "cli",
+    "secrets",
     "command-line"
   ],
   "bin": {
-    "infisical": "./bin/infisical"
+    "kms": "./bin/kms"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Infisical/infisical.git"
+    "url": "https://github.com/hanzokms/cli.git"
   },
-  "author": "Infisical Inc, <daniel@infisical.com>",
+  "author": "Hanzo AI Inc, <z@hanzo.ai>",
   "scripts": {
     "preinstall": "node src/index.cjs"
   },

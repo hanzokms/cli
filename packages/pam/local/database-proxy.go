@@ -10,8 +10,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Infisical/infisical-merge/packages/pam/session"
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/pam/session"
+	"github.com/hanzokms/cli/packages/util"
 	"github.com/go-resty/resty/v2"
 	"github.com/rs/zerolog/log"
 )
@@ -36,7 +36,7 @@ func StartDatabaseLocalProxy(accessToken string, accessParams PAMAccessParams, p
 
 	httpClient := resty.New()
 	httpClient.SetAuthToken(accessToken)
-	httpClient.SetHeader("User-Agent", "infisical-cli")
+	httpClient.SetHeader("User-Agent", "hanzo-kms-cli")
 
 	pamRequest := accessParams.ToAPIRequest(projectID, durationStr)
 

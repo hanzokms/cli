@@ -15,10 +15,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Infisical/infisical-merge/packages/api"
-	"github.com/Infisical/infisical-merge/packages/config"
-	"github.com/Infisical/infisical-merge/packages/pam"
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/api"
+	"github.com/hanzokms/cli/packages/config"
+	"github.com/hanzokms/cli/packages/pam"
+	"github.com/hanzokms/cli/packages/util"
 	"github.com/go-resty/resty/v2"
 	"github.com/manifoldco/promptui"
 	"github.com/rs/zerolog/log"
@@ -186,7 +186,7 @@ Please contact your Gateway administrator and request that they:
 
 After they have completed the upgrade, you can retry your access command.
 
-The Gateway upgrade guide can be found at: https://infisical.com/docs/documentation/platform/gateways/gateway-deployment`, capabilities.GatewayName, b.resourceType)
+The Gateway upgrade guide can be found at: https://kms.hanzo.ai/docs/documentation/platform/gateways/gateway-deployment`, capabilities.GatewayName, b.resourceType)
 }
 
 // CreateGatewayConnection establishes a mTLS connection to the gateway over the relay

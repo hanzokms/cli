@@ -1,4 +1,4 @@
-module github.com/Infisical/infisical-merge
+module github.com/hanzokms/cli
 
 go 1.24.13
 

@@ -29,7 +29,7 @@ import (
 	"regexp"
 	"unicode"
 
-	"github.com/Infisical/infisical-merge/detect/logging"
+	"github.com/hanzokms/cli/detect/logging"
 )
 
 var b64LikelyChars [128]byte

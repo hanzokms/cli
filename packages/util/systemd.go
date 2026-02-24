@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"github.com/Infisical/infisical-merge/packages/templates"
+	"github.com/hanzokms/cli/packages/templates"
 	"github.com/rs/zerolog/log"
 )
 
@@ -49,7 +49,7 @@ func WriteSystemdServiceFile(
 		data["ServiceLogFile"] = serviceLogFile
 	}
 
-	tmpl, err := template.ParseFS(templates.TemplatesFS, "infisical-service.tmpl")
+	tmpl, err := template.ParseFS(templates.TemplatesFS, "kms-service.tmpl")
 	if err != nil {
 		return fmt.Errorf("failed to parse template: %v", err)
 	}

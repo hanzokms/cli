@@ -1,9 +1,9 @@
-module github.com/infisical/cli/e2e-tests
+module github.com/hanzokms/cli/e2e-tests
 
 go 1.24.13
 
 require (
-	github.com/Infisical/infisical-merge v0.0.0
+	github.com/hanzokms/cli v0.0.0
 	github.com/compose-spec/compose-go/v2 v2.9.0
 	github.com/docker/compose/v2 v2.40.2
 	github.com/docker/docker v28.5.1+incompatible
@@ -334,7 +334,7 @@ require (
 
 tool github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen
 
-replace github.com/Infisical/infisical-merge => ../
+replace github.com/hanzokms/cli => ../
 
 replace github.com/zalando/go-keyring => github.com/Infisical/go-keyring v1.0.2
 

@@ -11,9 +11,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Infisical/infisical-merge/packages/api"
-	"github.com/Infisical/infisical-merge/packages/systemd"
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/api"
+	"github.com/hanzokms/cli/packages/systemd"
+	"github.com/hanzokms/cli/packages/util"
 	"github.com/go-resty/resty/v2"
 	"github.com/pion/dtls/v3"
 	"github.com/pion/logging"
@@ -181,7 +181,7 @@ func (g *Gateway) Listen(ctx context.Context) error {
 		MinVersion:   tls.VersionTLS12,
 		ClientCAs:    caCertPool,
 		ClientAuth:   tls.RequireAndVerifyClientCert,
-		NextProtos:   []string{"infisical-gateway"},
+		NextProtos:   []string{"kms-gateway"},
 	}
 	// Setup QUIC listener on the relayConn
 	quicConfig := &quic.Config{

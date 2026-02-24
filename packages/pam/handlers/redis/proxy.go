@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/Infisical/infisical-merge/packages/pam/session"
+	"github.com/hanzokms/cli/packages/pam/session"
 	"github.com/rs/zerolog/log"
 	"github.com/smallnest/resp3"
 )

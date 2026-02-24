@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Infisical/infisical-merge/packages/api"
-	"github.com/Infisical/infisical-merge/packages/config"
-	"github.com/Infisical/infisical-merge/packages/models"
+	"github.com/hanzokms/cli/packages/api"
+	"github.com/hanzokms/cli/packages/config"
+	"github.com/hanzokms/cli/packages/models"
 	"github.com/zalando/go-keyring"
 )
 
@@ -36,7 +36,7 @@ func GetUserCredsFromKeyRing(userEmail string) (credentials models.UserCredentia
 	credentialsValue, err := GetValueInKeyring(userEmail)
 	if err != nil {
 		if err == keyring.ErrUnsupportedPlatform {
-			return models.UserCredentials{}, errors.New("your OS does not support keyring. Consider using a service token https://infisical.com/docs/documentation/platform/token")
+			return models.UserCredentials{}, errors.New("your OS does not support keyring. Consider using a service token https://kms.hanzo.ai/docs/documentation/platform/token")
 		} else if err == keyring.ErrNotFound {
 			return models.UserCredentials{}, errors.New("credentials not found in system keyring")
 		} else {

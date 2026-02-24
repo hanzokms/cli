@@ -28,7 +28,7 @@ import (
 
 	"golang.org/x/exp/maps"
 
-	"github.com/Infisical/infisical-merge/detect/regexp"
+	"github.com/hanzokms/cli/detect/regexp"
 )
 
 type AllowlistMatchCondition int

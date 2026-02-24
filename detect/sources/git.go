@@ -33,7 +33,7 @@ import (
 
 	"github.com/gitleaks/go-gitdiff/gitdiff"
 
-	"github.com/Infisical/infisical-merge/detect/logging"
+	"github.com/hanzokms/cli/detect/logging"
 )
 
 var quotedOptPattern = regexp.MustCompile(`^(?:"[^"]+"|'[^']+')$`)

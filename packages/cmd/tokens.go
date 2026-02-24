@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2023 Infisical Inc.
+Copyright (c) 2024 Hanzo AI Inc.
 */
 package cmd
 
@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Infisical/infisical-merge/packages/api"
-	"github.com/Infisical/infisical-merge/packages/crypto"
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/api"
+	"github.com/hanzokms/cli/packages/crypto"
+	"github.com/hanzokms/cli/packages/util"
 	"github.com/spf13/cobra"
 )
 
@@ -18,7 +18,7 @@ var tokensCmd = &cobra.Command{
 	Use:                   "service-token",
 	Short:                 "Manage service tokens",
 	DisableFlagsInUseLine: true,
-	Example:               "infisical service-token",
+	Example:               "kms service-token",
 	Args:                  cobra.ExactArgs(0),
 	PreRun: func(cmd *cobra.Command, args []string) {
 		util.RequireLogin()
@@ -31,7 +31,7 @@ var tokensCreateCmd = &cobra.Command{
 	Use:                   "create",
 	Short:                 "Used to create service tokens",
 	DisableFlagsInUseLine: true,
-	Example:               "infisical service-token create",
+	Example:               "kms service-token create",
 	Args:                  cobra.ExactArgs(0),
 	PreRun: func(cmd *cobra.Command, args []string) {
 		util.RequireLogin()
@@ -61,7 +61,7 @@ var tokensCreateCmd = &cobra.Command{
 		if workspaceId == "" {
 			configFile, err := util.GetWorkSpaceFromFile()
 			if err != nil {
-				util.PrintErrorMessageAndExit("Please either run infisical init to connect to a project or pass in project id with --projectId flag")
+				util.PrintErrorMessageAndExit("Please either run kms init to connect to a project or pass in project id with --projectId flag")
 			}
 			workspaceId = configFile.WorkspaceId
 		}
@@ -167,7 +167,7 @@ var tokensCreateCmd = &cobra.Command{
 }
 
 func init() {
-	tokensCreateCmd.Flags().String("projectId", "", "The project ID you'd like to create the service token for. Default: will use linked Infisical project in .infisical.json")
+	tokensCreateCmd.Flags().String("projectId", "", "The project ID you'd like to create the service token for. Default: will use linked project in .kms.json")
 	tokensCreateCmd.Flags().StringSliceP("scope", "s", []string{}, "Environment and secret path. Example format: <env-slug>:<folder-path>")
 	tokensCreateCmd.Flags().StringP("name", "n", "Service token generated via CLI", "Service token name")
 	tokensCreateCmd.Flags().StringSliceP("access-level", "a", []string{}, "The type of access the service token should have. Can be 'read' and or 'write'")

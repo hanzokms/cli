@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/go-faker/faker/v4"
-	"github.com/infisical/cli/e2e-tests/packages/client"
+	"github.com/hanzokms/cli/e2e-tests/packages/client"
 	"github.com/oapi-codegen/oapi-codegen/v2/pkg/securityprovider"
 	"github.com/stretchr/testify/require"
 )

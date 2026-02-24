@@ -20,15 +20,15 @@ import (
 
 	"path/filepath"
 
-	"github.com/Infisical/infisical-merge/packages/api"
-	"github.com/Infisical/infisical-merge/packages/models"
+	"github.com/hanzokms/cli/packages/api"
+	"github.com/hanzokms/cli/packages/models"
 	"github.com/go-resty/resty/v2"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
 const (
-	RELAY_CACHE_FILE = "/var/lib/infisical/cached_relay"
+	RELAY_CACHE_FILE = "/var/lib/hanzo-kms/cached_relay"
 )
 
 func GetRelayName(cmd *cobra.Command, forceRefetch bool, accessToken string) (string, error) {
@@ -398,7 +398,7 @@ func RequireServiceToken() {
 func RequireLocalWorkspaceFile() {
 	workspaceFilePath, _ := FindWorkspaceConfigFile()
 	if workspaceFilePath == "" {
-		PrintErrorMessageAndExit("It looks you have not yet connected this project to Infisical", "To do so, run [infisical init] then run your command again")
+		PrintErrorMessageAndExit("It looks you have not yet connected this project to Hanzo KMS", "To do so, run [kms init] then run your command again")
 	}
 
 	workspaceFile, err := GetWorkSpaceFromFile()
@@ -407,7 +407,7 @@ func RequireLocalWorkspaceFile() {
 	}
 
 	if workspaceFile.WorkspaceId == "" {
-		PrintErrorMessageAndExit("Your project id is missing in your local config file. Please add it or run again [infisical init]")
+		PrintErrorMessageAndExit("Your project id is missing in your local config file. Please add it or run again [kms init]")
 	}
 }
 
@@ -418,7 +418,7 @@ func ValidateWorkspaceFile(projectConfigFilePath string) {
 	}
 
 	if workspaceFilePath.WorkspaceId == "" {
-		PrintErrorMessageAndExit("Your project id is missing in your local config file. Please add it or run again [infisical init]")
+		PrintErrorMessageAndExit("Your project id is missing in your local config file. Please add it or run again [kms init]")
 	}
 }
 

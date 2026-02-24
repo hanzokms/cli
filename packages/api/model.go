@@ -3,7 +3,7 @@ package api
 import (
 	"time"
 
-	"github.com/Infisical/infisical-merge/packages/models"
+	"github.com/hanzokms/cli/packages/models"
 )
 
 // Stores info for login one

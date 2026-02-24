@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Infisical/infisical-merge/packages/api"
+	"github.com/hanzokms/cli/packages/api"
 	"github.com/go-resty/resty/v2"
 	"github.com/rs/zerolog/log"
 )

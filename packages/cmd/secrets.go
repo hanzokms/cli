@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2023 Infisical Inc.
+Copyright (c) 2024 Hanzo AI Inc.
 */
 package cmd
 
@@ -10,16 +10,16 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/Infisical/infisical-merge/packages/api"
-	"github.com/Infisical/infisical-merge/packages/models"
-	"github.com/Infisical/infisical-merge/packages/util"
-	"github.com/Infisical/infisical-merge/packages/visualize"
+	"github.com/hanzokms/cli/packages/api"
+	"github.com/hanzokms/cli/packages/models"
+	"github.com/hanzokms/cli/packages/util"
+	"github.com/hanzokms/cli/packages/visualize"
 	"github.com/posthog/posthog-go"
 	"github.com/spf13/cobra"
 )
 
 var secretsCmd = &cobra.Command{
-	Example:               `infisical secrets`,
+	Example:               `kms secrets`,
 	Short:                 "Used to create, read update and delete secrets",
 	Use:                   "secrets",
 	DisableFlagsInUseLine: true,
@@ -199,7 +199,7 @@ var secretsSetCmd = &cobra.Command{
 		if token == nil && projectId == "" {
 			_, err := util.GetWorkSpaceFromFile()
 			if err != nil {
-				util.PrintErrorMessageAndExit("Please either run infisical init to connect to a project or pass in project id with --projectId flag")
+				util.PrintErrorMessageAndExit("Please either run kms init to connect to a project or pass in project id with --projectId flag")
 			}
 		}
 
@@ -262,7 +262,7 @@ var secretsSetCmd = &cobra.Command{
 			if projectId == "" {
 				workspaceFile, err := util.GetWorkSpaceFromFile()
 				if err != nil {
-					util.PrintErrorMessageAndExit("Please either run infisical init to connect to a project or pass in project id with --projectId flag")
+					util.PrintErrorMessageAndExit("Please either run kms init to connect to a project or pass in project id with --projectId flag")
 				}
 
 				projectId = workspaceFile.WorkspaceId
@@ -371,7 +371,7 @@ var secretsDeleteCmd = &cobra.Command{
 		if projectId == "" {
 			workspaceFile, err := util.GetWorkSpaceFromFile()
 			if err != nil {
-				util.PrintErrorMessageAndExit("Please either run infisical init to connect to a project or pass in project id with --projectId flag")
+				util.PrintErrorMessageAndExit("Please either run kms init to connect to a project or pass in project id with --projectId flag")
 			}
 			projectId = workspaceFile.WorkspaceId
 		}

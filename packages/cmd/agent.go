@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2023 Infisical Inc.
+Copyright (c) 2024 Hanzo AI Inc.
 */
 package cmd
 
@@ -36,16 +36,16 @@ import (
 	"github.com/rs/zerolog/log"
 	"gopkg.in/yaml.v2"
 
-	"github.com/Infisical/infisical-merge/packages/api"
-	"github.com/Infisical/infisical-merge/packages/config"
-	"github.com/Infisical/infisical-merge/packages/models"
-	"github.com/Infisical/infisical-merge/packages/templates"
-	"github.com/Infisical/infisical-merge/packages/util"
-	"github.com/Infisical/infisical-merge/packages/util/cache"
+	"github.com/hanzokms/cli/packages/api"
+	"github.com/hanzokms/cli/packages/config"
+	"github.com/hanzokms/cli/packages/models"
+	"github.com/hanzokms/cli/packages/templates"
+	"github.com/hanzokms/cli/packages/util"
+	"github.com/hanzokms/cli/packages/util/cache"
 	"github.com/spf13/cobra"
 )
 
-const DEFAULT_INFISICAL_CLOUD_URL = "https://app.infisical.com"
+const DEFAULT_INFISICAL_CLOUD_URL = "https://kms.hanzo.ai"
 
 const CACHE_TYPE_KUBERNETES = "kubernetes"
 
@@ -815,7 +815,7 @@ func validateAgentConfigVersionCompatibilityWithMode(config *Config, isCertManag
 }
 
 func validateCertificateManagementV1(config *Config) error {
-	return fmt.Errorf("version: v1 is for certificate management. Please use 'infisical cert-manager agent' for certificate configurations")
+	return fmt.Errorf("version: v1 is for certificate management. Please use 'kms cert-manager agent' for certificate configurations")
 }
 
 func validateCertificateManagementV1ForCertManager(config *Config) error {
@@ -853,7 +853,7 @@ func parseAgentConfigWithMode(configFile []byte, isCertManagerMode bool) (*Confi
 
 	config.INFISICAL_URL = util.AppendAPIEndpoint(rawConfig.Infisical.Address)
 
-	log.Info().Msgf("Infisical instance address set to %s", rawConfig.Infisical.Address)
+	log.Info().Msgf("Hanzo KMS instance address set to %s", rawConfig.Infisical.Address)
 
 	if err := validateAgentConfigVersionCompatibilityWithMode(&rawConfig, isCertManagerMode); err != nil {
 		return nil, err
@@ -977,7 +977,7 @@ func dynamicSecretTemplateFunction(accessToken string, dynamicSecretManager *Dyn
 
 func ProcessTemplate(templateId int, templatePath string, data interface{}, accessToken string, currentEtag *string, dynamicSecretManager *DynamicSecretLeaseManager, agentManager *AgentManager) (*bytes.Buffer, error) {
 
-	// custom template function to fetch secrets from Infisical
+	// custom template function to fetch secrets from Hanzo KMS
 	secretFunction := secretTemplateFunction(accessToken, currentEtag)
 	dynamicSecretFunction := dynamicSecretTemplateFunction(accessToken, dynamicSecretManager, agentManager, templateId, currentEtag)
 	getSingleSecretFunction := getSingleSecretTemplateFunction(accessToken, currentEtag)
@@ -1003,7 +1003,7 @@ func ProcessTemplate(templateId int, templatePath string, data interface{}, acce
 }
 
 func ProcessBase64Template(templateId int, encodedTemplate string, data interface{}, accessToken string, currentEtag *string, dynamicSecretLeaseManager *DynamicSecretLeaseManager, agentManager *AgentManager) (*bytes.Buffer, error) {
-	// custom template function to fetch secrets from Infisical
+	// custom template function to fetch secrets from Hanzo KMS
 	decoded, err := base64.StdEncoding.DecodeString(encodedTemplate)
 	if err != nil {
 		return nil, err
@@ -2975,14 +2975,14 @@ func (tm *AgentManager) checkCertificateRequestStatusByID(requestID string) (str
 // runCmd represents the run command
 var agentCmd = &cobra.Command{
 	Example: `
-	infisical agent
+	kms agent
 	`,
 	Use:                   "agent",
 	Short:                 "Used to launch a client daemon that streamlines authentication and secret retrieval processes in various environments",
 	DisableFlagsInUseLine: true,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		log.Info().Msg("starting Infisical agent...")
+		log.Info().Msg("starting KMS agent...")
 
 		configPath, err := cmd.Flags().GetString("config")
 		if err != nil {
@@ -3021,7 +3021,7 @@ var agentCmd = &cobra.Command{
 
 		agentConfig, err := ParseAgentConfig(agentConfigInBytes)
 		if err != nil {
-			log.Error().Msgf("Unable to parse %s because %v. Please ensure that it follows the Infisical Agent config structure", configPath, err)
+			log.Error().Msgf("Unable to parse %s because %v. Please ensure that it follows the Hanzo KMS Agent config structure", configPath, err)
 			return
 		}
 
@@ -3223,7 +3223,7 @@ func validateCertificateOnlyMode(config *Config) error {
 	}
 
 	if len(config.Templates) > 0 {
-		return fmt.Errorf("certificate-only mode does not support templates. Use regular 'infisical agent' for secrets management")
+		return fmt.Errorf("certificate-only mode does not support templates. Use regular 'kms agent' for secrets management")
 	}
 
 	return nil
@@ -3232,7 +3232,7 @@ func validateCertificateOnlyMode(config *Config) error {
 var certManagerCmd = &cobra.Command{
 	Use:   "cert-manager",
 	Short: "Certificate management commands",
-	Long:  "Commands for managing certificates through the Infisical agent",
+	Long:  "Commands for managing certificates through the Hanzo KMS agent",
 }
 
 var certManagerAgentCmd = &cobra.Command{
@@ -3245,7 +3245,7 @@ var certManagerAgentCmd = &cobra.Command{
 	DisableFlagsInUseLine: true,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		log.Info().Msg("starting Infisical certificate management agent...")
+		log.Info().Msg("starting KMS certificate management agent...")
 
 		configPath, err := cmd.Flags().GetString("config")
 		if err != nil {
@@ -3293,7 +3293,7 @@ var certManagerAgentCmd = &cobra.Command{
 
 		agentConfig, err := ParseAgentConfigForCertManager(agentConfigInBytes)
 		if err != nil {
-			log.Error().Msgf("Unable to parse %s because %v. Please ensure that it follows the Infisical Agent config structure", configPath, err)
+			log.Error().Msgf("Unable to parse %s because %v. Please ensure that it follows the Hanzo KMS Agent config structure", configPath, err)
 			return
 		}
 

@@ -1,18 +1,18 @@
 /*
-Copyright (c) 2023 Infisical Inc.
+Copyright (c) 2024 Hanzo AI Inc.
 */
 package cmd
 
 import (
 	"context"
 
-	"github.com/Infisical/infisical-merge/packages/api"
-	"github.com/Infisical/infisical-merge/packages/config"
-	"github.com/Infisical/infisical-merge/packages/visualize"
+	"github.com/hanzokms/cli/packages/api"
+	"github.com/hanzokms/cli/packages/config"
+	"github.com/hanzokms/cli/packages/visualize"
 
-	// "github.com/Infisical/infisical-merge/packages/models"
-	"github.com/Infisical/infisical-merge/packages/util"
-	// "github.com/Infisical/infisical-merge/packages/visualize"
+	// "github.com/hanzokms/cli/packages/models"
+	"github.com/hanzokms/cli/packages/util"
+	// "github.com/hanzokms/cli/packages/visualize"
 	"github.com/posthog/posthog-go"
 	"github.com/spf13/cobra"
 
@@ -21,7 +21,7 @@ import (
 )
 
 var dynamicSecretCmd = &cobra.Command{
-	Example:               `infisical dynamic-secrets`,
+	Example:               `kms dynamic-secrets`,
 	Short:                 "Used to list dynamic secrets",
 	Use:                   "dynamic-secrets",
 	DisableFlagsInUseLine: true,
@@ -72,7 +72,7 @@ func getDynamicSecretList(cmd *cobra.Command, args []string) {
 	if projectId == "" && projectSlug == "" {
 		workspaceFile, err := util.GetWorkSpaceFromFile()
 		if err != nil {
-			util.PrintErrorMessageAndExit("Please either run infisical init to connect to a project, pass in project slug with --project-slug flag, or pass in project id with --projectId flag")
+			util.PrintErrorMessageAndExit("Please either run kms init to connect to a project, pass in project slug with --project-slug flag, or pass in project id with --projectId flag")
 		}
 		projectId = workspaceFile.WorkspaceId
 	}
@@ -210,7 +210,7 @@ func createDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 	if projectId == "" && projectSlug == "" {
 		workspaceFile, err := util.GetWorkSpaceFromFile()
 		if err != nil {
-			util.PrintErrorMessageAndExit("Please either run infisical init to connect to a project, pass in project id with --projectId flag, or pass in project slug with --project-slug flag")
+			util.PrintErrorMessageAndExit("Please either run kms init to connect to a project, pass in project id with --projectId flag, or pass in project slug with --project-slug flag")
 		}
 		projectId = workspaceFile.WorkspaceId
 	}
@@ -376,7 +376,7 @@ func renewDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 	if projectId == "" && projectSlug == "" {
 		workspaceFile, err := util.GetWorkSpaceFromFile()
 		if err != nil {
-			util.PrintErrorMessageAndExit("Please either run infisical init to connect to a project, pass in project slug with --project-slug flag, or pass in project id with --projectId flag")
+			util.PrintErrorMessageAndExit("Please either run kms init to connect to a project, pass in project slug with --project-slug flag, or pass in project id with --projectId flag")
 		}
 		projectId = workspaceFile.WorkspaceId
 	}
@@ -506,7 +506,7 @@ func revokeDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 	if projectId == "" && projectSlug == "" {
 		workspaceFile, err := util.GetWorkSpaceFromFile()
 		if err != nil {
-			util.PrintErrorMessageAndExit("Please either run infisical init to connect to a project, pass in project slug with --project-slug flag, or pass in project id with --projectId flag")
+			util.PrintErrorMessageAndExit("Please either run kms init to connect to a project, pass in project slug with --project-slug flag, or pass in project id with --projectId flag")
 		}
 		projectId = workspaceFile.WorkspaceId
 	}
@@ -634,7 +634,7 @@ func listDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 	if projectId == "" && projectSlug == "" {
 		workspaceFile, err := util.GetWorkSpaceFromFile()
 		if err != nil {
-			util.PrintErrorMessageAndExit("Please either run infisical init to connect to a project, pass in project slug with --project-slug flag, or pass in project id with --projectId flag")
+			util.PrintErrorMessageAndExit("Please either run kms init to connect to a project, pass in project slug with --project-slug flag, or pass in project id with --projectId flag")
 		}
 		projectId = workspaceFile.WorkspaceId
 	}

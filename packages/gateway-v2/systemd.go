@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/util"
 	"github.com/rs/zerolog/log"
 )
 
@@ -44,11 +44,11 @@ func InstallGatewaySystemdService(token string, domain string, name string, rela
 		return fmt.Errorf("failed to write environment file: %v", err)
 	}
 
-	if err := util.WriteSystemdServiceFile(serviceLogFile, environmentFilePath, "infisical-gateway", "gateway", "Infisical Gateway Service"); err != nil {
+	if err := util.WriteSystemdServiceFile(serviceLogFile, environmentFilePath, "kms-gateway", "gateway", "Infisical Gateway Service"); err != nil {
 		return fmt.Errorf("failed to write systemd service file: %v", err)
 	}
 
-	if err := util.WriteLogrotateFile(serviceLogFile, "infisical-gateway"); err != nil {
+	if err := util.WriteLogrotateFile(serviceLogFile, "kms-gateway"); err != nil {
 		return fmt.Errorf("failed to write logrotate file: %v", err)
 	}
 
@@ -58,8 +58,8 @@ func InstallGatewaySystemdService(token string, domain string, name string, rela
 	}
 
 	log.Info().Msg("Successfully installed systemd service")
-	log.Info().Msg("To start the service, run: sudo systemctl start infisical-gateway")
-	log.Info().Msg("To enable the service on boot, run: sudo systemctl enable infisical-gateway")
+	log.Info().Msg("To start the service, run: sudo systemctl start kms-gateway")
+	log.Info().Msg("To enable the service on boot, run: sudo systemctl enable kms-gateway")
 
 	return nil
 }
@@ -76,19 +76,19 @@ func UninstallGatewaySystemdService() error {
 	}
 
 	// Stop the service if it's running
-	stopCmd := exec.Command("systemctl", "stop", "infisical-gateway")
+	stopCmd := exec.Command("systemctl", "stop", "kms-gateway")
 	if err := stopCmd.Run(); err != nil {
 		log.Warn().Msgf("Failed to stop service: %v", err)
 	}
 
 	// Disable the service
-	disableCmd := exec.Command("systemctl", "disable", "infisical-gateway")
+	disableCmd := exec.Command("systemctl", "disable", "kms-gateway")
 	if err := disableCmd.Run(); err != nil {
 		log.Warn().Msgf("Failed to disable service: %v", err)
 	}
 
 	// Remove the service file
-	servicePath := "/etc/systemd/system/infisical-gateway.service"
+	servicePath := "/etc/systemd/system/kms-gateway.service"
 	if err := os.Remove(servicePath); err != nil && !os.IsNotExist(err) {
 		return fmt.Errorf("failed to remove systemd service file: %v", err)
 	}

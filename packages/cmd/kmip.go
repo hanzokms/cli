@@ -1,19 +1,19 @@
 /*
-Copyright (c) 2023 Infisical Inc.
+Copyright (c) 2024 Hanzo AI Inc.
 */
 package cmd
 
 import (
 	"fmt"
 
-	"github.com/Infisical/infisical-merge/packages/config"
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/config"
+	"github.com/hanzokms/cli/packages/util"
 	kmip "github.com/infisical/infisical-kmip"
 	"github.com/spf13/cobra"
 )
 
 var kmipCmd = &cobra.Command{
-	Example:               `infisical kmip`,
+	Example:               `kms kmip`,
 	Short:                 "Used to manage KMIP servers",
 	Use:                   "kmip",
 	DisableFlagsInUseLine: true,
@@ -21,7 +21,7 @@ var kmipCmd = &cobra.Command{
 }
 
 var kmipStartCmd = &cobra.Command{
-	Example:               `infisical kmip start`,
+	Example:               `kms kmip start`,
 	Short:                 "Used to start a KMIP server",
 	Use:                   "start",
 	DisableFlagsInUseLine: true,

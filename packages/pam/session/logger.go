@@ -98,7 +98,7 @@ func GetSessionRecordingDir() string {
 	if globalSessionRecordingPath != "" {
 		return globalSessionRecordingPath
 	}
-	return "/var/lib/infisical/session_recordings"
+	return "/var/lib/hanzo-kms/session_recordings"
 }
 
 // This ensures atomic writes across concurrent connections for the same session

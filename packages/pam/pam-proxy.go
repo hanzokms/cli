@@ -9,12 +9,12 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/Infisical/infisical-merge/packages/pam/handlers"
-	"github.com/Infisical/infisical-merge/packages/pam/handlers/kubernetes"
-	"github.com/Infisical/infisical-merge/packages/pam/handlers/mysql"
-	"github.com/Infisical/infisical-merge/packages/pam/handlers/redis"
-	"github.com/Infisical/infisical-merge/packages/pam/handlers/ssh"
-	"github.com/Infisical/infisical-merge/packages/pam/session"
+	"github.com/hanzokms/cli/packages/pam/handlers"
+	"github.com/hanzokms/cli/packages/pam/handlers/kubernetes"
+	"github.com/hanzokms/cli/packages/pam/handlers/mysql"
+	"github.com/hanzokms/cli/packages/pam/handlers/redis"
+	"github.com/hanzokms/cli/packages/pam/handlers/ssh"
+	"github.com/hanzokms/cli/packages/pam/session"
 	"github.com/go-resty/resty/v2"
 	"github.com/rs/zerolog/log"
 )

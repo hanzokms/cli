@@ -10,7 +10,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/util"
 	"github.com/go-resty/resty/v2"
 	"github.com/rs/zerolog/log"
 	"k8s.io/client-go/tools/clientcmd"
@@ -35,7 +35,7 @@ func StartKubernetesLocalProxy(accessToken string, accessParams PAMAccessParams,
 
 	httpClient := resty.New()
 	httpClient.SetAuthToken(accessToken)
-	httpClient.SetHeader("User-Agent", "infisical-cli")
+	httpClient.SetHeader("User-Agent", "hanzo-kms-cli")
 
 	pamRequest := accessParams.ToAPIRequest(projectId, durationStr)
 

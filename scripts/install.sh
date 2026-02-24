@@ -48,37 +48,37 @@ else
 fi
 
 # example: v0.0.98
-LATEST_RELEASE_VERSION=$(curl -s "https://api.github.com/repos/Infisical/infisical/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+LATEST_RELEASE_VERSION=$(curl -s "https://api.github.com/repos/hanzokms/cli/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 
 # example: 0.0.98
 NUMERIC_RELEASE_VERSION="${LATEST_RELEASE_VERSION:1}"
 
-DOWNLOAD_LINK="https://github.com/Infisical/infisical/releases/download/${LATEST_RELEASE_VERSION}/infisical_${NUMERIC_RELEASE_VERSION}_${PLATFORM}_${ARCH}.tar.gz"
+DOWNLOAD_LINK="https://github.com/hanzokms/cli/releases/download/${LATEST_RELEASE_VERSION}/cli_${NUMERIC_RELEASE_VERSION}_${PLATFORM}_${ARCH}.tar.gz"
 
 CHECK_IF_BINARY_EXISTS=$(curl -s -o -L /dev/null -w "%{http_code}" ${DOWNLOAD_LINK})
-if [[ $CHECK_IF_BINARY_EXISTS == "000Not Found404" ]]; then 
+if [[ $CHECK_IF_BINARY_EXISTS == "000Not Found404" ]]; then
   echo "Looks like we do not yet have a binary for this architecture and platform."
   echo "Your architecture is $(uname -m) and your platform is $(uname -s)"
   exit 1
 fi
 
 # make temp install folder
-mkdir -p infisical_temp_download_folder
+mkdir -p kms_temp_download_folder
 
-cd infisical_temp_download_folder
+cd kms_temp_download_folder
 
 TEMP_DOWNLOAD_FOLDER=$(pwd)
 
 # download latest cli
-curl -L -o infisical-binary.tar.gz ${DOWNLOAD_LINK}
+curl -L -o kms-binary.tar.gz ${DOWNLOAD_LINK}
 
 # open up the tar file
-tar zxf infisical-binary.tar.gz
+tar zxf kms-binary.tar.gz
 
 if [ "$PLATFORM" == "darwin" ] || [ $RUNNING_IN_DOCKER ] ; then
   if [[ -d /usr/local/bin ]]; then
-    mv infisical /usr/local/bin/
-    echo "Infisical CLI ${LATEST_RELEASE_VERSION} has been installed in /usr/local/bin."
+    mv kms /usr/local/bin/
+    echo "Hanzo KMS CLI ${LATEST_RELEASE_VERSION} has been installed in /usr/local/bin."
   else
     echo >&2 "Error: /usr/local/bin does not exist. You must create it before reinstalling"
     delete_temp_install_folder
@@ -86,12 +86,12 @@ if [ "$PLATFORM" == "darwin" ] || [ $RUNNING_IN_DOCKER ] ; then
   fi
 elif [ "$PLATFORM" == "windows" ]; then
   mkdir $HOME/bin 2> /dev/null
-  mv infisical.exe $HOME/bin/
-  echo "Infisical CLI ${LATEST_RELEASE_VERSION} has been installed in $HOME/bin"
+  mv kms.exe $HOME/bin/
+  echo "Hanzo KMS CLI ${LATEST_RELEASE_VERSION} has been installed in $HOME/bin"
   echo "Please add $HOME/bin to your system PATH"
 else
-  sudo mv infisical /usr/local/bin/
-  echo "Infisical CLI ${LATEST_RELEASE_VERSION} has been installed in /usr/local/bin."
-fi  
+  sudo mv kms /usr/local/bin/
+  echo "Hanzo KMS CLI ${LATEST_RELEASE_VERSION} has been installed in /usr/local/bin."
+fi
 
 delete_temp_install_folder

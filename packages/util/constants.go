@@ -1,11 +1,11 @@
 package util
 
 const (
-	CONFIG_FILE_NAME                           = "infisical-config.json"
-	CONFIG_FOLDER_NAME                         = ".infisical"
-	INFISICAL_DEFAULT_US_URL                   = "https://app.infisical.com"
-	INFISICAL_DEFAULT_EU_URL                   = "https://eu.infisical.com"
-	INFISICAL_WORKSPACE_CONFIG_FILE_NAME       = ".infisical.json"
+	CONFIG_FILE_NAME                           = "kms-config.json"
+	CONFIG_FOLDER_NAME                         = ".kms"
+	INFISICAL_DEFAULT_US_URL                   = "https://kms.hanzo.ai"
+	INFISICAL_DEFAULT_EU_URL                   = "https://eu.kms.hanzo.ai"
+	INFISICAL_WORKSPACE_CONFIG_FILE_NAME       = ".kms.json"
 	INFISICAL_TOKEN_NAME                       = "INFISICAL_TOKEN"
 	INFISICAL_UNIVERSAL_AUTH_ACCESS_TOKEN_NAME = "INFISICAL_UNIVERSAL_AUTH_ACCESS_TOKEN"
 	INFISICAL_VAULT_FILE_PASSPHRASE_ENV_NAME   = "INFISICAL_VAULT_FILE_PASSPHRASE" // This works because we've forked the keyring package and added support for this env variable. This explains why you won't find any occurrences of it in the CLI codebase.
@@ -51,15 +51,15 @@ const (
 
 	SECRET_TYPE_PERSONAL      = "personal"
 	SECRET_TYPE_SHARED        = "shared"
-	KEYRING_SERVICE_NAME      = "infisical"
+	KEYRING_SERVICE_NAME      = "hanzo-kms"
 	PERSONAL_SECRET_TYPE_NAME = "personal"
 	SHARED_SECRET_TYPE_NAME   = "shared"
 
 	SERVICE_TOKEN_IDENTIFIER        = "service-token"
 	UNIVERSAL_AUTH_TOKEN_IDENTIFIER = "universal-auth-token"
 
-	INFISICAL_BACKUP_SECRET                = "infisical-backup-secrets" // akhilmhdh: @depreciated remove in version v0.30
-	INFISICAL_BACKUP_SECRET_ENCRYPTION_KEY = "infisical-backup-secret-encryption-key"
+	INFISICAL_BACKUP_SECRET                = "kms-backup-secrets"
+	INFISICAL_BACKUP_SECRET_ENCRYPTION_KEY = "kms-backup-secret-encryption-key"
 
 	KUBERNETES_SERVICE_HOST_ENV_NAME        = "KUBERNETES_SERVICE_HOST"
 	KUBERNETES_SERVICE_PORT_HTTPS_ENV_NAME  = "KUBERNETES_SERVICE_PORT_HTTPS"

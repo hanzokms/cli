@@ -8,8 +8,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/Infisical/infisical-merge/packages/config"
-	"github.com/Infisical/infisical-merge/packages/models"
+	"github.com/hanzokms/cli/packages/config"
+	"github.com/hanzokms/cli/packages/models"
 	"github.com/rs/zerolog/log"
 )
 
@@ -117,7 +117,7 @@ func GetWorkSpaceFromFile() (models.WorkspaceConfigFile, error) {
 }
 
 func GetWorkSpaceFromFilePath(configFileDir string) (models.WorkspaceConfigFile, error) {
-	configFilePath := filepath.Join(configFileDir, ".infisical.json")
+	configFilePath := filepath.Join(configFileDir, ".kms.json")
 
 	_, configFileStatusError := os.Stat(configFilePath)
 	if os.IsNotExist(configFileStatusError) {
@@ -138,7 +138,7 @@ func GetWorkSpaceFromFilePath(configFileDir string) (models.WorkspaceConfigFile,
 	return workspaceConfigFile, nil
 }
 
-// FindWorkspaceConfigFile searches for a .infisical.json file in the current directory and all parent directories.
+// FindWorkspaceConfigFile searches for a .kms.json file in the current directory and all parent directories.
 func FindWorkspaceConfigFile() (string, error) {
 	dir, err := os.Getwd()
 	if err != nil {

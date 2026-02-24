@@ -12,9 +12,9 @@ import (
 	"syscall"
 	"time"
 
-	gatewayv2 "github.com/Infisical/infisical-merge/packages/gateway-v2"
-	"github.com/Infisical/infisical-merge/packages/relay"
-	"github.com/Infisical/infisical-merge/packages/util"
+	gatewayv2 "github.com/hanzokms/cli/packages/gateway-v2"
+	"github.com/hanzokms/cli/packages/relay"
+	"github.com/hanzokms/cli/packages/util"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -22,14 +22,14 @@ import (
 var relayCmd = &cobra.Command{
 	Use:   "relay",
 	Short: "Relay-related commands",
-	Long:  "Relay-related commands for Infisical",
+	Long:  "Relay-related commands for Hanzo KMS",
 }
 
 var relayStartCmd = &cobra.Command{
 	Use:                   "start",
-	Short:                 "Start the Infisical relay component",
-	Long:                  "Start the Infisical relay component",
-	Example:               "infisical relay start --type=instance --host=<host> --name=<name> --token=<token>",
+	Short:                 "Start the Hanzo KMS relay component",
+	Long:                  "Start the Hanzo KMS relay component",
+	Example:               "kms relay start --type=instance --host=<host> --name=<name> --token=<token>",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -71,7 +71,7 @@ var relayStartCmd = &cobra.Command{
 		} else {
 			infisicalClient, cancelSdk, err := getInfisicalSdkInstance(cmd)
 			if err != nil {
-				util.HandleError(err, "unable to get infisical client")
+				util.HandleError(err, "unable to get KMS client")
 			}
 			defer cancelSdk()
 
@@ -141,11 +141,11 @@ var relayStartCmd = &cobra.Command{
 
 var relaySystemdCmd = &cobra.Command{
 	Use:   "systemd",
-	Short: "Manage systemd service for Infisical relay",
-	Long:  "Manage systemd service for Infisical relay. Use 'systemd install' to install and enable the service.",
-	Example: `sudo infisical relay systemd install --token=<token> --name=<name> --host=<host>
-  sudo infisical relay systemd install --type=instance --name=<name> --host=<host> --relay-auth-secret=<secret>
-  sudo infisical relay systemd uninstall`,
+	Short: "Manage systemd service for Hanzo KMS relay",
+	Long:  "Manage systemd service for Hanzo KMS relay. Use 'systemd install' to install and enable the service.",
+	Example: `sudo kms relay systemd install --token=<token> --name=<name> --host=<host>
+  sudo kms relay systemd install --type=instance --name=<name> --host=<host> --relay-auth-secret=<secret>
+  sudo kms relay systemd uninstall`,
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 }
@@ -154,8 +154,8 @@ var relaySystemdInstallCmd = &cobra.Command{
 	Use:   "install",
 	Short: "Install and enable systemd service for the relay (requires sudo)",
 	Long:  "Install and enable systemd service for the relay. Must be run with sudo on Linux.",
-	Example: `sudo infisical relay systemd install --token=<token> --name=<name> --host=<host>
-  sudo infisical relay systemd install --type=instance --name=<name> --host=<host> --relay-auth-secret=<secret>`,
+	Example: `sudo kms relay systemd install --token=<token> --name=<name> --host=<host>
+  sudo kms relay systemd install --type=instance --name=<name> --host=<host> --relay-auth-secret=<secret>`,
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -237,7 +237,7 @@ var relaySystemdUninstallCmd = &cobra.Command{
 	Use:                   "uninstall",
 	Short:                 "Uninstall and remove systemd service for the relay (requires sudo)",
 	Long:                  "Uninstall and remove systemd service for the relay. Must be run with sudo on Linux.",
-	Example:               "sudo infisical relay systemd uninstall",
+	Example:               "sudo kms relay systemd uninstall",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -259,7 +259,7 @@ func init() {
 	relayStartCmd.Flags().String("type", "", "The type of relay to run. Defaults to 'org'")
 	relayStartCmd.Flags().String("host", "", "The IP or hostname for the relay")
 	relayStartCmd.Flags().String("name", "", "The name of the relay")
-	relayStartCmd.Flags().String("token", "", "connect with Infisical using machine identity access token. if not provided, you must set the auth-method flag")
+	relayStartCmd.Flags().String("token", "", "connect with Hanzo KMS using machine identity access token. if not provided, you must set the auth-method flag")
 	relayStartCmd.Flags().String("auth-method", "", "login method [universal-auth, kubernetes, azure, gcp-id-token, gcp-iam, aws-iam, oidc-auth]. if not provided, you must set the token flag")
 	relayStartCmd.Flags().String("client-id", "", "client id for universal auth")
 	relayStartCmd.Flags().String("client-secret", "", "client secret for universal auth")
@@ -269,9 +269,9 @@ func init() {
 	relayStartCmd.Flags().String("jwt", "", "JWT for jwt-based auth methods [oidc-auth, jwt-auth]")
 
 	// systemd install command flags
-	relaySystemdInstallCmd.Flags().String("token", "", "Connect with Infisical using machine identity access token (org type)")
-	relaySystemdInstallCmd.Flags().String("log-file", "", "The file to write the service logs to. Example: /var/log/infisical/relay.log. If not provided, logs will not be written to a file.")
-	relaySystemdInstallCmd.Flags().String("domain", "", "Domain of your self-hosted Infisical instance")
+	relaySystemdInstallCmd.Flags().String("token", "", "Connect with Hanzo KMS using machine identity access token (org type)")
+	relaySystemdInstallCmd.Flags().String("log-file", "", "The file to write the service logs to. Example: /var/log/hanzo-kms/relay.log. If not provided, logs will not be written to a file.")
+	relaySystemdInstallCmd.Flags().String("domain", "", "Domain of your self-hosted Hanzo KMS instance")
 	relaySystemdInstallCmd.Flags().String("name", "", "The name of the relay")
 	relaySystemdInstallCmd.Flags().String("host", "", "The IP or hostname for the relay")
 	relaySystemdInstallCmd.Flags().String("type", "org", "The type of relay to run. Defaults to 'org'")

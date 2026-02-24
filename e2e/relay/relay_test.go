@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/compose-spec/compose-go/v2/types"
-	helpers "github.com/infisical/cli/e2e-tests/util"
+	helpers "github.com/hanzokms/cli/e2e-tests/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

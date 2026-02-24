@@ -1,6 +1,6 @@
 package visualize
 
-import "github.com/Infisical/infisical-merge/packages/models"
+import "github.com/hanzokms/cli/packages/models"
 
 func PrintAllSecretDetails(secrets []models.SingleEnvironmentVariable) {
 	rows := [][3]string{}

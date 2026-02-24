@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2023 Infisical Inc.
+Copyright (c) 2024 Hanzo AI Inc.
 */
 package cmd
 
@@ -23,11 +23,11 @@ import (
 
 	browser "github.com/pkg/browser"
 
-	"github.com/Infisical/infisical-merge/packages/api"
-	"github.com/Infisical/infisical-merge/packages/config"
-	"github.com/Infisical/infisical-merge/packages/models"
-	"github.com/Infisical/infisical-merge/packages/srp"
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/api"
+	"github.com/hanzokms/cli/packages/config"
+	"github.com/hanzokms/cli/packages/models"
+	"github.com/hanzokms/cli/packages/srp"
+	"github.com/hanzokms/cli/packages/util"
 	"github.com/fatih/color"
 	"github.com/manifoldco/promptui"
 	"github.com/posthog/posthog-go"
@@ -51,7 +51,7 @@ const QUIT_BROWSER_LOGIN = "q"
 // loginCmd represents the login command
 var loginCmd = &cobra.Command{
 	Use:                   "login",
-	Short:                 "Login into your Infisical account",
+	Short:                 "Login into your Hanzo KMS account",
 	DisableFlagsInUseLine: true,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// daniel: oidc-jwt is deprecated in favor of `jwt`. we backfill the `jwt` flag with the value of `oidc-jwt` if it's set.
@@ -224,7 +224,7 @@ var loginCmd = &cobra.Command{
 			err = util.StoreUserCredsInKeyRing(&userCredentialsToBeStored)
 			if err != nil {
 				log.Error().Msgf("Unable to store your credentials in system vault")
-				log.Error().Msgf("\nTo trouble shoot further, read https://infisical.com/docs/cli/faq")
+				log.Error().Msgf("\nTo trouble shoot further, read https://kms.hanzo.ai/docs/cli/faq")
 				log.Debug().Err(err)
 				//return here
 				util.HandleError(err)
@@ -232,7 +232,7 @@ var loginCmd = &cobra.Command{
 
 			err = util.WriteInitalConfig(&userCredentialsToBeStored)
 			if err != nil {
-				util.HandleError(err, "Unable to write write to Infisical Config file. Please try again")
+				util.HandleError(err, "Unable to write write to Hanzo KMS Config file. Please try again")
 			}
 
 			// clear backed up secrets from prev account
@@ -246,14 +246,14 @@ var loginCmd = &cobra.Command{
 			whilte := color.New(color.FgGreen)
 			boldWhite := whilte.Add(color.Bold)
 			time.Sleep(time.Second * 1)
-			boldWhite.Printf(">>>> Welcome to Infisical!")
+			boldWhite.Printf(">>>> Welcome to Hanzo KMS!")
 			boldWhite.Printf(" You are now logged in as %v <<<< \n", userCredentialsToBeStored.Email)
 
 			plainBold := color.New(color.Bold)
 
 			plainBold.Println("\nQuick links")
-			util.PrintlnStderr("- Learn to inject secrets into your application at https://infisical.com/docs/cli/usage")
-			util.PrintlnStderr("- Stuck? Join our slack for quick support https://infisical.com/slack")
+			util.PrintlnStderr("- Learn to inject secrets into your application at https://kms.hanzo.ai/docs/cli/usage")
+			util.PrintlnStderr("- Stuck? Join our slack for quick support https://kms.hanzo.ai/slack")
 
 			Telemetry.CaptureEvent("cli-command:login", posthog.NewProperties().Set("infisical-backend", config.INFISICAL_URL).Set("version", util.CLI_VERSION))
 		} else {
@@ -372,7 +372,7 @@ func cliDefaultLogin(userCredentialsToBeStored *models.UserCredentials, email st
 		getOrganizationIdAccessToken = loginTwoResponse.Token
 	}
 
-	// TODO(daniel): At a later time we should re-add this check, but we don't want to break older Infisical instances that doesn't have the latest SRP removal initiative on them.
+	// TODO(daniel): At a later time we should re-add this check, but we don't want to break older Hanzo KMS instances that doesn't have the latest SRP removal initiative on them.
 	// if !strings.Contains(err.Error(), "LegacyEncryptionScheme") {
 	// 	util.HandleError(err)
 	// }
@@ -485,8 +485,8 @@ func usePresetDomain(presetDomain string, domainFlagExplicitlySet bool) (bool, e
 func askForDomain() error {
 	// query user to choose between Infisical cloud or self-hosting
 	const (
-		INFISICAL_CLOUD_US = "Infisical Cloud (US Region)"
-		INFISICAL_CLOUD_EU = "Infisical Cloud (EU Region)"
+		INFISICAL_CLOUD_US = "Hanzo KMS Cloud (US Region)"
+		INFISICAL_CLOUD_EU = "Hanzo KMS Cloud (EU Region)"
 		SELF_HOSTING       = "Self-Hosting or Dedicated Instance"
 		ADD_NEW_DOMAIN     = "Add a new domain"
 	)

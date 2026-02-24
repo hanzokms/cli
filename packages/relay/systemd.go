@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"runtime"
 
-	gatewayv2 "github.com/Infisical/infisical-merge/packages/gateway-v2"
-	"github.com/Infisical/infisical-merge/packages/util"
+	gatewayv2 "github.com/hanzokms/cli/packages/gateway-v2"
+	"github.com/hanzokms/cli/packages/util"
 	"github.com/rs/zerolog/log"
 )
 

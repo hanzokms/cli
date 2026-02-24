@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2023 Infisical Inc.
+Copyright (c) 2024 Hanzo AI Inc.
 */
 package cmd
 
@@ -10,7 +10,7 @@ import (
 	"github.com/muesli/roff"
 	"github.com/spf13/cobra"
 
-	"github.com/Infisical/infisical-merge/packages/util"
+	"github.com/hanzokms/cli/packages/util"
 )
 
 var manCmd = &cobra.Command{

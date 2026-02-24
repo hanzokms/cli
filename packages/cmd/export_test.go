@@ -3,7 +3,7 @@ package cmd
 import (
 	"testing"
 
-	"github.com/Infisical/infisical-merge/packages/models"
+	"github.com/hanzokms/cli/packages/models"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v2"
 )

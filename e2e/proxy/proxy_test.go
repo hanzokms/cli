@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/infisical/cli/e2e-tests/packages/client"
-	proxyHelpers "github.com/infisical/cli/e2e-tests/proxy"
-	helpers "github.com/infisical/cli/e2e-tests/util"
+	"github.com/hanzokms/cli/e2e-tests/packages/client"
+	proxyHelpers "github.com/hanzokms/cli/e2e-tests/proxy"
+	helpers "github.com/hanzokms/cli/e2e-tests/util"
 	"github.com/oapi-codegen/oapi-codegen/v2/pkg/securityprovider"
 
 	"github.com/stretchr/testify/assert"

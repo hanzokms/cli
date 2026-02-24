@@ -15,8 +15,8 @@ import (
 
 	"github.com/compose-spec/compose-go/v2/types"
 	"github.com/google/uuid"
-	"github.com/infisical/cli/e2e-tests/packages/client"
-	helpers "github.com/infisical/cli/e2e-tests/util"
+	"github.com/hanzokms/cli/e2e-tests/packages/client"
+	helpers "github.com/hanzokms/cli/e2e-tests/util"
 	openapitypes "github.com/oapi-codegen/runtime/types"
 	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"

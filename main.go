@@ -1,12 +1,12 @@
 /*
-Copyright (c) 2023 Infisical Inc.
+Copyright (c) 2024 Hanzo AI Inc.
 */
 package main
 
 import (
 	"os"
 
-	"github.com/Infisical/infisical-merge/packages/cmd"
+	"github.com/hanzokms/cli/packages/cmd"
 	"github.com/rs/zerolog/log"
 )
 
