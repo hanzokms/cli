@@ -1,6 +1,6 @@
 module github.com/hanzokms/cli
 
-go 1.24.13
+go 1.26
 
 require (
 	github.com/BobuSumisu/aho-corasick v1.0.3
