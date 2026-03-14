@@ -5,7 +5,7 @@ builds:
     binary: kms
     ldflags:
       - -X github.com/hanzokms/cli/packages/util.CLI_VERSION={{ .Version }}
-      - -X github.com/hanzokms/cli/packages/telemetry.POSTHOG_API_KEY_FOR_CLI={{ .Env.POSTHOG_API_KEY_FOR_CLI }}
+      - -X github.com/hanzokms/cli/packages/telemetry.INSIGHTS_API_KEY_FOR_CLI={{ .Env.INSIGHTS_API_KEY_FOR_CLI }}
     flags:
       - -trimpath
     goos:

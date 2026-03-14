@@ -7,11 +7,11 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var POSTHOG_API_KEY_FOR_CLI string
+var INSIGHTS_API_KEY_FOR_CLI string
 
 type Telemetry struct {
 	isEnabled     bool
-	posthogClient posthog.Client
+	insightsClient posthog.Client
 }
 
 type NoOpLogger struct{}
@@ -25,15 +25,15 @@ func (NoOpLogger) Errorf(format string, args ...interface{}) {
 }
 
 func NewTelemetry(telemetryIsEnabled bool) *Telemetry {
-	if POSTHOG_API_KEY_FOR_CLI != "" {
+	if INSIGHTS_API_KEY_FOR_CLI != "" {
 		client, _ := posthog.NewWithConfig(
-			POSTHOG_API_KEY_FOR_CLI,
+			INSIGHTS_API_KEY_FOR_CLI,
 			posthog.Config{
 				Logger: NoOpLogger{},
 			},
 		)
 
-		return &Telemetry{isEnabled: telemetryIsEnabled, posthogClient: client}
+		return &Telemetry{isEnabled: telemetryIsEnabled, insightsClient: client}
 	} else {
 		return &Telemetry{isEnabled: false}
 	}
@@ -46,13 +46,13 @@ func (t *Telemetry) CaptureEvent(eventName string, properties posthog.Properties
 	}
 
 	if t.isEnabled {
-		t.posthogClient.Enqueue(posthog.Capture{
+		t.insightsClient.Enqueue(posthog.Capture{
 			DistinctId: userIdentity,
 			Event:      eventName,
 			Properties: properties,
 		})
 
-		defer t.posthogClient.Close()
+		defer t.insightsClient.Close()
 	}
 }
 
