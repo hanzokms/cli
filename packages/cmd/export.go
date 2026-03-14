@@ -169,7 +169,7 @@ var exportCmd = &cobra.Command{
 			util.PrintStdout(output)
 		}
 
-		// Telemetry.CaptureEvent("cli-command:export", posthog.NewProperties().Set("secretsCount", len(secrets)).Set("version", util.CLI_VERSION))
+		// Telemetry.CaptureEvent("cli-command:export", insights.NewProperties().Set("secretsCount", len(secrets)).Set("version", util.CLI_VERSION))
 	},
 }
 

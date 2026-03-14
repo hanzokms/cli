@@ -29,7 +29,7 @@ require (
 	github.com/pion/turn/v4 v4.0.0
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/pkg/errors v0.9.1
-	github.com/posthog/posthog-go v0.0.0-20221221115252-24dfed35d71a
+	github.com/hanzoai/insights-go v0.0.0-20221221115252-24dfed35d71a
 	github.com/quic-go/quic-go v0.54.1
 	github.com/rs/cors v1.11.0
 	github.com/rs/zerolog v1.26.1

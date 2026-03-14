@@ -30,7 +30,7 @@ import (
 	"github.com/hanzokms/cli/packages/util"
 	"github.com/fatih/color"
 	"github.com/manifoldco/promptui"
-	"github.com/posthog/posthog-go"
+	insights "github.com/hanzoai/insights-go"
 	"github.com/rs/cors"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -255,7 +255,7 @@ var loginCmd = &cobra.Command{
 			util.PrintlnStderr("- Learn to inject secrets into your application at https://kms.hanzo.ai/docs/cli/usage")
 			util.PrintlnStderr("- Stuck? Join our slack for quick support https://kms.hanzo.ai/slack")
 
-			Telemetry.CaptureEvent("cli-command:login", posthog.NewProperties().Set("infisical-backend", config.INFISICAL_URL).Set("version", util.CLI_VERSION))
+			Telemetry.CaptureEvent("cli-command:login", insights.NewProperties().Set("infisical-backend", config.INFISICAL_URL).Set("version", util.CLI_VERSION))
 		} else {
 			sdkAuthenticator := util.NewSdkAuthenticator(infisicalClient, cmd)
 

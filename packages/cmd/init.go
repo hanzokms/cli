@@ -11,7 +11,7 @@ import (
 	"github.com/hanzokms/cli/packages/models"
 	"github.com/hanzokms/cli/packages/util"
 	"github.com/manifoldco/promptui"
-	"github.com/posthog/posthog-go"
+	insights "github.com/hanzoai/insights-go"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -155,7 +155,7 @@ var initCmd = &cobra.Command{
 			util.HandleError(err)
 		}
 
-		Telemetry.CaptureEvent("cli-command:init", posthog.NewProperties().Set("version", util.CLI_VERSION))
+		Telemetry.CaptureEvent("cli-command:init", insights.NewProperties().Set("version", util.CLI_VERSION))
 
 	},
 }

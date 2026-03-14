@@ -19,7 +19,7 @@ import (
 	"github.com/hanzokms/cli/packages/util"
 	infisicalSdk "github.com/infisical/go-sdk"
 	"github.com/pkg/errors"
-	"github.com/posthog/posthog-go"
+	insights "github.com/hanzoai/insights-go"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -104,7 +104,7 @@ var gatewayCmd = &cobra.Command{
 			util.HandleError(errors.New("no access token found"))
 		}
 
-		Telemetry.CaptureEvent("cli-command:gateway", posthog.NewProperties().Set("version", util.CLI_VERSION))
+		Telemetry.CaptureEvent("cli-command:gateway", insights.NewProperties().Set("version", util.CLI_VERSION))
 
 		sigCh := make(chan os.Signal, 1)
 		signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
@@ -250,7 +250,7 @@ var gatewayStartCmd = &cobra.Command{
 
 		gatewayInstance.SetToken(accessToken.Load().(string))
 
-		Telemetry.CaptureEvent("cli-command:gateway-v2", posthog.NewProperties().Set("version", util.CLI_VERSION))
+		Telemetry.CaptureEvent("cli-command:gateway-v2", insights.NewProperties().Set("version", util.CLI_VERSION))
 
 		sigCh := make(chan os.Signal, 1)
 		signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)

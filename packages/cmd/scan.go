@@ -40,7 +40,7 @@ import (
 	"github.com/hanzokms/cli/detect/sources"
 	"github.com/hanzokms/cli/packages/util"
 	"github.com/manifoldco/promptui"
-	"github.com/posthog/posthog-go"
+	insights "github.com/hanzoai/insights-go"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -192,7 +192,7 @@ var installCmd = &cobra.Command{
 
 			log.Info().Msgf("Pre-commit hook successfully added. KMS scan should now run on each commit you make\n")
 
-			Telemetry.CaptureEvent("cli-command:install --pre-commit-hook", posthog.NewProperties().Set("version", util.CLI_VERSION))
+			Telemetry.CaptureEvent("cli-command:install --pre-commit-hook", insights.NewProperties().Set("version", util.CLI_VERSION))
 
 			return
 		}
@@ -362,7 +362,7 @@ var scanCmd = &cobra.Command{
 			}
 		}
 
-		Telemetry.CaptureEvent("cli-command:scan", posthog.NewProperties().Set("risks", len(findings)).Set("version", util.CLI_VERSION))
+		Telemetry.CaptureEvent("cli-command:scan", insights.NewProperties().Set("risks", len(findings)).Set("version", util.CLI_VERSION))
 
 		// write report if desired
 		reportPath, _ := cmd.Flags().GetString("report-path")
@@ -464,7 +464,7 @@ var scanGitChangesCmd = &cobra.Command{
 			logging.Error().Err(err).Msg("failed to scan Git repository")
 		}
 
-		Telemetry.CaptureEvent("cli-command:scan git-changes", posthog.NewProperties().Set("risks", len(findings)).Set("version", util.CLI_VERSION))
+		Telemetry.CaptureEvent("cli-command:scan git-changes", insights.NewProperties().Set("risks", len(findings)).Set("version", util.CLI_VERSION))
 
 		reportPath, _ := cmd.Flags().GetString("report-path")
 		ext, _ := cmd.Flags().GetString("report-format")

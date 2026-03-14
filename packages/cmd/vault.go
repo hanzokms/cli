@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/hanzokms/cli/packages/util"
-	"github.com/posthog/posthog-go"
+	insights "github.com/hanzoai/insights-go"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -67,7 +67,7 @@ var vaultSetCmd = &cobra.Command{
 
 			util.PrintfStderr("\nSuccessfully, switched vault backend from [%s] to [%s]. Please login in again to store your login details in the new vault with [kms login]\n", currentVaultBackend, wantedVaultTypeName)
 
-			Telemetry.CaptureEvent("cli-command:vault set", posthog.NewProperties().Set("currentVault", currentVaultBackend).Set("wantedVault", wantedVaultTypeName).Set("version", util.CLI_VERSION))
+			Telemetry.CaptureEvent("cli-command:vault set", insights.NewProperties().Set("currentVault", currentVaultBackend).Set("wantedVault", wantedVaultTypeName).Set("version", util.CLI_VERSION))
 		} else {
 			var availableVaultsNames []string
 			for _, vault := range AvailableVaults {
@@ -100,7 +100,7 @@ func printAvailableVaultBackends() {
 		log.Error().Msgf("printAvailableVaultBackends: unable to print the available vault backend because of error [err=%s]", err)
 	}
 
-	Telemetry.CaptureEvent("cli-command:vault", posthog.NewProperties().Set("currentVault", currentVaultBackend).Set("version", util.CLI_VERSION))
+	Telemetry.CaptureEvent("cli-command:vault", insights.NewProperties().Set("currentVault", currentVaultBackend).Set("version", util.CLI_VERSION))
 
 	util.PrintfStderr("\n\nYou are currently using [%s] vault to store your login credentials\n", string(currentVaultBackend))
 }

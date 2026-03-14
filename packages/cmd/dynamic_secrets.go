@@ -13,7 +13,7 @@ import (
 	// "github.com/hanzokms/cli/packages/models"
 	"github.com/hanzokms/cli/packages/util"
 	// "github.com/hanzokms/cli/packages/visualize"
-	"github.com/posthog/posthog-go"
+	insights "github.com/hanzoai/insights-go"
 	"github.com/spf13/cobra"
 
 	infisicalSdk "github.com/infisical/go-sdk"
@@ -136,7 +136,7 @@ func getDynamicSecretList(cmd *cobra.Command, args []string) {
 	} else {
 		visualize.PrintAllDynamicRootCredentials(dynamicSecretRootCredentials)
 	}
-	Telemetry.CaptureEvent("cli-command:dynamic-secrets", posthog.NewProperties().Set("count", len(dynamicSecretRootCredentials)).Set("version", util.CLI_VERSION))
+	Telemetry.CaptureEvent("cli-command:dynamic-secrets", insights.NewProperties().Set("count", len(dynamicSecretRootCredentials)).Set("version", util.CLI_VERSION))
 }
 
 var dynamicSecretLeaseCmd = &cobra.Command{
@@ -314,7 +314,7 @@ func createDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	Telemetry.CaptureEvent("cli-command:dynamic-secrets lease", posthog.NewProperties().Set("type", dynamicSecretRootCredential.Type).Set("version", util.CLI_VERSION))
+	Telemetry.CaptureEvent("cli-command:dynamic-secrets lease", insights.NewProperties().Set("type", dynamicSecretRootCredential.Type).Set("version", util.CLI_VERSION))
 }
 
 var dynamicSecretLeaseRenewCmd = &cobra.Command{
@@ -449,7 +449,7 @@ func renewDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		visualize.PrintAllDynamicSecretLeases([]infisicalSdkModels.DynamicSecretLease{leaseDetails})
 	}
 
-	Telemetry.CaptureEvent("cli-command:dynamic-secrets lease renew", posthog.NewProperties().Set("version", util.CLI_VERSION))
+	Telemetry.CaptureEvent("cli-command:dynamic-secrets lease renew", insights.NewProperties().Set("version", util.CLI_VERSION))
 }
 
 var dynamicSecretLeaseRevokeCmd = &cobra.Command{
@@ -577,7 +577,7 @@ func revokeDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		visualize.PrintAllDynamicSecretLeases([]infisicalSdkModels.DynamicSecretLease{leaseDetails})
 	}
 
-	Telemetry.CaptureEvent("cli-command:dynamic-secrets lease revoke", posthog.NewProperties().Set("version", util.CLI_VERSION))
+	Telemetry.CaptureEvent("cli-command:dynamic-secrets lease revoke", insights.NewProperties().Set("version", util.CLI_VERSION))
 }
 
 var dynamicSecretLeaseListCmd = &cobra.Command{
@@ -699,7 +699,7 @@ func listDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		visualize.PrintAllDynamicSecretLeases(dynamicSecretLeases)
 	}
 
-	Telemetry.CaptureEvent("cli-command:dynamic-secrets lease list", posthog.NewProperties().Set("lease-count", len(dynamicSecretLeases)).Set("version", util.CLI_VERSION))
+	Telemetry.CaptureEvent("cli-command:dynamic-secrets lease list", insights.NewProperties().Set("lease-count", len(dynamicSecretLeases)).Set("version", util.CLI_VERSION))
 }
 
 func init() {

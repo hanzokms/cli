@@ -14,7 +14,7 @@ import (
 	"github.com/hanzokms/cli/packages/models"
 	"github.com/hanzokms/cli/packages/util"
 	"github.com/hanzokms/cli/packages/visualize"
-	"github.com/posthog/posthog-go"
+	insights "github.com/hanzoai/insights-go"
 	"github.com/spf13/cobra"
 )
 
@@ -141,7 +141,7 @@ var secretsCmd = &cobra.Command{
 			}
 		}
 
-		Telemetry.CaptureEvent("cli-command:secrets", posthog.NewProperties().Set("secretCount", len(secrets)).Set("version", util.CLI_VERSION))
+		Telemetry.CaptureEvent("cli-command:secrets", insights.NewProperties().Set("secretCount", len(secrets)).Set("version", util.CLI_VERSION))
 	},
 }
 
@@ -317,7 +317,7 @@ var secretsSetCmd = &cobra.Command{
 		} else {
 			visualize.Table(headers, rows)
 		}
-		Telemetry.CaptureEvent("cli-command:secrets set", posthog.NewProperties().Set("version", util.CLI_VERSION))
+		Telemetry.CaptureEvent("cli-command:secrets set", insights.NewProperties().Set("version", util.CLI_VERSION))
 	},
 }
 
@@ -426,7 +426,7 @@ var secretsDeleteCmd = &cobra.Command{
 			util.PrintfStderr("secret name(s) [%v] have been deleted from your project \n", strings.Join(args, ", "))
 		}
 
-		Telemetry.CaptureEvent("cli-command:secrets delete", posthog.NewProperties().Set("secretCount", len(args)).Set("version", util.CLI_VERSION))
+		Telemetry.CaptureEvent("cli-command:secrets delete", insights.NewProperties().Set("secretCount", len(args)).Set("version", util.CLI_VERSION))
 	},
 }
 
@@ -575,7 +575,7 @@ func getSecretsByNames(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	Telemetry.CaptureEvent("cli-command:secrets get", posthog.NewProperties().Set("secretCount", len(secrets)).Set("version", util.CLI_VERSION))
+	Telemetry.CaptureEvent("cli-command:secrets get", insights.NewProperties().Set("secretCount", len(secrets)).Set("version", util.CLI_VERSION))
 }
 
 func generateExampleEnv(cmd *cobra.Command, args []string) {
@@ -779,7 +779,7 @@ func generateExampleEnv(cmd *cobra.Command, args []string) {
 	}
 	util.PrintlnStdout(strings.Join(fullyGeneratedDocuments, ""))
 
-	Telemetry.CaptureEvent("cli-command:generate-example-env", posthog.NewProperties().Set("secretCount", len(secrets)).Set("version", util.CLI_VERSION))
+	Telemetry.CaptureEvent("cli-command:generate-example-env", insights.NewProperties().Set("secretCount", len(secrets)).Set("version", util.CLI_VERSION))
 }
 
 func CenterString(s string, numStars int) string {

@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/hanzokms/cli/packages/util"
-	"github.com/posthog/posthog-go"
+	insights "github.com/hanzoai/insights-go"
 	"github.com/spf13/cobra"
 )
 
@@ -36,7 +36,7 @@ var resetCmd = &cobra.Command{
 		util.DeleteBackupSecrets()
 
 		util.PrintSuccessMessage("Reset successful")
-		Telemetry.CaptureEvent("cli-command:reset", posthog.NewProperties().Set("version", util.CLI_VERSION))
+		Telemetry.CaptureEvent("cli-command:reset", insights.NewProperties().Set("version", util.CLI_VERSION))
 	},
 }
 

@@ -3,7 +3,7 @@ package telemetry
 import (
 	"github.com/hanzokms/cli/packages/util"
 	"github.com/denisbrodbeck/machineid"
-	"github.com/posthog/posthog-go"
+	insights "github.com/hanzoai/insights-go"
 	"github.com/rs/zerolog/log"
 )
 
@@ -11,7 +11,7 @@ var INSIGHTS_API_KEY_FOR_CLI string
 
 type Telemetry struct {
 	isEnabled     bool
-	insightsClient posthog.Client
+	insightsClient insights.Client
 }
 
 type NoOpLogger struct{}
@@ -26,9 +26,9 @@ func (NoOpLogger) Errorf(format string, args ...interface{}) {
 
 func NewTelemetry(telemetryIsEnabled bool) *Telemetry {
 	if INSIGHTS_API_KEY_FOR_CLI != "" {
-		client, _ := posthog.NewWithConfig(
+		client, _ := insights.NewWithConfig(
 			INSIGHTS_API_KEY_FOR_CLI,
-			posthog.Config{
+			insights.Config{
 				Logger: NoOpLogger{},
 			},
 		)
@@ -39,14 +39,14 @@ func NewTelemetry(telemetryIsEnabled bool) *Telemetry {
 	}
 }
 
-func (t *Telemetry) CaptureEvent(eventName string, properties posthog.Properties) {
+func (t *Telemetry) CaptureEvent(eventName string, properties insights.Properties) {
 	userIdentity, err := t.GetDistinctId()
 	if err != nil {
 		return
 	}
 
 	if t.isEnabled {
-		t.insightsClient.Enqueue(posthog.Capture{
+		t.insightsClient.Enqueue(insights.Capture{
 			DistinctId: userIdentity,
 			Event:      eventName,
 			Properties: properties,

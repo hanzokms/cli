@@ -7,7 +7,7 @@ import (
 	"github.com/hanzokms/cli/packages/models"
 	"github.com/hanzokms/cli/packages/util"
 	"github.com/hanzokms/cli/packages/visualize"
-	"github.com/posthog/posthog-go"
+	insights "github.com/hanzoai/insights-go"
 	"github.com/spf13/cobra"
 )
 
@@ -89,7 +89,7 @@ var getCmd = &cobra.Command{
 		} else {
 			visualize.PrintAllFoldersDetails(folders, foldersPath)
 		}
-		Telemetry.CaptureEvent("cli-command:folders get", posthog.NewProperties().Set("folderCount", len(folders)).Set("version", util.CLI_VERSION))
+		Telemetry.CaptureEvent("cli-command:folders get", insights.NewProperties().Set("folderCount", len(folders)).Set("version", util.CLI_VERSION))
 	},
 }
 
@@ -180,7 +180,7 @@ var createCmd = &cobra.Command{
 			util.PrintSuccessMessage(fmt.Sprintf("folder named `%s` created in path %s", folderName, folderPath))
 		}
 
-		Telemetry.CaptureEvent("cli-command:folders create", posthog.NewProperties().Set("version", util.CLI_VERSION))
+		Telemetry.CaptureEvent("cli-command:folders create", insights.NewProperties().Set("version", util.CLI_VERSION))
 	},
 }
 
@@ -267,6 +267,6 @@ var deleteCmd = &cobra.Command{
 			util.PrintSuccessMessage(fmt.Sprintf("folder named `%s` deleted in path %s", folderName, folderPath))
 		}
 
-		Telemetry.CaptureEvent("cli-command:folders delete", posthog.NewProperties().Set("version", util.CLI_VERSION))
+		Telemetry.CaptureEvent("cli-command:folders delete", insights.NewProperties().Set("version", util.CLI_VERSION))
 	},
 }

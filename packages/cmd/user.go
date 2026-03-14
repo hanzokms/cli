@@ -12,7 +12,7 @@ import (
 	"github.com/hanzokms/cli/packages/models"
 	"github.com/hanzokms/cli/packages/util"
 	"github.com/manifoldco/promptui"
-	"github.com/posthog/posthog-go"
+	insights "github.com/hanzoai/insights-go"
 	"github.com/spf13/cobra"
 )
 
@@ -84,7 +84,7 @@ var switchCmd = &cobra.Command{
 			util.HandleError(err, "")
 		}
 
-		Telemetry.CaptureEvent("cli-command:user switch", posthog.NewProperties().Set("numberOfLoggedInProfiles", len(loggedInProfiles)).Set("version", util.CLI_VERSION))
+		Telemetry.CaptureEvent("cli-command:user switch", insights.NewProperties().Set("numberOfLoggedInProfiles", len(loggedInProfiles)).Set("version", util.CLI_VERSION))
 	},
 }
 
@@ -242,7 +242,7 @@ var domainCmd = &cobra.Command{
 		if err != nil {
 			util.HandleError(err, "")
 		}
-		Telemetry.CaptureEvent("cli-command:user domain", posthog.NewProperties().Set("version", util.CLI_VERSION))
+		Telemetry.CaptureEvent("cli-command:user domain", insights.NewProperties().Set("version", util.CLI_VERSION))
 	},
 }
 
