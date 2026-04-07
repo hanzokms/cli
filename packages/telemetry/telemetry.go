@@ -20,8 +20,16 @@ func (NoOpLogger) Logf(format string, args ...interface{}) {
 	log.Debug().Msgf(format, args...)
 }
 
-func (NoOpLogger) Errorf(format string, args ...interface{}) {
+func (NoOpLogger) Debugf(format string, args ...interface{}) {
 	log.Debug().Msgf(format, args...)
+}
+
+func (NoOpLogger) Warnf(format string, args ...interface{}) {
+	log.Warn().Msgf(format, args...)
+}
+
+func (NoOpLogger) Errorf(format string, args ...interface{}) {
+	log.Error().Msgf(format, args...)
 }
 
 func NewTelemetry(telemetryIsEnabled bool) *Telemetry {

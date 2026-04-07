@@ -16,6 +16,7 @@ require (
 	github.com/go-mysql-org/go-mysql v1.13.0
 	github.com/google/uuid v1.6.0
 	github.com/h2non/filetype v1.1.3
+	github.com/hanzoai/insights-go v1.12.0
 	github.com/infisical/go-sdk v0.6.8
 	github.com/infisical/infisical-kmip v0.3.17
 	github.com/jackc/pgx/v5 v5.7.6
@@ -29,14 +30,13 @@ require (
 	github.com/pion/turn/v4 v4.0.0
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/pkg/errors v0.9.1
-	github.com/hanzoai/insights-go v0.0.0-20221221115252-24dfed35d71a
 	github.com/quic-go/quic-go v0.54.1
 	github.com/rs/cors v1.11.0
 	github.com/rs/zerolog v1.26.1
 	github.com/smallnest/resp3 v0.0.0-20251228151914-4f2fa7427e69
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.8.1
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	github.com/wasilibs/go-re2 v1.10.0
 	golang.org/x/crypto v0.43.0
 	golang.org/x/exp v0.0.0-20250228200357-dead58393ab7
@@ -95,7 +95,7 @@ require (
 	github.com/go-openapi/jsonreference v0.20.2 // indirect
 	github.com/go-openapi/strfmt v0.21.3 // indirect
 	github.com/go-openapi/swag v0.23.0 // indirect
-	github.com/goccy/go-json v0.10.2 // indirect
+	github.com/goccy/go-json v0.10.6 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/gofrs/flock v0.8.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
@@ -158,7 +158,6 @@ require (
 	github.com/wasilibs/wazero-helpers v0.0.0-20240620070341-3dff1577cd52 // indirect
 	github.com/wlynxg/anet v0.0.5 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
-	github.com/xtgo/uuid v0.0.0-20140804021211-a0b114877d4c // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	go.mongodb.org/mongo-driver v1.10.0 // indirect
 	go.opencensus.io v0.24.0 // indirect
