@@ -137,7 +137,7 @@ var bootstrapCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		email, _ := cmd.Flags().GetString("email")
 		if email == "" {
-			if envEmail, ok := os.LookupEnv(util.INFISICAL_BOOTSTRAP_EMAIL_NAME); ok {
+			if envEmail, ok := os.LookupEnv(util.KMS_BOOTSTRAP_EMAIL_NAME); ok {
 				email = envEmail
 			}
 		}
@@ -149,7 +149,7 @@ var bootstrapCmd = &cobra.Command{
 
 		password, _ := cmd.Flags().GetString("password")
 		if password == "" {
-			if envPassword, ok := os.LookupEnv(util.INFISICAL_BOOTSTRAP_PASSWORD_NAME); ok {
+			if envPassword, ok := os.LookupEnv(util.KMS_BOOTSTRAP_PASSWORD_NAME); ok {
 				password = envPassword
 			}
 		}
@@ -161,7 +161,7 @@ var bootstrapCmd = &cobra.Command{
 
 		organization, _ := cmd.Flags().GetString("organization")
 		if organization == "" {
-			if envOrganization, ok := os.LookupEnv(util.INFISICAL_BOOTSTRAP_ORGANIZATION_NAME); ok {
+			if envOrganization, ok := os.LookupEnv(util.KMS_BOOTSTRAP_ORGANIZATION_NAME); ok {
 				organization = envOrganization
 			}
 		}
@@ -173,7 +173,7 @@ var bootstrapCmd = &cobra.Command{
 
 		domain, _ := cmd.Flags().GetString("domain")
 		if domain == "" {
-			if envDomain, ok := os.LookupEnv("INFISICAL_API_URL"); ok {
+			if envDomain, ok := os.LookupEnv("KMS_API_URL"); ok {
 				domain = envDomain
 			}
 		}

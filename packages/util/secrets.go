@@ -430,7 +430,7 @@ func OverrideSecrets(secrets []models.SingleEnvironmentVariable, secretType stri
 }
 
 func GetBackupEncryptionKey() ([]byte, error) {
-	encryptionKey, err := GetValueInKeyring(INFISICAL_BACKUP_SECRET_ENCRYPTION_KEY)
+	encryptionKey, err := GetValueInKeyring(KMS_BACKUP_SECRET_ENCRYPTION_KEY)
 	if err != nil {
 		if err == keyring.ErrUnsupportedPlatform {
 			return nil, errors.New("your OS does not support keyring. Consider using a service token https://kms.hanzo.ai/docs/documentation/platform/token")
@@ -439,7 +439,7 @@ func GetBackupEncryptionKey() ([]byte, error) {
 			randomizedKey := make([]byte, 16)
 			rand.Read(randomizedKey)
 			encryptionKey = hex.EncodeToString(randomizedKey)
-			if err := SetValueInKeyring(INFISICAL_BACKUP_SECRET_ENCRYPTION_KEY, encryptionKey); err != nil {
+			if err := SetValueInKeyring(KMS_BACKUP_SECRET_ENCRYPTION_KEY, encryptionKey); err != nil {
 				return nil, err
 			}
 			return []byte(encryptionKey), nil
@@ -530,8 +530,8 @@ func DeleteBackupSecrets() error {
 	}
 
 	fullPathToSecretsBackupFolder := fmt.Sprintf("%s/%s", fullConfigFileDirPath, secrets_backup_folder_name)
-	DeleteValueInKeyring(INFISICAL_BACKUP_SECRET)
-	DeleteValueInKeyring(INFISICAL_BACKUP_SECRET_ENCRYPTION_KEY)
+	DeleteValueInKeyring(KMS_BACKUP_SECRET)
+	DeleteValueInKeyring(KMS_BACKUP_SECRET_ENCRYPTION_KEY)
 
 	return os.RemoveAll(fullPathToSecretsBackupFolder)
 }

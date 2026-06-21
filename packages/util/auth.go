@@ -106,13 +106,13 @@ func NewSdkAuthenticator(infisicalClient infisicalSdk.InfisicalClientInterface, 
 }
 func (a *SdkAuthenticator) HandleUniversalAuthLogin() (credential infisicalSdk.MachineIdentityCredential, e error) {
 
-	clientId, err := GetCmdFlagOrEnv(a.cmd, "client-id", []string{INFISICAL_UNIVERSAL_AUTH_CLIENT_ID_NAME})
+	clientId, err := GetCmdFlagOrEnv(a.cmd, "client-id", []string{KMS_UNIVERSAL_AUTH_CLIENT_ID_NAME})
 
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, err
 	}
 
-	clientSecret, err := GetCmdFlagOrEnv(a.cmd, "client-secret", []string{INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET_NAME})
+	clientSecret, err := GetCmdFlagOrEnv(a.cmd, "client-secret", []string{KMS_UNIVERSAL_AUTH_CLIENT_SECRET_NAME})
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, err
 	}
@@ -129,12 +129,12 @@ func (a *SdkAuthenticator) HandleUniversalAuthLogin() (credential infisicalSdk.M
 
 func (a *SdkAuthenticator) HandleJwtAuthLogin() (credential infisicalSdk.MachineIdentityCredential, e error) {
 
-	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{INFISICAL_MACHINE_IDENTITY_ID_NAME})
+	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{KMS_MACHINE_IDENTITY_ID_NAME})
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, err
 	}
 
-	jwt, err := GetCmdFlagOrEnv(a.cmd, "jwt", []string{INFISICAL_JWT_NAME})
+	jwt, err := GetCmdFlagOrEnv(a.cmd, "jwt", []string{KMS_JWT_NAME})
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, err
 	}
@@ -149,12 +149,12 @@ func (a *SdkAuthenticator) HandleJwtAuthLogin() (credential infisicalSdk.Machine
 
 func (a *SdkAuthenticator) HandleKubernetesAuthLogin() (credential infisicalSdk.MachineIdentityCredential, e error) {
 
-	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{INFISICAL_MACHINE_IDENTITY_ID_NAME})
+	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{KMS_MACHINE_IDENTITY_ID_NAME})
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, err
 	}
 
-	serviceAccountTokenPath, err := GetCmdFlagOrEnv(a.cmd, "service-account-token-path", []string{INFISICAL_KUBERNETES_SERVICE_ACCOUNT_TOKEN_NAME})
+	serviceAccountTokenPath, err := GetCmdFlagOrEnv(a.cmd, "service-account-token-path", []string{KMS_KUBERNETES_SERVICE_ACCOUNT_TOKEN_NAME})
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, err
 	}
@@ -169,7 +169,7 @@ func (a *SdkAuthenticator) HandleKubernetesAuthLogin() (credential infisicalSdk.
 
 func (a *SdkAuthenticator) HandleAzureAuthLogin() (credential infisicalSdk.MachineIdentityCredential, e error) {
 
-	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{INFISICAL_MACHINE_IDENTITY_ID_NAME})
+	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{KMS_MACHINE_IDENTITY_ID_NAME})
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, err
 	}
@@ -184,7 +184,7 @@ func (a *SdkAuthenticator) HandleAzureAuthLogin() (credential infisicalSdk.Machi
 
 func (a *SdkAuthenticator) HandleGcpIdTokenAuthLogin() (credential infisicalSdk.MachineIdentityCredential, e error) {
 
-	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{INFISICAL_MACHINE_IDENTITY_ID_NAME})
+	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{KMS_MACHINE_IDENTITY_ID_NAME})
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, err
 	}
@@ -199,12 +199,12 @@ func (a *SdkAuthenticator) HandleGcpIdTokenAuthLogin() (credential infisicalSdk.
 
 func (a *SdkAuthenticator) HandleGcpIamAuthLogin() (credential infisicalSdk.MachineIdentityCredential, e error) {
 
-	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{INFISICAL_MACHINE_IDENTITY_ID_NAME})
+	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{KMS_MACHINE_IDENTITY_ID_NAME})
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, err
 	}
 
-	serviceAccountKeyFilePath, err := GetCmdFlagOrEnv(a.cmd, "service-account-key-file-path", []string{INFISICAL_GCP_IAM_SERVICE_ACCOUNT_KEY_FILE_PATH_NAME})
+	serviceAccountKeyFilePath, err := GetCmdFlagOrEnv(a.cmd, "service-account-key-file-path", []string{KMS_GCP_IAM_SERVICE_ACCOUNT_KEY_FILE_PATH_NAME})
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, err
 	}
@@ -219,7 +219,7 @@ func (a *SdkAuthenticator) HandleGcpIamAuthLogin() (credential infisicalSdk.Mach
 
 func (a *SdkAuthenticator) HandleAwsIamAuthLogin() (credential infisicalSdk.MachineIdentityCredential, e error) {
 
-	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{INFISICAL_MACHINE_IDENTITY_ID_NAME})
+	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{KMS_MACHINE_IDENTITY_ID_NAME})
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, err
 	}
@@ -234,12 +234,12 @@ func (a *SdkAuthenticator) HandleAwsIamAuthLogin() (credential infisicalSdk.Mach
 
 func (a *SdkAuthenticator) HandleOidcAuthLogin() (credential infisicalSdk.MachineIdentityCredential, e error) {
 
-	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{INFISICAL_MACHINE_IDENTITY_ID_NAME})
+	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{KMS_MACHINE_IDENTITY_ID_NAME})
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, err
 	}
 
-	jwt, err := GetCmdFlagOrEnv(a.cmd, "jwt", []string{INFISICAL_JWT_NAME, INFISICAL_OIDC_AUTH_JWT_NAME})
+	jwt, err := GetCmdFlagOrEnv(a.cmd, "jwt", []string{KMS_JWT_NAME, KMS_OIDC_AUTH_JWT_NAME})
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, err
 	}
@@ -253,17 +253,17 @@ func (a *SdkAuthenticator) HandleOidcAuthLogin() (credential infisicalSdk.Machin
 }
 
 func (a *SdkAuthenticator) HandleLdapAuthLogin() (credential infisicalSdk.MachineIdentityCredential, e error) {
-	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{INFISICAL_MACHINE_IDENTITY_ID_NAME})
+	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{KMS_MACHINE_IDENTITY_ID_NAME})
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, err
 	}
 
-	ldapUsername, err := GetCmdFlagOrEnv(a.cmd, "ldap-username", []string{INFISICAL_LDAP_USERNAME})
+	ldapUsername, err := GetCmdFlagOrEnv(a.cmd, "ldap-username", []string{KMS_LDAP_USERNAME})
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, err
 	}
 
-	ldapPassword, err := GetCmdFlagOrEnv(a.cmd, "ldap-password", []string{INFISICAL_LDAP_PASSWORD})
+	ldapPassword, err := GetCmdFlagOrEnv(a.cmd, "ldap-password", []string{KMS_LDAP_PASSWORD})
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, err
 	}

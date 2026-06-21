@@ -291,7 +291,7 @@ func (g *Gateway) registerHeartBeat(ctx context.Context, errCh chan error) {
 			if err := api.CallGatewayHeartBeatV1(g.httpClient); err != nil {
 				errCh <- err
 			} else {
-				log.Info().Msg("Gateway is reachable by Infisical")
+				log.Info().Msg("Gateway is reachable by Hanzo KMS")
 			}
 
 			select {

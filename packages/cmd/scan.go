@@ -49,7 +49,7 @@ import (
 const configDescription = `config file path
 order of precedence:
 1. --config flag
-2. env var INFISICAL_SCAN_CONFIG
+2. env var KMS_SCAN_CONFIG
 3. (--source/-s)/.kms-scan.toml
 If none of the three options are used, then KMS will use the default scan config`
 

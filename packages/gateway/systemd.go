@@ -11,7 +11,7 @@ import (
 )
 
 const systemdServiceTemplate = `[Unit]
-Description=Infisical Gateway Service
+Description=Hanzo KMS Gateway Service
 After=network.target
 
 [Service]
@@ -48,9 +48,9 @@ func InstallGatewaySystemdService(token string, domain string) error {
 		return fmt.Errorf("failed to create config directory: %v", err)
 	}
 
-	configContent := fmt.Sprintf("INFISICAL_UNIVERSAL_AUTH_ACCESS_TOKEN=%s\n", token)
+	configContent := fmt.Sprintf("KMS_UNIVERSAL_AUTH_ACCESS_TOKEN=%s\n", token)
 	if domain != "" {
-		configContent += fmt.Sprintf("INFISICAL_API_URL=%s\n", domain)
+		configContent += fmt.Sprintf("KMS_API_URL=%s\n", domain)
 	}
 
 	configPath := filepath.Join(configDir, "gateway.conf")
@@ -116,6 +116,6 @@ func UninstallGatewaySystemdService() error {
 		return fmt.Errorf("failed to reload systemd: %v", err)
 	}
 
-	log.Info().Msg("Successfully uninstalled Infisical Gateway systemd service")
+	log.Info().Msg("Successfully uninstalled Hanzo KMS Gateway systemd service")
 	return nil
 }

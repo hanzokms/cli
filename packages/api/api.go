@@ -65,7 +65,7 @@ const (
 var ErrNotFound = errors.New("resource not found")
 
 func CallGetEncryptedWorkspaceKey(httpClient *resty.Client, request GetEncryptedWorkspaceKeyRequest) (GetEncryptedWorkspaceKeyResponse, error) {
-	endpoint := fmt.Sprintf("%v/v2/workspace/%v/encrypted-key", config.INFISICAL_URL, request.WorkspaceId)
+	endpoint := fmt.Sprintf("%v/v2/workspace/%v/encrypted-key", config.KMS_URL, request.WorkspaceId)
 	var result GetEncryptedWorkspaceKeyResponse
 	response, err := httpClient.
 		R().
@@ -90,7 +90,7 @@ func CallGetServiceTokenDetailsV2(httpClient *resty.Client) (GetServiceTokenDeta
 		R().
 		SetResult(&tokenDetailsResponse).
 		SetHeader("User-Agent", USER_AGENT).
-		Get(fmt.Sprintf("%v/v2/service-token", config.INFISICAL_URL))
+		Get(fmt.Sprintf("%v/v2/service-token", config.KMS_URL))
 
 	if err != nil {
 		return GetServiceTokenDetailsResponse{}, NewGenericRequestError(operationCallGetServiceTokenDetails, err)
@@ -110,7 +110,7 @@ func CallLogin1V2(httpClient *resty.Client, request GetLoginOneV2Request) (GetLo
 		SetResult(&loginOneV2Response).
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Post(fmt.Sprintf("%v/v3/auth/login1", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v3/auth/login1", config.KMS_URL))
 
 	if err != nil {
 		return GetLoginOneV2Response{}, NewGenericRequestError(operationCallLogin1V3, err)
@@ -130,7 +130,7 @@ func CallLoginV3(httpClient *resty.Client, request GetLoginV3Request) (GetLoginV
 		SetResult(&loginV3Response).
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Post(fmt.Sprintf("%v/v3/auth/login", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v3/auth/login", config.KMS_URL))
 
 	if err != nil {
 		return GetLoginV3Response{}, NewGenericRequestError(operationCallLoginV3, err)
@@ -152,7 +152,7 @@ func CallVerifyMfaToken(httpClient *resty.Client, request VerifyMfaTokenRequest)
 		SetHeader("User-Agent", USER_AGENT).
 		SetError(&responseError).
 		SetBody(request).
-		Post(fmt.Sprintf("%v/v2/auth/mfa/verify", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v2/auth/mfa/verify", config.KMS_URL))
 
 	cookies := response.Cookies()
 	// Find a cookie by name
@@ -188,7 +188,7 @@ func CallLogin2V2(httpClient *resty.Client, request GetLoginTwoV2Request) (GetLo
 		SetResult(&loginTwoV2Response).
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Post(fmt.Sprintf("%v/v3/auth/login2", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v3/auth/login2", config.KMS_URL))
 
 	cookies := response.Cookies()
 	// Find a cookie by name
@@ -223,7 +223,7 @@ func CallGetAllOrganizations(httpClient *resty.Client) (GetOrganizationsResponse
 		R().
 		SetResult(&orgResponse).
 		SetHeader("User-Agent", USER_AGENT).
-		Get(fmt.Sprintf("%v/v1/organization", config.INFISICAL_URL))
+		Get(fmt.Sprintf("%v/v1/organization", config.KMS_URL))
 
 	if err != nil {
 		return GetOrganizationsResponse{}, NewGenericRequestError(operationCallGetAllOrganizations, err)
@@ -244,7 +244,7 @@ func CallSelectOrganization(httpClient *resty.Client, request SelectOrganization
 		SetBody(request).
 		SetResult(&selectOrgResponse).
 		SetHeader("User-Agent", USER_AGENT).
-		Post(fmt.Sprintf("%v/v3/auth/select-organization", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v3/auth/select-organization", config.KMS_URL))
 
 	if err != nil {
 		return SelectOrganizationResponse{}, NewGenericRequestError(operationCallSelectOrganization, err)
@@ -264,7 +264,7 @@ func CallGetAllWorkSpacesUserBelongsTo(httpClient *resty.Client) (GetWorkSpacesR
 		R().
 		SetResult(&workSpacesResponse).
 		SetHeader("User-Agent", USER_AGENT).
-		Get(fmt.Sprintf("%v/v1/workspace", config.INFISICAL_URL))
+		Get(fmt.Sprintf("%v/v1/workspace", config.KMS_URL))
 
 	if err != nil {
 		return GetWorkSpacesResponse{}, err
@@ -283,7 +283,7 @@ func CallGetProjectById(httpClient *resty.Client, id string) (Project, error) {
 		R().
 		SetResult(&projectResponse).
 		SetHeader("User-Agent", USER_AGENT).
-		Get(fmt.Sprintf("%v/v1/workspace/%s", config.INFISICAL_URL, id))
+		Get(fmt.Sprintf("%v/v1/workspace/%s", config.KMS_URL, id))
 
 	if err != nil {
 		return Project{}, NewGenericRequestError(operationCallGetProjectById, err)
@@ -302,7 +302,7 @@ func CallGetProjectBySlug(httpClient *resty.Client, slug string) (Project, error
 		R().
 		SetResult(&projectResponse).
 		SetHeader("User-Agent", USER_AGENT).
-		Get(fmt.Sprintf("%v/v1/projects/slug/%s", config.INFISICAL_URL, slug))
+		Get(fmt.Sprintf("%v/v1/projects/slug/%s", config.KMS_URL, slug))
 
 	if err != nil {
 		return Project{}, NewGenericRequestError("CallGetProjectBySlug", err)
@@ -322,7 +322,7 @@ func CallGetCertificateProfileBySlug(httpClient *resty.Client, projectId, slug s
 		SetResult(&profileResponse).
 		SetHeader("User-Agent", USER_AGENT).
 		SetQueryParam("projectId", projectId).
-		Get(fmt.Sprintf("%v/v1/cert-manager/certificate-profiles/slug/%s", config.INFISICAL_URL, slug))
+		Get(fmt.Sprintf("%v/v1/cert-manager/certificate-profiles/slug/%s", config.KMS_URL, slug))
 
 	if err != nil {
 		return CertificateProfile{}, NewGenericRequestError("CallGetCertificateProfileBySlug", err)
@@ -341,7 +341,7 @@ func CallIsAuthenticated(httpClient *resty.Client) bool {
 		R().
 		SetResult(&workSpacesResponse).
 		SetHeader("User-Agent", USER_AGENT).
-		Post(fmt.Sprintf("%v/v1/auth/checkAuth", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v1/auth/checkAuth", config.KMS_URL))
 
 	if err != nil {
 		return false
@@ -365,7 +365,7 @@ func CallGetNewAccessTokenWithRefreshToken(httpClient *resty.Client, refreshToke
 			Name:  "jid",
 			Value: refreshToken,
 		}).
-		Post(fmt.Sprintf("%v/v1/auth/token", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v1/auth/token", config.KMS_URL))
 
 	if err != nil {
 		return GetNewAccessTokenWithRefreshTokenResponse{}, NewGenericRequestError(operationCallGetNewAccessTokenWithRefreshToken, err)
@@ -388,7 +388,7 @@ func CallGetFoldersV1(httpClient *resty.Client, request GetFoldersV1Request) (Ge
 		SetQueryParam("workspaceId", request.WorkspaceId).
 		SetQueryParam("directory", request.FoldersPath)
 
-	response, err := httpRequest.Get(fmt.Sprintf("%v/v1/folders", config.INFISICAL_URL))
+	response, err := httpRequest.Get(fmt.Sprintf("%v/v1/folders", config.KMS_URL))
 
 	if err != nil {
 		return GetFoldersV1Response{}, NewGenericRequestError(operationCallGetFoldersV1, err)
@@ -409,7 +409,7 @@ func CallCreateFolderV1(httpClient *resty.Client, request CreateFolderV1Request)
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request)
 
-	response, err := httpRequest.Post(fmt.Sprintf("%v/v1/folders", config.INFISICAL_URL))
+	response, err := httpRequest.Post(fmt.Sprintf("%v/v1/folders", config.KMS_URL))
 	if err != nil {
 		return CreateFolderV1Response{}, NewGenericRequestError(operationCallCreateFolderV1, err)
 	}
@@ -430,7 +430,7 @@ func CallDeleteFolderV1(httpClient *resty.Client, request DeleteFolderV1Request)
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request)
 
-	response, err := httpRequest.Delete(fmt.Sprintf("%v/v1/folders/%v", config.INFISICAL_URL, request.FolderName))
+	response, err := httpRequest.Delete(fmt.Sprintf("%v/v1/folders/%v", config.KMS_URL, request.FolderName))
 	if err != nil {
 		return DeleteFolderV1Response{}, NewGenericRequestError(operationCallDeleteFolderV1, err)
 	}
@@ -450,7 +450,7 @@ func CallDeleteSecretsRawV3(httpClient *resty.Client, request DeleteSecretV3Requ
 		SetResult(&secretsResponse).
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Delete(fmt.Sprintf("%v/v3/secrets/raw/%s", config.INFISICAL_URL, request.SecretName))
+		Delete(fmt.Sprintf("%v/v3/secrets/raw/%s", config.KMS_URL, request.SecretName))
 
 	if err != nil {
 		return NewGenericRequestError(operationCallDeleteSecretsV3, err)
@@ -471,7 +471,7 @@ func CallCreateServiceToken(httpClient *resty.Client, request CreateServiceToken
 		SetResult(&createServiceTokenResponse).
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Post(fmt.Sprintf("%v/v2/service-token/", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v2/service-token/", config.KMS_URL))
 
 	if err != nil {
 		return CreateServiceTokenResponse{}, NewGenericRequestError(operationCallCreateServiceToken, err)
@@ -491,7 +491,7 @@ func CallUniversalAuthLogin(httpClient *resty.Client, request UniversalAuthLogin
 		SetResult(&universalAuthLoginResponse).
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Post(fmt.Sprintf("%v/v1/auth/universal-auth/login/", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v1/auth/universal-auth/login/", config.KMS_URL))
 
 	if err != nil {
 		return UniversalAuthLoginResponse{}, NewGenericRequestError(operationCallUniversalAuthLogin, err)
@@ -511,7 +511,7 @@ func CallMachineIdentityRefreshAccessToken(httpClient *resty.Client, request Uni
 		SetResult(&universalAuthRefreshResponse).
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Post(fmt.Sprintf("%v/v1/auth/token/renew", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v1/auth/token/renew", config.KMS_URL))
 
 	if err != nil {
 		return UniversalAuthRefreshResponse{}, NewGenericRequestError(operationCallMachineIdentityRefreshAccessToken, err)
@@ -550,7 +550,7 @@ func CallGetRawSecretsV3(httpClient *resty.Client, request GetRawSecretsV3Reques
 		req.SetQueryParam("expandSecretReferences", "true")
 	}
 
-	response, err := req.Get(fmt.Sprintf("%v/v3/secrets/raw", config.INFISICAL_URL))
+	response, err := req.Get(fmt.Sprintf("%v/v3/secrets/raw", config.KMS_URL))
 
 	if err != nil {
 		return GetRawSecretsV3Response{}, NewGenericRequestError(operationCallGetRawSecretsV3, err)
@@ -586,7 +586,7 @@ func CallFetchSingleSecretByName(httpClient *resty.Client, request GetRawSecretV
 		SetQueryParam("secretPath", request.SecretPath).
 		SetQueryParam("workspaceId", request.WorkspaceID).
 		SetQueryParam("type", "shared").
-		Get(fmt.Sprintf("%v/v3/secrets/raw/%s", config.INFISICAL_URL, request.SecretName))
+		Get(fmt.Sprintf("%v/v3/secrets/raw/%s", config.KMS_URL, request.SecretName))
 
 	if err != nil {
 		return GetRawSecretV3ByNameResponse{}, NewGenericRequestError(operationCallFetchSingleSecretByName, err)
@@ -608,7 +608,7 @@ func CallCreateDynamicSecretLeaseV1(httpClient *resty.Client, request CreateDyna
 		SetResult(&createDynamicSecretLeaseResponse).
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Post(fmt.Sprintf("%v/v1/dynamic-secrets/leases", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v1/dynamic-secrets/leases", config.KMS_URL))
 
 	if err != nil {
 		return CreateDynamicSecretLeaseV1Response{}, fmt.Errorf("CreateDynamicSecretLeaseV1: Unable to complete api request [err=%w]", err)
@@ -630,7 +630,7 @@ func CallGetDynamicSecretLeaseV1(httpClient *resty.Client, request GetDynamicSec
 		SetQueryParam("environmentSlug", request.Environment).
 		SetQueryParam("projectSlug", request.ProjectSlug).
 		SetQueryParam("secretPath", request.SecretPath).
-		Get(fmt.Sprintf("%v/v1/dynamic-secrets/leases/%s", config.INFISICAL_URL, request.LeaseID))
+		Get(fmt.Sprintf("%v/v1/dynamic-secrets/leases/%s", config.KMS_URL, request.LeaseID))
 
 	if err != nil {
 		return GetDynamicSecretLeaseV1Response{}, fmt.Errorf("CallGetDynamicSecretLeaseV1: Unable to complete api request [err=%w]", err)
@@ -651,7 +651,7 @@ func CallCreateRawSecretsV3(httpClient *resty.Client, request CreateRawSecretV3R
 		R().
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Post(fmt.Sprintf("%v/v3/secrets/raw/%s", config.INFISICAL_URL, request.SecretName))
+		Post(fmt.Sprintf("%v/v3/secrets/raw/%s", config.KMS_URL, request.SecretName))
 
 	if err != nil {
 		return NewGenericRequestError(operationCallCreateRawSecretsV3, err)
@@ -669,7 +669,7 @@ func CallUpdateRawSecretsV3(httpClient *resty.Client, request UpdateRawSecretByN
 		R().
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Patch(fmt.Sprintf("%v/v3/secrets/raw/%s", config.INFISICAL_URL, request.SecretName))
+		Patch(fmt.Sprintf("%v/v3/secrets/raw/%s", config.KMS_URL, request.SecretName))
 
 	if err != nil {
 		return NewGenericRequestError(operationCallUpdateRawSecretsV3, err)
@@ -688,7 +688,7 @@ func CallRegisterGatewayIdentityV1(httpClient *resty.Client) (*GetRelayCredentia
 		R().
 		SetResult(&resBody).
 		SetHeader("User-Agent", USER_AGENT).
-		Post(fmt.Sprintf("%v/v1/gateways/register-identity", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v1/gateways/register-identity", config.KMS_URL))
 
 	if err != nil {
 		return nil, NewGenericRequestError(operationCallRegisterGatewayIdentityV1, err)
@@ -708,7 +708,7 @@ func CallExchangeRelayCertV1(httpClient *resty.Client, request ExchangeRelayCert
 		SetResult(&resBody).
 		SetBody(request).
 		SetHeader("User-Agent", USER_AGENT).
-		Post(fmt.Sprintf("%v/v1/gateways/exchange-cert", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v1/gateways/exchange-cert", config.KMS_URL))
 
 	if err != nil {
 		return nil, NewGenericRequestError(operationCallExchangeRelayCertV1, err)
@@ -725,7 +725,7 @@ func CallGatewayHeartBeatV1(httpClient *resty.Client) error {
 	response, err := httpClient.
 		R().
 		SetHeader("User-Agent", USER_AGENT).
-		Post(fmt.Sprintf("%v/v1/gateways/heartbeat", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v1/gateways/heartbeat", config.KMS_URL))
 
 	if err != nil {
 		return NewGenericRequestError(operationCallGatewayHeartBeatV1, err)
@@ -742,7 +742,7 @@ func CallGatewayHeartBeatV2(httpClient *resty.Client) error {
 	response, err := httpClient.
 		R().
 		SetHeader("User-Agent", USER_AGENT).
-		Post(fmt.Sprintf("%v/v2/gateways/heartbeat", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v2/gateways/heartbeat", config.KMS_URL))
 
 	if err != nil {
 		return NewGenericRequestError(operationCallGatewayHeartBeatV2, err)
@@ -760,7 +760,7 @@ func CallOrgRelayHeartBeat(httpClient *resty.Client, request RelayHeartbeatReque
 		R().
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Post(fmt.Sprintf("%v/v1/relays/heartbeat-org-relay", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v1/relays/heartbeat-org-relay", config.KMS_URL))
 
 	if err != nil {
 		return NewGenericRequestError(operationCallOrgRelayHeartBeat, err)
@@ -778,7 +778,7 @@ func CallInstanceRelayHeartBeat(httpClient *resty.Client, request RelayHeartbeat
 		R().
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Post(fmt.Sprintf("%v/v1/relays/heartbeat-instance-relay", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v1/relays/heartbeat-instance-relay", config.KMS_URL))
 
 	if err != nil {
 		return NewGenericRequestError(operationCallInstanceRelayHeartBeat, err)
@@ -818,7 +818,7 @@ func CallRegisterInstanceRelay(httpClient *resty.Client, request RegisterRelayRe
 		SetResult(&resBody).
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Post(fmt.Sprintf("%v/v1/relays/register-instance-relay", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v1/relays/register-instance-relay", config.KMS_URL))
 
 	if err != nil {
 		return RegisterRelayResponse{}, NewGenericRequestError(operationCallRegisterInstanceRelay, err)
@@ -838,7 +838,7 @@ func CallRegisterRelay(httpClient *resty.Client, request RegisterRelayRequest) (
 		SetResult(&resBody).
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Post(fmt.Sprintf("%v/v1/relays/register-org-relay", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v1/relays/register-org-relay", config.KMS_URL))
 
 	if err != nil {
 		return RegisterRelayResponse{}, NewGenericRequestError(operationCallRegisterOrgRelay, err)
@@ -857,7 +857,7 @@ func CallGetRelays(httpClient *resty.Client) (GetRelaysResponse, error) {
 		R().
 		SetResult(&resBody).
 		SetHeader("User-Agent", USER_AGENT).
-		Get(fmt.Sprintf("%v/v1/relays", config.INFISICAL_URL))
+		Get(fmt.Sprintf("%v/v1/relays", config.KMS_URL))
 
 	if err != nil {
 		return GetRelaysResponse{}, NewGenericRequestError(operationCallGetOrgRelays, err)
@@ -877,7 +877,7 @@ func CallRegisterGateway(httpClient *resty.Client, request RegisterGatewayReques
 		SetResult(&resBody).
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Post(fmt.Sprintf("%v/v2/gateways", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v2/gateways", config.KMS_URL))
 
 	if err != nil {
 		return RegisterGatewayResponse{}, NewGenericRequestError(operationCallRegisterGateway, err)
@@ -897,7 +897,7 @@ func CallPAMAccess(httpClient *resty.Client, request PAMAccessRequest) (PAMAcces
 		SetResult(&pamAccessResponse).
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Post(fmt.Sprintf("%v/v1/pam/accounts/access", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v1/pam/accounts/access", config.KMS_URL))
 
 	if err != nil {
 		return PAMAccessResponse{}, NewGenericRequestError(operationCallPAMAccess, err)
@@ -917,7 +917,7 @@ func CallPAMAccessApprovalRequest(httpClient *resty.Client, request PAMAccessApp
 		SetResult(&pamAccessApprovalRequestResponse).
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Post(fmt.Sprintf("%v/v1/approval-policies/pam-access/requests", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v1/approval-policies/pam-access/requests", config.KMS_URL))
 
 	if err != nil {
 		return PAMAccessApprovalRequestResponse{}, NewGenericRequestError(operationCallPAMAccessApprovalRequest, err)
@@ -936,7 +936,7 @@ func CallPAMSessionCredentials(httpClient *resty.Client, sessionId string) (PAMS
 		R().
 		SetResult(&pamSessionCredentialsResponse).
 		SetHeader("User-Agent", USER_AGENT).
-		Get(fmt.Sprintf("%v/v1/pam/sessions/%s/credentials", config.INFISICAL_URL, sessionId))
+		Get(fmt.Sprintf("%v/v1/pam/sessions/%s/credentials", config.KMS_URL, sessionId))
 
 	if err != nil {
 		return PAMSessionCredentialsResponse{}, NewGenericRequestError(operationCallPAMSessionCredentials, err)
@@ -953,7 +953,7 @@ func CallGetPamSessionKey(httpClient *resty.Client) (string, error) {
 	response, err := httpClient.
 		R().
 		SetHeader("User-Agent", USER_AGENT).
-		Get(fmt.Sprintf("%v/v2/gateways/pam-session-key", config.INFISICAL_URL))
+		Get(fmt.Sprintf("%v/v2/gateways/pam-session-key", config.KMS_URL))
 
 	if err != nil {
 		return "", NewGenericRequestError(operationCallGetPamSessionKey, err)
@@ -971,7 +971,7 @@ func CallUploadPamSessionLogs(httpClient *resty.Client, sessionId string, reques
 		R().
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Post(fmt.Sprintf("%v/v1/pam/sessions/%s/logs", config.INFISICAL_URL, sessionId))
+		Post(fmt.Sprintf("%v/v1/pam/sessions/%s/logs", config.KMS_URL, sessionId))
 
 	if err != nil {
 		return NewGenericRequestError(operationCallUploadPamSessionLog, err)
@@ -988,7 +988,7 @@ func CallPAMSessionTermination(httpClient *resty.Client, sessionId string) error
 	response, err := httpClient.
 		R().
 		SetHeader("User-Agent", USER_AGENT).
-		Post(fmt.Sprintf("%v/v1/pam/sessions/%s/end", config.INFISICAL_URL, sessionId))
+		Post(fmt.Sprintf("%v/v1/pam/sessions/%s/end", config.KMS_URL, sessionId))
 
 	if err != nil {
 		return NewGenericRequestError(operationCallPAMSessionTermination, err)
@@ -1007,7 +1007,7 @@ func CallGetMFASessionStatus(httpClient *resty.Client, mfaSessionId string) (MFA
 		R().
 		SetResult(&mfaSessionStatusResponse).
 		SetHeader("User-Agent", USER_AGENT).
-		Get(fmt.Sprintf("%v/v2/mfa-sessions/%s/status", config.INFISICAL_URL, mfaSessionId))
+		Get(fmt.Sprintf("%v/v2/mfa-sessions/%s/status", config.KMS_URL, mfaSessionId))
 
 	if err != nil {
 		return MFASessionStatusResponse{}, NewGenericRequestError(operationCallGetMFASessionStatus, err)
@@ -1027,7 +1027,7 @@ func CallIssueCertificate(httpClient *resty.Client, request IssueCertificateRequ
 		SetResult(&resBody).
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Post(fmt.Sprintf("%v/v1/cert-manager/certificates", config.INFISICAL_URL))
+		Post(fmt.Sprintf("%v/v1/cert-manager/certificates", config.KMS_URL))
 
 	if err != nil {
 		return nil, NewGenericRequestError(operationCallIssueCertificate, err)
@@ -1046,7 +1046,7 @@ func CallRetrieveCertificate(httpClient *resty.Client, certificateId string) (*R
 		R().
 		SetResult(&resBody).
 		SetHeader("User-Agent", USER_AGENT).
-		Get(fmt.Sprintf("%v/v1/cert-manager/certificates/%s", config.INFISICAL_URL, certificateId))
+		Get(fmt.Sprintf("%v/v1/cert-manager/certificates/%s", config.KMS_URL, certificateId))
 
 	if err != nil {
 		return nil, NewGenericRequestError(operationCallRetrieveCertificate, err)
@@ -1066,7 +1066,7 @@ func CallRenewCertificate(httpClient *resty.Client, certificateId string, reques
 		SetResult(&resBody).
 		SetHeader("User-Agent", USER_AGENT).
 		SetBody(request).
-		Post(fmt.Sprintf("%v/v1/cert-manager/certificates/%s/renew", config.INFISICAL_URL, certificateId))
+		Post(fmt.Sprintf("%v/v1/cert-manager/certificates/%s/renew", config.KMS_URL, certificateId))
 
 	if err != nil {
 		return nil, NewGenericRequestError(operationCallRenewCertificate, err)
@@ -1085,7 +1085,7 @@ func CallGetCertificateRequest(httpClient *resty.Client, certificateRequestId st
 		R().
 		SetResult(&resBody).
 		SetHeader("User-Agent", USER_AGENT).
-		Get(fmt.Sprintf("%v/v1/cert-manager/certificates/certificate-requests/%s", config.INFISICAL_URL, certificateRequestId))
+		Get(fmt.Sprintf("%v/v1/cert-manager/certificates/certificate-requests/%s", config.KMS_URL, certificateRequestId))
 
 	if err != nil {
 		return nil, NewGenericRequestError(operationCallGetCertificateRequest, err)

@@ -65,7 +65,7 @@ var initCmd = &cobra.Command{
 		organizationNames := util.GetOrganizationsNameList(organizationResponse)
 
 		prompt := promptui.Select{
-			Label: "Which Infisical organization would you like to select a project from?",
+			Label: "Which Hanzo KMS organization would you like to select a project from?",
 			Items: organizationNames,
 			Size:  7,
 		}
@@ -174,7 +174,7 @@ func writeWorkspaceFile(selectedWorkspace models.Workspace) error {
 		return err
 	}
 
-	err = util.WriteToFile(util.INFISICAL_WORKSPACE_CONFIG_FILE_NAME, marshalledWorkspaceFile, 0600)
+	err = util.WriteToFile(util.KMS_WORKSPACE_CONFIG_FILE_NAME, marshalledWorkspaceFile, 0600)
 	if err != nil {
 		return err
 	}

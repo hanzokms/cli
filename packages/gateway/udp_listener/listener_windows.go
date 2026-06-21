@@ -12,7 +12,7 @@ import (
 func SetupListenerConfig() *net.ListenConfig {
 	return &net.ListenConfig{
 		Control: func(network, address string, conn syscall.RawConn) error {
-			return fmt.Errorf("Infisical relay not supported for windows.")
+			return fmt.Errorf("Hanzo KMS relay not supported for windows.")
 		},
 	}
 }

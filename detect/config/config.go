@@ -36,7 +36,7 @@ import (
 )
 
 const DefaultScanConfigFileName = ".infisical-scan.toml"
-const DefaultScanConfigEnvName = "INFISICAL_SCAN_CONFIG"
+const DefaultScanConfigEnvName = "KMS_SCAN_CONFIG"
 const DefaultKmsIgnoreFileName = ".kmsignore"
 
 var (

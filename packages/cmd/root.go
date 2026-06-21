@@ -76,7 +76,7 @@ func init() {
 	cobra.OnInitialize(initLog)
 	RootCmd.PersistentFlags().StringP("log-level", "l", "", "log level (trace, debug, info, warn, error, fatal)")
 	RootCmd.PersistentFlags().Bool("telemetry", true, "Hanzo KMS collects non-sensitive telemetry data to enhance features and improve user experience. Participation is voluntary")
-	RootCmd.PersistentFlags().StringVar(&config.INFISICAL_URL, "domain", fmt.Sprintf("%s/api", util.INFISICAL_DEFAULT_US_URL), "Point the CLI to your Hanzo KMS instance (e.g., https://eu.kms.hanzo.ai for EU, or https://your-instance.com for self-hosted). Can also set via INFISICAL_API_URL environment variable.")
+	RootCmd.PersistentFlags().StringVar(&config.KMS_URL, "domain", fmt.Sprintf("%s/api", util.KMS_DEFAULT_US_URL), "Point the CLI to your Hanzo KMS instance (e.g., https://eu.kms.hanzo.ai for EU, or https://your-instance.com for self-hosted). Can also set via KMS_API_URL environment variable.")
 	RootCmd.PersistentFlags().Bool("silent", false, "Disable output of tip/info messages. Useful when running in scripts or CI/CD pipelines.")
 	RootCmd.PersistentPreRun = func(cmd *cobra.Command, args []string) {
 		silent, err := cmd.Flags().GetBool("silent")
@@ -84,7 +84,7 @@ func init() {
 			util.HandleError(err)
 		}
 
-		config.INFISICAL_URL = util.AppendAPIEndpoint(config.INFISICAL_URL)
+		config.KMS_URL = util.AppendAPIEndpoint(config.KMS_URL)
 
 		// util.DisplayAptInstallationChangeBannerWithWriter(silent, cmd.ErrOrStderr())
 		if !util.IsRunningInDocker() && !silent {
@@ -103,11 +103,11 @@ func init() {
 
 	}
 
-	// if config.INFISICAL_URL is set to the default value, check if INFISICAL_URL is set in the environment
+	// if config.KMS_URL is set to the default value, check if KMS_URL is set in the environment
 	// this is used to allow overrides of the default value
 	if !RootCmd.Flag("domain").Changed {
-		if envInfisicalBackendUrl, ok := os.LookupEnv("INFISICAL_API_URL"); ok {
-			config.INFISICAL_URL = util.AppendAPIEndpoint(envInfisicalBackendUrl)
+		if envInfisicalBackendUrl, ok := os.LookupEnv("KMS_API_URL"); ok {
+			config.KMS_URL = util.AppendAPIEndpoint(envInfisicalBackendUrl)
 		}
 	}
 

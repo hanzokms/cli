@@ -41,13 +41,13 @@ func WriteToFile(fileName string, dataToWrite []byte, filePerm os.FileMode) erro
 }
 
 func ValidateInfisicalAPIConnection() (ok bool) {
-	_, err := http.Get(fmt.Sprintf("%v/status", config.INFISICAL_URL))
+	_, err := http.Get(fmt.Sprintf("%v/status", config.KMS_URL))
 	return err == nil
 }
 
 func GetRestyClientWithCustomHeaders() (*resty.Client, error) {
 	httpClient := resty.New()
-	customHeaders := os.Getenv("INFISICAL_CUSTOM_HEADERS")
+	customHeaders := os.Getenv("KMS_CUSTOM_HEADERS")
 	if customHeaders != "" {
 		headers, err := GetInfisicalCustomHeadersMap()
 		if err != nil {
@@ -60,7 +60,7 @@ func GetRestyClientWithCustomHeaders() (*resty.Client, error) {
 }
 
 func GetInfisicalCustomHeadersMap() (map[string]string, error) {
-	customHeaders := os.Getenv("INFISICAL_CUSTOM_HEADERS")
+	customHeaders := os.Getenv("KMS_CUSTOM_HEADERS")
 	if customHeaders == "" {
 		return nil, nil
 	}

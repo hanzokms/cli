@@ -13,8 +13,8 @@ import (
 )
 
 // InstallRelaySystemdService installs the systemd unit and writes configuration for the relay.
-// token is used for org-type relays (written as INFISICAL_TOKEN). For instance-type relays,
-// relayAuthSecret is written as INFISICAL_RELAY_AUTH_SECRET.
+// token is used for org-type relays (written as KMS_TOKEN). For instance-type relays,
+// relayAuthSecret is written as KMS_RELAY_AUTH_SECRET.
 func InstallRelaySystemdService(token string, domain string, name string, host string, instanceType string, relayAuthSecret string, serviceLogFile string) error {
 	if runtime.GOOS != "linux" {
 		log.Info().Msg("Skipping systemd service installation - not on Linux")
@@ -40,7 +40,7 @@ func InstallRelaySystemdService(token string, domain string, name string, host s
 
 	// API URL for self-hosted
 	if domain != "" {
-		configContent += fmt.Sprintf("INFISICAL_API_URL=%s\n", domain)
+		configContent += fmt.Sprintf("KMS_API_URL=%s\n", domain)
 	}
 
 	// Auth settings
@@ -50,7 +50,7 @@ func InstallRelaySystemdService(token string, domain string, name string, host s
 		}
 	} else {
 		if token != "" {
-			configContent += fmt.Sprintf("INFISICAL_TOKEN=%s\n", token)
+			configContent += fmt.Sprintf("KMS_TOKEN=%s\n", token)
 		}
 	}
 

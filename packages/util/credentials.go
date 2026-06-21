@@ -75,11 +75,11 @@ func GetCurrentLoggedInUserDetails(setConfigVariables bool) (LoggedInUserDetails
 		}
 
 		if setConfigVariables {
-			config.INFISICAL_URL_MANUAL_OVERRIDE = config.INFISICAL_URL
+			config.KMS_URL_MANUAL_OVERRIDE = config.KMS_URL
 			//configFile.LoggedInUserDomain
 			//if not empty set as infisical url
 			if configFile.LoggedInUserDomain != "" {
-				config.INFISICAL_URL = AppendAPIEndpoint(configFile.LoggedInUserDomain)
+				config.KMS_URL = AppendAPIEndpoint(configFile.LoggedInUserDomain)
 			}
 		}
 

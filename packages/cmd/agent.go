@@ -45,7 +45,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const DEFAULT_INFISICAL_CLOUD_URL = "https://kms.hanzo.ai"
+const DEFAULT_KMS_CLOUD_URL = "https://kms.hanzo.ai"
 
 const CACHE_TYPE_KUBERNETES = "kubernetes"
 
@@ -842,7 +842,7 @@ func parseAgentConfigWithMode(configFile []byte, isCertManagerMode bool) (*Confi
 
 	// Set defaults
 	if rawConfig.Infisical.Address == "" {
-		rawConfig.Infisical.Address = DEFAULT_INFISICAL_CLOUD_URL
+		rawConfig.Infisical.Address = DEFAULT_KMS_CLOUD_URL
 	}
 
 	if rawConfig.Cache.Persistent != nil && rawConfig.Cache.Persistent.Type == CACHE_TYPE_KUBERNETES {
@@ -851,7 +851,7 @@ func parseAgentConfigWithMode(configFile []byte, isCertManagerMode bool) (*Confi
 		}
 	}
 
-	config.INFISICAL_URL = util.AppendAPIEndpoint(rawConfig.Infisical.Address)
+	config.KMS_URL = util.AppendAPIEndpoint(rawConfig.Infisical.Address)
 
 	log.Info().Msgf("Hanzo KMS instance address set to %s", rawConfig.Infisical.Address)
 
@@ -948,7 +948,7 @@ func dynamicSecretTemplateFunction(accessToken string, dynamicSecretManager *Dyn
 		}
 
 		temporaryInfisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
-			SiteUrl:             config.INFISICAL_URL,
+			SiteUrl:             config.KMS_URL,
 			UserAgent:           api.USER_AGENT,
 			AutoTokenRefresh:    false,
 			RetryRequestsConfig: agentManager.SdkRetryConfig(),
@@ -1150,7 +1150,7 @@ func NewAgentManager(options NewAgentMangerOptions) *AgentManager {
 	ctx, cancelContext := context.WithCancel(context.Background())
 
 	agentManager.infisicalClient = infisicalSdk.NewInfisicalClient(ctx, infisicalSdk.Config{
-		SiteUrl:             config.INFISICAL_URL,
+		SiteUrl:             config.KMS_URL,
 		UserAgent:           api.USER_AGENT, // ? Should we perhaps use a different user agent for the Agent for better analytics?
 		AutoTokenRefresh:    true,
 		CustomHeaders:       customHeaders,
@@ -1191,12 +1191,12 @@ func (tm *AgentManager) FetchUniversalAuthAccessToken() (credential infisicalSdk
 		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
 	}
 
-	clientID, err := util.GetEnvVarOrFileContent(util.INFISICAL_UNIVERSAL_AUTH_CLIENT_ID_NAME, universalAuthConfig.ClientIDPath)
+	clientID, err := util.GetEnvVarOrFileContent(util.KMS_UNIVERSAL_AUTH_CLIENT_ID_NAME, universalAuthConfig.ClientIDPath)
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get client id: %v", err)
 	}
 
-	clientSecret, err := util.GetEnvVarOrFileContent("INFISICAL_UNIVERSAL_CLIENT_SECRET", universalAuthConfig.ClientSecretPath)
+	clientSecret, err := util.GetEnvVarOrFileContent("KMS_UNIVERSAL_CLIENT_SECRET", universalAuthConfig.ClientSecretPath)
 	if err != nil {
 		if len(tm.cachedUniversalAuthClientSecret) == 0 {
 			return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get client secret: %v", err)
@@ -1226,12 +1226,12 @@ func (tm *AgentManager) FetchKubernetesAuthAccessToken() (credential infisicalSd
 		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
 	}
 
-	identityId, err := util.GetEnvVarOrFileContent(util.INFISICAL_MACHINE_IDENTITY_ID_NAME, kubernetesAuthConfig.IdentityID)
+	identityId, err := util.GetEnvVarOrFileContent(util.KMS_MACHINE_IDENTITY_ID_NAME, kubernetesAuthConfig.IdentityID)
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get identity id: %v", err)
 	}
 
-	serviceAccountTokenPath := os.Getenv(util.INFISICAL_KUBERNETES_SERVICE_ACCOUNT_TOKEN_NAME)
+	serviceAccountTokenPath := os.Getenv(util.KMS_KUBERNETES_SERVICE_ACCOUNT_TOKEN_NAME)
 	if serviceAccountTokenPath == "" {
 		serviceAccountTokenPath = kubernetesAuthConfig.ServiceAccountToken
 		if serviceAccountTokenPath == "" {
@@ -1250,7 +1250,7 @@ func (tm *AgentManager) FetchAzureAuthAccessToken() (credential infisicalSdk.Mac
 		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
 	}
 
-	identityId, err := util.GetEnvVarOrFileContent(util.INFISICAL_MACHINE_IDENTITY_ID_NAME, azureAuthConfig.IdentityID)
+	identityId, err := util.GetEnvVarOrFileContent(util.KMS_MACHINE_IDENTITY_ID_NAME, azureAuthConfig.IdentityID)
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get identity id: %v", err)
 	}
@@ -1266,7 +1266,7 @@ func (tm *AgentManager) FetchGcpIdTokenAuthAccessToken() (credential infisicalSd
 		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
 	}
 
-	identityId, err := util.GetEnvVarOrFileContent(util.INFISICAL_MACHINE_IDENTITY_ID_NAME, gcpIdTokenAuthConfig.IdentityID)
+	identityId, err := util.GetEnvVarOrFileContent(util.KMS_MACHINE_IDENTITY_ID_NAME, gcpIdTokenAuthConfig.IdentityID)
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get identity id: %v", err)
 	}
@@ -1282,12 +1282,12 @@ func (tm *AgentManager) FetchGcpIamAuthAccessToken() (credential infisicalSdk.Ma
 		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
 	}
 
-	identityId, err := util.GetEnvVarOrFileContent(util.INFISICAL_MACHINE_IDENTITY_ID_NAME, gcpIamAuthConfig.IdentityID)
+	identityId, err := util.GetEnvVarOrFileContent(util.KMS_MACHINE_IDENTITY_ID_NAME, gcpIamAuthConfig.IdentityID)
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get identity id: %v", err)
 	}
 
-	serviceAccountKeyPath := os.Getenv(util.INFISICAL_GCP_IAM_SERVICE_ACCOUNT_KEY_FILE_PATH_NAME)
+	serviceAccountKeyPath := os.Getenv(util.KMS_GCP_IAM_SERVICE_ACCOUNT_KEY_FILE_PATH_NAME)
 	if serviceAccountKeyPath == "" {
 		// we don't need to read this file, because the service account key path is directly read inside the sdk
 		serviceAccountKeyPath = gcpIamAuthConfig.ServiceAccountKey
@@ -1307,7 +1307,7 @@ func (tm *AgentManager) FetchAwsIamAuthAccessToken() (credential infisicalSdk.Ma
 		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
 	}
 
-	identityId, err := util.GetEnvVarOrFileContent(util.INFISICAL_MACHINE_IDENTITY_ID_NAME, awsIamAuthConfig.IdentityID)
+	identityId, err := util.GetEnvVarOrFileContent(util.KMS_MACHINE_IDENTITY_ID_NAME, awsIamAuthConfig.IdentityID)
 
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get identity id: %v", err)
@@ -1323,17 +1323,17 @@ func (tm *AgentManager) FetchLdapAuthAccessToken() (credential infisicalSdk.Mach
 		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
 	}
 
-	identityId, err := util.GetEnvVarOrFileContent(util.INFISICAL_MACHINE_IDENTITY_ID_NAME, ldapAuthConfig.IdentityID)
+	identityId, err := util.GetEnvVarOrFileContent(util.KMS_MACHINE_IDENTITY_ID_NAME, ldapAuthConfig.IdentityID)
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get identity id: %v", err)
 	}
 
-	username, err := util.GetEnvVarOrFileContent(util.INFISICAL_LDAP_USERNAME, ldapAuthConfig.LdapUsername)
+	username, err := util.GetEnvVarOrFileContent(util.KMS_LDAP_USERNAME, ldapAuthConfig.LdapUsername)
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get ldap username: %v", err)
 	}
 
-	password, err := util.GetEnvVarOrFileContent(util.INFISICAL_LDAP_PASSWORD, ldapAuthConfig.LdapPassword)
+	password, err := util.GetEnvVarOrFileContent(util.KMS_LDAP_PASSWORD, ldapAuthConfig.LdapPassword)
 	if err != nil {
 		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get ldap password: %v", err)
 	}
@@ -1406,13 +1406,13 @@ func (tm *AgentManager) SdkRetryConfig() *infisicalSdk.RetryRequestsConfig {
 		maxRetries = tm.retryConfig.MaxRetries
 	}
 
-	if envVarBaseDelay := os.Getenv(util.INFISICAL_RETRY_BASE_DELAY_NAME); envVarBaseDelay != "" {
+	if envVarBaseDelay := os.Getenv(util.KMS_RETRY_BASE_DELAY_NAME); envVarBaseDelay != "" {
 		baseDelay = envVarBaseDelay
 	}
-	if envVarMaxDelay := os.Getenv(util.INFISICAL_RETRY_MAX_DELAY_NAME); envVarMaxDelay != "" {
+	if envVarMaxDelay := os.Getenv(util.KMS_RETRY_MAX_DELAY_NAME); envVarMaxDelay != "" {
 		maxDelay = envVarMaxDelay
 	}
-	if envVarMaxRetries := os.Getenv(util.INFISICAL_RETRY_MAX_RETRIES_NAME); envVarMaxRetries != "" {
+	if envVarMaxRetries := os.Getenv(util.KMS_RETRY_MAX_RETRIES_NAME); envVarMaxRetries != "" {
 		maxRetriesInt, err := strconv.Atoi(envVarMaxRetries)
 		if err != nil {
 			log.Error().Msgf("unable to parse retry config max retries because %v", err)
@@ -1455,7 +1455,7 @@ func revokeDynamicSecretLease(accessToken, projectSlug, environment, secretPath,
 	}
 
 	temporaryInfisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
-		SiteUrl:             config.INFISICAL_URL,
+		SiteUrl:             config.KMS_URL,
 		UserAgent:           api.USER_AGENT,
 		AutoTokenRefresh:    false,
 		CustomHeaders:       customHeaders,
@@ -1578,7 +1578,7 @@ func (tm *AgentManager) RevokeCredentials() error {
 				log.Info().Msgf("revoking token from file '%s'", sink.Config.Path)
 
 				temporaryInfisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
-					SiteUrl:          config.INFISICAL_URL,
+					SiteUrl:          config.KMS_URL,
 					UserAgent:        api.USER_AGENT,
 					AutoTokenRefresh: false,
 					CustomHeaders:    customHeaders,
@@ -1608,7 +1608,7 @@ func (tm *AgentManager) RevokeCredentials() error {
 	// check to see if the active token was already deleted, if not, delete it
 	if !slices.Contains(deletedTokens, token) {
 		temporaryInfisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
-			SiteUrl:          config.INFISICAL_URL,
+			SiteUrl:          config.KMS_URL,
 			UserAgent:        api.USER_AGENT,
 			AutoTokenRefresh: false,
 			CustomHeaders:    customHeaders,
@@ -2991,7 +2991,7 @@ var agentCmd = &cobra.Command{
 
 		var agentConfigInBytes []byte
 
-		agentConfigInBase64 := os.Getenv("INFISICAL_AGENT_CONFIG_BASE64")
+		agentConfigInBase64 := os.Getenv("KMS_AGENT_CONFIG_BASE64")
 
 		if agentConfigInBase64 == "" {
 			data, err := ioutil.ReadFile(configPath)
@@ -3263,7 +3263,7 @@ var certManagerAgentCmd = &cobra.Command{
 
 		var agentConfigInBytes []byte
 
-		agentConfigInBase64 := os.Getenv("INFISICAL_AGENT_CONFIG_BASE64")
+		agentConfigInBase64 := os.Getenv("KMS_AGENT_CONFIG_BASE64")
 
 		if agentConfigInBase64 == "" {
 			data, err := ioutil.ReadFile(configPath)

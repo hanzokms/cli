@@ -12,7 +12,7 @@ func GetOrganizationsNameList(organizationResponse api.GetOrganizationsResponse)
 	organizations := organizationResponse.Organizations
 
 	if len(organizations) == 0 {
-		message := fmt.Sprintf("You don't have any organization created in Infisical. You must first create a organization at %s", config.INFISICAL_URL)
+		message := fmt.Sprintf("You don't have any organization created in Hanzo KMS. You must first create a organization at %s", config.KMS_URL)
 		PrintErrorMessageAndExit(message)
 	}
 
@@ -38,7 +38,7 @@ func GetWorkspacesInOrganization(workspaceResponse api.GetWorkSpacesResponse, or
 	}
 
 	if len(filteredWorkspaces) == 0 {
-		message := fmt.Sprintf("You don't have any projects created in Infisical organization. You must first create a project at %s", config.INFISICAL_URL)
+		message := fmt.Sprintf("You don't have any projects created in Hanzo KMS organization. You must first create a project at %s", config.KMS_URL)
 		PrintErrorMessageAndExit(message)
 	}
 

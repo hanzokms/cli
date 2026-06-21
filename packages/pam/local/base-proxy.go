@@ -178,7 +178,7 @@ func (b *BaseProxyServer) ValidateResourceTypeSupported() error {
 		return nil
 	}
 
-	return fmt.Errorf(`The connected Infisical Gateway '%s' does not support '%s' PAM accounts.
+	return fmt.Errorf(`The connected Hanzo KMS Gateway '%s' does not support '%s' PAM accounts.
 
 Please contact your Gateway administrator and request that they:
 1. Update the Gateway deployment to the latest version.
@@ -294,7 +294,7 @@ func CallPAMAccessWithMFA(httpClient *resty.Client, pamRequest api.PAMAccessRequ
 
 					if mfaSessionId != "" {
 						// Handle MFA flow
-						err := util.HandleMFASession(httpClient, mfaSessionId, mfaMethod, config.INFISICAL_URL)
+						err := util.HandleMFASession(httpClient, mfaSessionId, mfaMethod, config.KMS_URL)
 						if err != nil {
 							return api.PAMAccessResponse{}, fmt.Errorf("MFA verification failed: %w", err)
 						}
@@ -359,7 +359,7 @@ func HandleApprovalWorkflow(httpClient *resty.Client, err error, projectID strin
 	}
 
 	url := fmt.Sprintf("%s/organizations/%s/projects/pam/%s/approval-requests/%s",
-		strings.TrimSuffix(config.INFISICAL_URL, "/api"),
+		strings.TrimSuffix(config.KMS_URL, "/api"),
 		approvalReq.Request.OrgId,
 		approvalReq.Request.ProjectId,
 		approvalReq.Request.ID)

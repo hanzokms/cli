@@ -334,7 +334,7 @@ func issueCredentials(cmd *cobra.Command, args []string) {
 	}
 
 	infisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
-		SiteUrl:          config.INFISICAL_URL,
+		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
 		CustomHeaders:    customHeaders,
@@ -579,7 +579,7 @@ func signKey(cmd *cobra.Command, args []string) {
 	}
 
 	infisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
-		SiteUrl:          config.INFISICAL_URL,
+		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
 		CustomHeaders:    customHeaders,
@@ -690,7 +690,7 @@ func sshConnect(cmd *cobra.Command, args []string) {
 	}
 
 	infisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
-		SiteUrl:          config.INFISICAL_URL,
+		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
 		CustomHeaders:    customHeaders,
@@ -1004,7 +1004,7 @@ func sshAddHost(cmd *cobra.Command, args []string) {
 	}
 
 	client := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
-		SiteUrl:          config.INFISICAL_URL,
+		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
 		CustomHeaders:    customHeaders,

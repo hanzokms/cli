@@ -28,7 +28,7 @@ func getInfisicalSdkInstance(cmd *cobra.Command) (infisicalSdk.InfisicalClientIn
 
 	ctx, cancel := context.WithCancel(cmd.Context())
 	infisicalClient := infisicalSdk.NewInfisicalClient(ctx, infisicalSdk.Config{
-		SiteUrl:   config.INFISICAL_URL,
+		SiteUrl:   config.KMS_URL,
 		UserAgent: api.USER_AGENT,
 	})
 
@@ -45,7 +45,7 @@ func getInfisicalSdkInstance(cmd *cobra.Command) (infisicalSdk.InfisicalClientIn
 	}
 
 	// if the --token param is not set, we use the auth-method flag to determine the authentication method, and perform the appropriate login flow based on that
-	authMethod, err := util.GetCmdFlagOrEnv(cmd, "auth-method", []string{util.INFISICAL_AUTH_METHOD_NAME})
+	authMethod, err := util.GetCmdFlagOrEnv(cmd, "auth-method", []string{util.KMS_AUTH_METHOD_NAME})
 
 	if err != nil {
 		cancel()
@@ -215,7 +215,7 @@ var gatewayStartCmd = &cobra.Command{
 			util.HandleError(err, fmt.Sprintf("unable to get name flag or %s env", gatewayv2.GATEWAY_NAME_ENV_NAME))
 		}
 
-		pamSessionRecordingPath, err := util.GetCmdFlagOrEnv(cmd, "pam-session-recording-path", []string{gatewayv2.INFISICAL_PAM_SESSION_RECORDING_PATH_ENV_NAME})
+		pamSessionRecordingPath, err := util.GetCmdFlagOrEnv(cmd, "pam-session-recording-path", []string{gatewayv2.KMS_PAM_SESSION_RECORDING_PATH_ENV_NAME})
 		if err == nil && pamSessionRecordingPath != "" {
 			session.SetSessionRecordingPath(pamSessionRecordingPath)
 		}
@@ -413,7 +413,7 @@ var gatewaySystemdInstallCmd = &cobra.Command{
 		}
 
 		if domain != "" {
-			config.INFISICAL_URL = util.AppendAPIEndpoint(domain)
+			config.KMS_URL = util.AppendAPIEndpoint(domain)
 		}
 
 		gatewayName, err := cmd.Flags().GetString("name")

@@ -70,7 +70,7 @@ var loginCmd = &cobra.Command{
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		presetDomain := config.INFISICAL_URL
+		presetDomain := config.KMS_URL
 
 		clearSelfHostedDomains, err := cmd.Flags().GetBool("clear-domains")
 		if err != nil {
@@ -100,7 +100,7 @@ var loginCmd = &cobra.Command{
 		}
 
 		infisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
-			SiteUrl:          config.INFISICAL_URL,
+			SiteUrl:          config.KMS_URL,
 			UserAgent:        api.USER_AGENT,
 			AutoTokenRefresh: false,
 			CustomHeaders:    customHeaders,
@@ -156,9 +156,9 @@ var loginCmd = &cobra.Command{
 
 			//override domain
 			domainQuery := true
-			if config.INFISICAL_URL_MANUAL_OVERRIDE != "" &&
-				config.INFISICAL_URL_MANUAL_OVERRIDE != fmt.Sprintf("%s/api", util.INFISICAL_DEFAULT_EU_URL) &&
-				config.INFISICAL_URL_MANUAL_OVERRIDE != fmt.Sprintf("%s/api", util.INFISICAL_DEFAULT_US_URL) &&
+			if config.KMS_URL_MANUAL_OVERRIDE != "" &&
+				config.KMS_URL_MANUAL_OVERRIDE != fmt.Sprintf("%s/api", util.KMS_DEFAULT_EU_URL) &&
+				config.KMS_URL_MANUAL_OVERRIDE != fmt.Sprintf("%s/api", util.KMS_DEFAULT_US_URL) &&
 				!usePresetDomain &&
 				!isDirectUserLoginFlagsAndEnvsSet {
 				overrideDomain, err := DomainOverridePrompt()
@@ -166,12 +166,12 @@ var loginCmd = &cobra.Command{
 					util.HandleError(err)
 				}
 
-				//if not override set INFISICAL_URL to exported var
+				//if not override set KMS_URL to exported var
 				//set domainQuery to false
 				if !overrideDomain && !usePresetDomain {
 					domainQuery = false
-					config.INFISICAL_URL = util.AppendAPIEndpoint(config.INFISICAL_URL_MANUAL_OVERRIDE)
-					config.INFISICAL_LOGIN_URL = fmt.Sprintf("%s/login", strings.TrimSuffix(config.INFISICAL_URL, "/api"))
+					config.KMS_URL = util.AppendAPIEndpoint(config.KMS_URL_MANUAL_OVERRIDE)
+					config.KMS_LOGIN_URL = fmt.Sprintf("%s/login", strings.TrimSuffix(config.KMS_URL, "/api"))
 				}
 
 			}
@@ -212,7 +212,7 @@ var loginCmd = &cobra.Command{
 				var organizationId string
 
 				if isDirectUserLoginFlagsAndEnvsSet {
-					organizationId, err = util.GetCmdFlagOrEnv(cmd, "organization-id", []string{"INFISICAL_ORGANIZATION_ID"})
+					organizationId, err = util.GetCmdFlagOrEnv(cmd, "organization-id", []string{"KMS_ORGANIZATION_ID"})
 					if err != nil {
 						util.HandleError(err)
 					}
@@ -255,7 +255,7 @@ var loginCmd = &cobra.Command{
 			util.PrintlnStderr("- Learn to inject secrets into your application at https://kms.hanzo.ai/docs/cli/usage")
 			util.PrintlnStderr("- Stuck? Join our slack for quick support https://kms.hanzo.ai/slack")
 
-			Telemetry.CaptureEvent("cli-command:login", insights.NewProperties().Set("infisical-backend", config.INFISICAL_URL).Set("version", util.CLI_VERSION))
+			Telemetry.CaptureEvent("cli-command:login", insights.NewProperties().Set("infisical-backend", config.KMS_URL).Set("version", util.CLI_VERSION))
 		} else {
 			sdkAuthenticator := util.NewSdkAuthenticator(infisicalClient, cmd)
 
@@ -274,7 +274,7 @@ var loginCmd = &cobra.Command{
 
 			if err != nil {
 				domainHint := ""
-				currentDomain := strings.TrimSuffix(config.INFISICAL_URL, "/api")
+				currentDomain := strings.TrimSuffix(config.KMS_URL, "/api")
 				errMsg := err.Error()
 
 				if strings.Contains(errMsg, "status-code=401") || strings.Contains(errMsg, "status-code=403") {
@@ -387,8 +387,8 @@ func cliDefaultLogin(userCredentialsToBeStored *models.UserCredentials, email st
 }
 
 func setDomainConfig(domain string) {
-	config.INFISICAL_URL = fmt.Sprintf("%s/api", domain)
-	config.INFISICAL_LOGIN_URL = fmt.Sprintf("%s/login", domain)
+	config.KMS_URL = fmt.Sprintf("%s/api", domain)
+	config.KMS_LOGIN_URL = fmt.Sprintf("%s/login", domain)
 }
 
 func init() {
@@ -421,9 +421,9 @@ func DomainOverridePrompt() (bool, error) {
 
 	options := []string{PRESET, OVERRIDE}
 	//trim the '/' from the end of the domain url
-	config.INFISICAL_URL_MANUAL_OVERRIDE = strings.TrimRight(config.INFISICAL_URL_MANUAL_OVERRIDE, "/")
+	config.KMS_URL_MANUAL_OVERRIDE = strings.TrimRight(config.KMS_URL_MANUAL_OVERRIDE, "/")
 	optionsPrompt := promptui.Select{
-		Label: fmt.Sprintf("Current INFISICAL_API_URL Domain Override: %s", config.INFISICAL_URL_MANUAL_OVERRIDE),
+		Label: fmt.Sprintf("Current KMS_API_URL Domain Override: %s", config.KMS_URL_MANUAL_OVERRIDE),
 		Items: options,
 		Size:  2,
 	}
@@ -446,7 +446,7 @@ func usePresetDomain(presetDomain string, domainFlagExplicitlySet bool) (bool, e
 
 	// If the domain flag was explicitly set by the user, use it directly (even for US/EU cloud URLs)
 	// Otherwise, only use the preset domain if it's not a default cloud URL
-	shouldUsePresetDomain := preconfiguredUrl != "" && (domainFlagExplicitlySet || (preconfiguredUrl != util.INFISICAL_DEFAULT_US_URL && preconfiguredUrl != util.INFISICAL_DEFAULT_EU_URL))
+	shouldUsePresetDomain := preconfiguredUrl != "" && (domainFlagExplicitlySet || (preconfiguredUrl != util.KMS_DEFAULT_US_URL && preconfiguredUrl != util.KMS_DEFAULT_EU_URL))
 
 	if shouldUsePresetDomain {
 		parsedDomain := strings.TrimSuffix(strings.Trim(preconfiguredUrl, "/"), "/api")
@@ -456,11 +456,11 @@ func usePresetDomain(presetDomain string, domainFlagExplicitlySet bool) (bool, e
 			return false, errors.New(fmt.Sprintf("Invalid domain URL: '%s'", parsedDomain))
 		}
 
-		config.INFISICAL_URL = fmt.Sprintf("%s/api", parsedDomain)
-		config.INFISICAL_LOGIN_URL = fmt.Sprintf("%s/login", parsedDomain)
+		config.KMS_URL = fmt.Sprintf("%s/api", parsedDomain)
+		config.KMS_LOGIN_URL = fmt.Sprintf("%s/login", parsedDomain)
 
 		// Only save non-cloud domains to the config file
-		if parsedDomain != util.INFISICAL_DEFAULT_US_URL && parsedDomain != util.INFISICAL_DEFAULT_EU_URL {
+		if parsedDomain != util.KMS_DEFAULT_US_URL && parsedDomain != util.KMS_DEFAULT_EU_URL {
 			if !slices.Contains(infisicalConfig.Domains, parsedDomain) {
 				infisicalConfig.Domains = append(infisicalConfig.Domains, parsedDomain)
 				err = util.WriteConfigFile(&infisicalConfig)
@@ -474,7 +474,7 @@ func usePresetDomain(presetDomain string, domainFlagExplicitlySet bool) (bool, e
 		whilte := color.New(color.FgGreen)
 		boldWhite := whilte.Add(color.Bold)
 		time.Sleep(time.Second * 1)
-		boldWhite.Printf("[INFO] Using domain '%s' from domain flag or INFISICAL_API_URL environment variable\n", parsedDomain)
+		boldWhite.Printf("[INFO] Using domain '%s' from domain flag or KMS_API_URL environment variable\n", parsedDomain)
 
 		return true, nil
 	}
@@ -485,13 +485,13 @@ func usePresetDomain(presetDomain string, domainFlagExplicitlySet bool) (bool, e
 func askForDomain() error {
 	// query user to choose between Infisical cloud or self-hosting
 	const (
-		INFISICAL_CLOUD_US = "Hanzo KMS Cloud (US Region)"
-		INFISICAL_CLOUD_EU = "Hanzo KMS Cloud (EU Region)"
+		KMS_CLOUD_US = "Hanzo KMS Cloud (US Region)"
+		KMS_CLOUD_EU = "Hanzo KMS Cloud (EU Region)"
 		SELF_HOSTING       = "Self-Hosting or Dedicated Instance"
 		ADD_NEW_DOMAIN     = "Add a new domain"
 	)
 
-	options := []string{INFISICAL_CLOUD_US, INFISICAL_CLOUD_EU, SELF_HOSTING}
+	options := []string{KMS_CLOUD_US, KMS_CLOUD_EU, SELF_HOSTING}
 	optionsPrompt := promptui.Select{
 		Label: "Select your hosting option",
 		Items: options,
@@ -503,11 +503,11 @@ func askForDomain() error {
 		return err
 	}
 
-	if selectedHostingOption == INFISICAL_CLOUD_US {
-		setDomainConfig(util.INFISICAL_DEFAULT_US_URL)
+	if selectedHostingOption == KMS_CLOUD_US {
+		setDomainConfig(util.KMS_DEFAULT_US_URL)
 		return nil
-	} else if selectedHostingOption == INFISICAL_CLOUD_EU {
-		setDomainConfig(util.INFISICAL_DEFAULT_EU_URL)
+	} else if selectedHostingOption == KMS_CLOUD_EU {
+		setDomainConfig(util.KMS_DEFAULT_EU_URL)
 		return nil
 	}
 
@@ -561,7 +561,7 @@ func askForDomain() error {
 
 func getLoginCredentials(cmd *cobra.Command, directUserLoginFlags bool) (email string, password string, err error) {
 	if directUserLoginFlags {
-		email, err = util.GetCmdFlagOrEnv(cmd, "email", []string{"INFISICAL_EMAIL"})
+		email, err = util.GetCmdFlagOrEnv(cmd, "email", []string{"KMS_EMAIL"})
 		if err != nil {
 			return "", "", err
 		}
@@ -571,7 +571,7 @@ func getLoginCredentials(cmd *cobra.Command, directUserLoginFlags bool) (email s
 			return "", "", err
 		}
 
-		password, err = util.GetCmdFlagOrEnv(cmd, "password", []string{"INFISICAL_PASSWORD"})
+		password, err = util.GetCmdFlagOrEnv(cmd, "password", []string{"KMS_PASSWORD"})
 		if err != nil {
 			return "", "", err
 		}
@@ -709,7 +709,7 @@ func GetJwtTokenWithOrganizationId(oldJwtToken string, email string, organizatio
 		organizationNames := util.GetOrganizationsNameList(organizationResponse)
 
 		prompt := promptui.Select{
-			Label: "Which Infisical organization would you like to log into?",
+			Label: "Which Hanzo KMS organization would you like to log into?",
 			Items: organizationNames,
 		}
 
@@ -776,7 +776,7 @@ func GetJwtTokenWithOrganizationId(oldJwtToken string, email string, organizatio
 }
 
 func userLoginMenu(currentLoggedInUserEmail string) (bool, error) {
-	label := fmt.Sprintf("Current logged in user email: %s on domain: %s", currentLoggedInUserEmail, config.INFISICAL_URL)
+	label := fmt.Sprintf("Current logged in user email: %s on domain: %s", currentLoggedInUserEmail, config.KMS_URL)
 
 	prompt := promptui.Select{
 		Label: label,
@@ -880,7 +880,7 @@ func browserCliLogin() (models.UserCredentials, error) {
 
 	//get callback port
 	callbackPort := listener.Addr().(*net.TCPAddr).Port
-	url := fmt.Sprintf("%s?callback_port=%d", config.INFISICAL_LOGIN_URL, callbackPort)
+	url := fmt.Sprintf("%s?callback_port=%d", config.KMS_LOGIN_URL, callbackPort)
 
 	defaultPrintStatement := fmt.Sprintf("\n\nTo complete your login, open this address in your browser: %v \n", url)
 
@@ -909,7 +909,7 @@ func browserCliLogin() (models.UserCredentials, error) {
 
 	//create handler
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{strings.ReplaceAll(config.INFISICAL_LOGIN_URL, "/login", "")},
+		AllowedOrigins:   []string{strings.ReplaceAll(config.KMS_LOGIN_URL, "/login", "")},
 		AllowCredentials: true,
 		AllowedMethods:   []string{"POST", "OPTIONS"},
 		AllowedHeaders:   []string{"Content-Type"},
@@ -992,9 +992,9 @@ func browserLoginHandler(success chan models.UserCredentials, failure chan error
 // check if one of the flag or all the envs are set
 func validateDirectUserLoginFlagsAndEnvsSet(cmd *cobra.Command, domain string) (isDirectUserLogin bool, err error) {
 	requiredFlagsEnvs := map[string]string{
-		"email":           "INFISICAL_EMAIL",
-		"password":        "INFISICAL_PASSWORD",
-		"organization-id": "INFISICAL_ORGANIZATION_ID",
+		"email":           "KMS_EMAIL",
+		"password":        "KMS_PASSWORD",
+		"organization-id": "KMS_ORGANIZATION_ID",
 	}
 
 	var missingFlagsEnvs []string
@@ -1011,7 +1011,7 @@ func validateDirectUserLoginFlagsAndEnvsSet(cmd *cobra.Command, domain string) (
 		}
 
 		missingFlagsEnvs = append(missingFlagsEnvs, "--domain")
-		requiredFlagsEnvs["domain"] = "INFISICAL_DOMAIN"
+		requiredFlagsEnvs["domain"] = "KMS_DOMAIN"
 	}
 
 	if len(missingFlagsEnvs) == len(requiredFlagsEnvs) {

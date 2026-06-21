@@ -27,9 +27,9 @@ func InstallGatewaySystemdService(token string, domain string, name string, rela
 		return fmt.Errorf("failed to create config directory: %v", err)
 	}
 
-	configContent := fmt.Sprintf("INFISICAL_TOKEN=%s\n", token)
+	configContent := fmt.Sprintf("KMS_TOKEN=%s\n", token)
 	if domain != "" {
-		configContent += fmt.Sprintf("INFISICAL_API_URL=%s\n", domain)
+		configContent += fmt.Sprintf("KMS_API_URL=%s\n", domain)
 	}
 
 	if name != "" {
@@ -44,7 +44,7 @@ func InstallGatewaySystemdService(token string, domain string, name string, rela
 		return fmt.Errorf("failed to write environment file: %v", err)
 	}
 
-	if err := util.WriteSystemdServiceFile(serviceLogFile, environmentFilePath, "kms-gateway", "gateway", "Infisical Gateway Service"); err != nil {
+	if err := util.WriteSystemdServiceFile(serviceLogFile, environmentFilePath, "kms-gateway", "gateway", "Hanzo KMS Gateway Service"); err != nil {
 		return fmt.Errorf("failed to write systemd service file: %v", err)
 	}
 
@@ -105,6 +105,6 @@ func UninstallGatewaySystemdService() error {
 		return fmt.Errorf("failed to reload systemd: %v", err)
 	}
 
-	log.Info().Msg("Successfully uninstalled Infisical Gateway systemd service")
+	log.Info().Msg("Successfully uninstalled Hanzo KMS Gateway systemd service")
 	return nil
 }

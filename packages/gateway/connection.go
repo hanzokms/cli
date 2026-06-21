@@ -196,7 +196,7 @@ func handleHTTPProxy(stream *quic.Stream, reader *bufio.Reader, targetURL string
 		}
 		log.Info().Msgf("Received HTTP request: %s", req.URL.Path)
 
-		actionHeader := HttpProxyAction(req.Header.Get(INFISICAL_HTTP_PROXY_ACTION_HEADER))
+		actionHeader := HttpProxyAction(req.Header.Get(KMS_HTTP_PROXY_ACTION_HEADER))
 		if actionHeader != "" {
 			if actionHeader == HttpProxyActionInjectGatewayK8sServiceAccountToken {
 				token, err := os.ReadFile(KUBERNETES_SERVICE_ACCOUNT_TOKEN_PATH)
@@ -242,7 +242,7 @@ func handleHTTPProxy(stream *quic.Stream, reader *bufio.Reader, targetURL string
 				log.Info().Msgf("Redirected request to Kubernetes API server: %s", targetURL)
 			}
 
-			req.Header.Del(INFISICAL_HTTP_PROXY_ACTION_HEADER)
+			req.Header.Del(KMS_HTTP_PROXY_ACTION_HEADER)
 		}
 
 		// Build full target URL

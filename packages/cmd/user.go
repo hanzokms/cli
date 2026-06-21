@@ -64,10 +64,10 @@ var switchCmd = &cobra.Command{
 			//profile not in loggedInUsers
 			configFile.LoggedInUsers = append(configFile.LoggedInUsers, models.LoggedInUser{
 				Email:  profile,
-				Domain: config.INFISICAL_URL,
+				Domain: config.KMS_URL,
 			})
 			//set logged in user domain
-			configFile.LoggedInUserDomain = config.INFISICAL_URL
+			configFile.LoggedInUserDomain = config.KMS_URL
 
 		} else {
 			//exists, set logged in user domain
@@ -184,7 +184,7 @@ var domainCmd = &cobra.Command{
 
 		domain := ""
 		domainQuery := true
-		if config.INFISICAL_URL_MANUAL_OVERRIDE != fmt.Sprintf("%s/api", util.INFISICAL_DEFAULT_EU_URL) && config.INFISICAL_URL_MANUAL_OVERRIDE != fmt.Sprintf("%s/api", util.INFISICAL_DEFAULT_US_URL) {
+		if config.KMS_URL_MANUAL_OVERRIDE != fmt.Sprintf("%s/api", util.KMS_DEFAULT_EU_URL) && config.KMS_URL_MANUAL_OVERRIDE != fmt.Sprintf("%s/api", util.KMS_DEFAULT_US_URL) {
 
 			override, err := DomainOverridePrompt()
 			if err != nil {
@@ -193,7 +193,7 @@ var domainCmd = &cobra.Command{
 
 			if !override {
 				domainQuery = false
-				domain = config.INFISICAL_URL_MANUAL_OVERRIDE
+				domain = config.KMS_URL_MANUAL_OVERRIDE
 			}
 
 		}

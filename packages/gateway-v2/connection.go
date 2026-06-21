@@ -94,7 +94,7 @@ func handleHTTPProxy(ctx context.Context, conn *tls.Conn, reader *bufio.Reader, 
 
 		log.Info().Msgf("Received HTTP request: %s", req.URL.Path)
 
-		actionHeader := HttpProxyAction(req.Header.Get(INFISICAL_HTTP_PROXY_ACTION_HEADER))
+		actionHeader := HttpProxyAction(req.Header.Get(KMS_HTTP_PROXY_ACTION_HEADER))
 
 		// Only platform actor can perform privileged actions
 		if actionHeader != "" && forwardConfig.ActorType == ActorTypePlatform {
@@ -143,7 +143,7 @@ func handleHTTPProxy(ctx context.Context, conn *tls.Conn, reader *bufio.Reader, 
 				log.Info().Msgf("Redirected request to Kubernetes API server: %s", targetURL)
 			}
 
-			req.Header.Del(INFISICAL_HTTP_PROXY_ACTION_HEADER)
+			req.Header.Del(KMS_HTTP_PROXY_ACTION_HEADER)
 		}
 
 		// Build full target URL

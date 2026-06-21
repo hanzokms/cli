@@ -102,7 +102,7 @@ func getDynamicSecretList(cmd *cobra.Command, args []string) {
 	}
 
 	infisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
-		SiteUrl:          config.INFISICAL_URL,
+		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
 		CustomHeaders:    customHeaders,
@@ -239,7 +239,7 @@ func createDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 	}
 
 	infisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
-		SiteUrl:          config.INFISICAL_URL,
+		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
 		CustomHeaders:    customHeaders,
@@ -406,7 +406,7 @@ func renewDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 	}
 
 	infisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
-		SiteUrl:          config.INFISICAL_URL,
+		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
 		CustomHeaders:    customHeaders,
@@ -536,7 +536,7 @@ func revokeDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 	}
 
 	infisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
-		SiteUrl:          config.INFISICAL_URL,
+		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
 		CustomHeaders:    customHeaders,
@@ -663,7 +663,7 @@ func listDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 	}
 
 	infisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
-		SiteUrl:          config.INFISICAL_URL,
+		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
 		CustomHeaders:    customHeaders,

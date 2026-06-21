@@ -45,7 +45,7 @@ func GetRelayName(cmd *cobra.Command, forceRefetch bool, accessToken string) (st
 
 	// --relay flag is deprecated in favor of --target-relay-name flag but still supported
 	if relayName == "" {
-		relayName, err = GetCmdFlagOrEnvWithDefaultValue(cmd, "relay", []string{"INFISICAL_RELAY_NAME"}, "")
+		relayName, err = GetCmdFlagOrEnvWithDefaultValue(cmd, "relay", []string{"KMS_RELAY_NAME"}, "")
 		if err != nil {
 			return "", fmt.Errorf("unable to parse relay flag: %v", err)
 		}
@@ -289,17 +289,17 @@ func GetInfisicalToken(cmd *cobra.Command) (token *models.TokenDetails, err erro
 	var source = "--token flag"
 
 	if infisicalToken == "" { // If no flag is passed, we first check for the universal auth access token env variable.
-		infisicalToken = os.Getenv(INFISICAL_UNIVERSAL_AUTH_ACCESS_TOKEN_NAME)
-		source = fmt.Sprintf("%s environment variable", INFISICAL_UNIVERSAL_AUTH_ACCESS_TOKEN_NAME)
+		infisicalToken = os.Getenv(KMS_UNIVERSAL_AUTH_ACCESS_TOKEN_NAME)
+		source = fmt.Sprintf("%s environment variable", KMS_UNIVERSAL_AUTH_ACCESS_TOKEN_NAME)
 
 		if infisicalToken == "" { // If it's still empty after the first env check, we check for the service token env variable.
-			infisicalToken = os.Getenv(INFISICAL_TOKEN_NAME)
-			source = fmt.Sprintf("%s environment variable", INFISICAL_TOKEN_NAME)
+			infisicalToken = os.Getenv(KMS_TOKEN_NAME)
+			source = fmt.Sprintf("%s environment variable", KMS_TOKEN_NAME)
 		}
 
 		if infisicalToken == "" { // if its still empty, check for the `TOKEN` environment variable (for gateway helm)
-			infisicalToken = os.Getenv(INFISICAL_GATEWAY_TOKEN_NAME_LEGACY)
-			source = fmt.Sprintf("%s environment variable", INFISICAL_GATEWAY_TOKEN_NAME_LEGACY)
+			infisicalToken = os.Getenv(KMS_GATEWAY_TOKEN_NAME_LEGACY)
+			source = fmt.Sprintf("%s environment variable", KMS_GATEWAY_TOKEN_NAME_LEGACY)
 		}
 	}
 
@@ -389,7 +389,7 @@ func IsLoggedIn() bool {
 }
 
 func RequireServiceToken() {
-	serviceToken := os.Getenv(INFISICAL_TOKEN_NAME)
+	serviceToken := os.Getenv(KMS_TOKEN_NAME)
 	if serviceToken == "" {
 		PrintErrorMessageAndExit("No service token is found in your terminal")
 	}

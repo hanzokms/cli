@@ -1,5 +1,5 @@
 package config
 
-var INFISICAL_URL string
-var INFISICAL_URL_MANUAL_OVERRIDE string
-var INFISICAL_LOGIN_URL string
+var KMS_URL string
+var KMS_URL_MANUAL_OVERRIDE string
+var KMS_LOGIN_URL string

@@ -36,7 +36,7 @@ func WriteInitalConfig(userCredentials *models.UserCredentials) error {
 	//if profiles exists
 	loggedInUser := models.LoggedInUser{
 		Email:  userCredentials.Email,
-		Domain: config.INFISICAL_URL,
+		Domain: config.KMS_URL,
 	}
 	//if empty or if email not in loggedinUsers
 	if len(existingConfigFile.LoggedInUsers) == 0 || !ConfigContainsEmail(existingConfigFile.LoggedInUsers, userCredentials.Email) {
@@ -52,7 +52,7 @@ func WriteInitalConfig(userCredentials *models.UserCredentials) error {
 
 	configFile := models.ConfigFile{
 		LoggedInUserEmail:      userCredentials.Email,
-		LoggedInUserDomain:     config.INFISICAL_URL,
+		LoggedInUserDomain:     config.KMS_URL,
 		LoggedInUsers:          existingConfigFile.LoggedInUsers,
 		VaultBackendType:       existingConfigFile.VaultBackendType,
 		VaultBackendPassphrase: existingConfigFile.VaultBackendPassphrase,
@@ -88,7 +88,7 @@ func ConfigFileExists() bool {
 }
 
 func WorkspaceConfigFileExistsInCurrentPath() bool {
-	if _, err := os.Stat(INFISICAL_WORKSPACE_CONFIG_FILE_NAME); err == nil {
+	if _, err := os.Stat(KMS_WORKSPACE_CONFIG_FILE_NAME); err == nil {
 		return true
 	} else {
 		log.Debug().Err(err)
@@ -146,7 +146,7 @@ func FindWorkspaceConfigFile() (string, error) {
 	}
 
 	for {
-		path := filepath.Join(dir, INFISICAL_WORKSPACE_CONFIG_FILE_NAME)
+		path := filepath.Join(dir, KMS_WORKSPACE_CONFIG_FILE_NAME)
 		_, err := os.Stat(path)
 		if err == nil {
 			// file found
@@ -165,7 +165,7 @@ func FindWorkspaceConfigFile() (string, error) {
 	}
 
 	// file not found
-	return "", fmt.Errorf("file not found: %s", INFISICAL_WORKSPACE_CONFIG_FILE_NAME)
+	return "", fmt.Errorf("file not found: %s", KMS_WORKSPACE_CONFIG_FILE_NAME)
 
 }
 
@@ -223,7 +223,7 @@ func GetConfigFile() (models.ConfigFile, error) {
 		if err != nil {
 			return models.ConfigFile{}, fmt.Errorf("GetConfigFile: Unable to decode base64 passphrase [err=%s]", err)
 		}
-		os.Setenv("INFISICAL_VAULT_FILE_PASSPHRASE", string(decodedPassphrase))
+		os.Setenv("KMS_VAULT_FILE_PASSPHRASE", string(decodedPassphrase))
 	}
 
 	return configFile, nil

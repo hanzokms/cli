@@ -22,7 +22,7 @@ func CheckForUpdate() {
 }
 
 func CheckForUpdateWithWriter(w io.Writer) {
-	if checkEnv := os.Getenv("INFISICAL_DISABLE_UPDATE_CHECK"); checkEnv != "" {
+	if checkEnv := os.Getenv("KMS_DISABLE_UPDATE_CHECK"); checkEnv != "" {
 		return
 	}
 	latestVersion, _, isUrgent, err := getLatestTag("hanzokms", "cli")
