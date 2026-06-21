@@ -17,8 +17,8 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/h2non/filetype v1.1.3
 	github.com/hanzoai/insights-go v1.12.0
-	github.com/infisical/go-sdk v0.6.8
-	github.com/infisical/infisical-kmip v0.3.17
+	github.com/hanzokms/go-sdk v1.0.0
+	github.com/hanzokms/kmip v0.4.0
 	github.com/jackc/pgx/v5 v5.7.6
 	github.com/mattn/go-isatty v0.0.20
 	github.com/muesli/ansi v0.0.0-20221106050444-61f0cd9a192a
@@ -204,6 +204,6 @@ require (
 	github.com/zalando/go-keyring v0.2.6
 )
 
-replace github.com/zalando/go-keyring => github.com/Infisical/go-keyring v1.0.2
+replace github.com/zalando/go-keyring => github.com/hanzokms/go-keyring v1.0.3
 
-replace github.com/pion/turn/v4 => github.com/Infisical/turn/v4 v4.0.1
+replace github.com/pion/turn/v4 => github.com/hanzokms/turn/v4 v4.0.2

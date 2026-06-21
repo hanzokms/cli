@@ -16,8 +16,8 @@ import (
 	"github.com/hanzokms/cli/packages/api"
 	"github.com/hanzokms/cli/packages/config"
 	"github.com/hanzokms/cli/packages/util"
-	kmsSdk "github.com/infisical/go-sdk"
-	kmsSdkUtil "github.com/infisical/go-sdk/packages/util"
+	kmsSdk "github.com/hanzokms/go-sdk"
+	kmsSdkUtil "github.com/hanzokms/go-sdk/packages/util"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh"
@@ -333,7 +333,7 @@ func issueCredentials(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "Unable to get custom headers")
 	}
 
-	kmsClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
+	kmsClient := kmsSdk.NewClient(context.Background(), kmsSdk.Config{
 		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
@@ -578,7 +578,7 @@ func signKey(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "Unable to get custom headers")
 	}
 
-	kmsClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
+	kmsClient := kmsSdk.NewClient(context.Background(), kmsSdk.Config{
 		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
@@ -689,7 +689,7 @@ func sshConnect(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "Unable to get custom headers")
 	}
 
-	kmsClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
+	kmsClient := kmsSdk.NewClient(context.Background(), kmsSdk.Config{
 		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
@@ -1003,7 +1003,7 @@ func sshAddHost(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "Unable to get custom headers")
 	}
 
-	client := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
+	client := kmsSdk.NewClient(context.Background(), kmsSdk.Config{
 		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,

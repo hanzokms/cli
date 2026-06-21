@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/exec"
 
-	kmsSdk "github.com/infisical/go-sdk"
+	kmsSdk "github.com/hanzokms/go-sdk"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -94,11 +94,11 @@ func EstablishUserLoginSession() LoggedInUserDetails {
 }
 
 type SdkAuthenticator struct {
-	kmsClient kmsSdk.InfisicalClientInterface
+	kmsClient kmsSdk.ClientInterface
 	cmd             *cobra.Command
 }
 
-func NewSdkAuthenticator(kmsClient kmsSdk.InfisicalClientInterface, cmd *cobra.Command) *SdkAuthenticator {
+func NewSdkAuthenticator(kmsClient kmsSdk.ClientInterface, cmd *cobra.Command) *SdkAuthenticator {
 	return &SdkAuthenticator{
 		kmsClient: kmsClient,
 		cmd:             cmd,

@@ -223,7 +223,7 @@ func GetConfigFile() (models.ConfigFile, error) {
 		if err != nil {
 			return models.ConfigFile{}, fmt.Errorf("GetConfigFile: Unable to decode base64 passphrase [err=%s]", err)
 		}
-		os.Setenv("INFISICAL_VAULT_FILE_PASSPHRASE", string(decodedPassphrase))
+		os.Setenv("KMS_VAULT_FILE_PASSPHRASE", string(decodedPassphrase))
 	}
 
 	return configFile, nil

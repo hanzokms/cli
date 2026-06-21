@@ -8,7 +8,7 @@ const (
 	KMS_WORKSPACE_CONFIG_FILE_NAME       = ".kms.json"
 	KMS_TOKEN_NAME                       = "KMS_TOKEN"
 	KMS_UNIVERSAL_AUTH_ACCESS_TOKEN_NAME = "KMS_UNIVERSAL_AUTH_ACCESS_TOKEN"
-	KMS_VAULT_FILE_PASSPHRASE_ENV_NAME   = "INFISICAL_VAULT_FILE_PASSPHRASE" // This works because we've forked the keyring package and added support for this env variable. This explains why you won't find any occurrences of it in the CLI codebase.
+	KMS_VAULT_FILE_PASSPHRASE_ENV_NAME   = "KMS_VAULT_FILE_PASSPHRASE" // This works because we've forked the keyring package and added support for this env variable. This explains why you won't find any occurrences of it in the CLI codebase.
 
 	KMS_BOOTSTRAP_EMAIL_NAME        = "KMS_ADMIN_EMAIL"
 	KMS_BOOTSTRAP_PASSWORD_NAME     = "KMS_ADMIN_PASSWORD"

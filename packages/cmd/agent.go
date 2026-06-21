@@ -31,7 +31,7 @@ import (
 	"github.com/awnumar/memguard"
 	"github.com/dgraph-io/badger/v3"
 	"github.com/go-resty/resty/v2"
-	kmsSdk "github.com/infisical/go-sdk"
+	kmsSdk "github.com/hanzokms/go-sdk"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/yaml.v2"
@@ -947,7 +947,7 @@ func dynamicSecretTemplateFunction(accessToken string, dynamicSecretManager *Dyn
 			return dynamicSecretData.Data, nil
 		}
 
-		temporaryKMSClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
+		temporaryKMSClient := kmsSdk.NewClient(context.Background(), kmsSdk.Config{
 			SiteUrl:             config.KMS_URL,
 			UserAgent:           api.USER_AGENT,
 			AutoTokenRefresh:    false,
@@ -1086,7 +1086,7 @@ type AgentManager struct {
 
 	isShuttingDown bool
 
-	kmsClient kmsSdk.InfisicalClientInterface
+	kmsClient kmsSdk.ClientInterface
 	cancelContext   context.CancelFunc
 }
 
@@ -1149,7 +1149,7 @@ func NewAgentManager(options NewAgentMangerOptions) *AgentManager {
 
 	ctx, cancelContext := context.WithCancel(context.Background())
 
-	agentManager.kmsClient = kmsSdk.NewInfisicalClient(ctx, kmsSdk.Config{
+	agentManager.kmsClient = kmsSdk.NewClient(ctx, kmsSdk.Config{
 		SiteUrl:             config.KMS_URL,
 		UserAgent:           api.USER_AGENT, // ? Should we perhaps use a different user agent for the Agent for better analytics?
 		AutoTokenRefresh:    true,
@@ -1454,7 +1454,7 @@ func revokeDynamicSecretLease(accessToken, projectSlug, environment, secretPath,
 		return fmt.Errorf("unable to get custom headers: %v", err)
 	}
 
-	temporaryKMSClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
+	temporaryKMSClient := kmsSdk.NewClient(context.Background(), kmsSdk.Config{
 		SiteUrl:             config.KMS_URL,
 		UserAgent:           api.USER_AGENT,
 		AutoTokenRefresh:    false,
@@ -1577,7 +1577,7 @@ func (tm *AgentManager) RevokeCredentials() error {
 			if token != "" {
 				log.Info().Msgf("revoking token from file '%s'", sink.Config.Path)
 
-				temporaryKMSClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
+				temporaryKMSClient := kmsSdk.NewClient(context.Background(), kmsSdk.Config{
 					SiteUrl:          config.KMS_URL,
 					UserAgent:        api.USER_AGENT,
 					AutoTokenRefresh: false,
@@ -1607,7 +1607,7 @@ func (tm *AgentManager) RevokeCredentials() error {
 
 	// check to see if the active token was already deleted, if not, delete it
 	if !slices.Contains(deletedTokens, token) {
-		temporaryKMSClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
+		temporaryKMSClient := kmsSdk.NewClient(context.Background(), kmsSdk.Config{
 			SiteUrl:          config.KMS_URL,
 			UserAgent:        api.USER_AGENT,
 			AutoTokenRefresh: false,

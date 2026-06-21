@@ -8,7 +8,7 @@ import (
 
 	"github.com/hanzokms/cli/packages/config"
 	"github.com/hanzokms/cli/packages/util"
-	kmip "github.com/infisical/infisical-kmip"
+	kmip "github.com/hanzokms/kmip"
 	"github.com/spf13/cobra"
 )
 
@@ -80,7 +80,7 @@ func startKmipServer(cmd *cobra.Command, args []string) {
 
 	kmip.StartServer(kmip.ServerConfig{
 		Addr:                 listenAddr,
-		InfisicalBaseAPIURL:  config.KMS_URL,
+		KMSBaseAPIURL:  config.KMS_URL,
 		IdentityClientId:     identityClientId,
 		IdentityClientSecret: identityClientSecret,
 		ServerName:           serverName,

@@ -17,17 +17,17 @@ import (
 	gatewayv2 "github.com/hanzokms/cli/packages/gateway-v2"
 	"github.com/hanzokms/cli/packages/pam/session"
 	"github.com/hanzokms/cli/packages/util"
-	kmsSdk "github.com/infisical/go-sdk"
+	kmsSdk "github.com/hanzokms/go-sdk"
 	"github.com/pkg/errors"
 	insights "github.com/hanzoai/insights-go"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
-func getKMSSdkInstance(cmd *cobra.Command) (kmsSdk.InfisicalClientInterface, context.CancelFunc, error) {
+func getKMSSdkInstance(cmd *cobra.Command) (kmsSdk.ClientInterface, context.CancelFunc, error) {
 
 	ctx, cancel := context.WithCancel(cmd.Context())
-	kmsClient := kmsSdk.NewInfisicalClient(ctx, kmsSdk.Config{
+	kmsClient := kmsSdk.NewClient(ctx, kmsSdk.Config{
 		SiteUrl:   config.KMS_URL,
 		UserAgent: api.USER_AGENT,
 	})

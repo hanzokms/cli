@@ -6,7 +6,7 @@ import (
 	"net/url"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/infisical/go-sdk/packages/util"
+	"github.com/hanzokms/go-sdk/packages/util"
 )
 
 type GenericRequestError struct {

@@ -1,6 +1,6 @@
 package visualize
 
-import kmsModels "github.com/infisical/go-sdk/packages/models"
+import kmsModels "github.com/hanzokms/go-sdk/packages/models"
 
 func PrintAllDyamicSecretLeaseCredentials(leaseCredentials map[string]any) {
 	rows := [][]string{}

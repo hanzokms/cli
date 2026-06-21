@@ -16,8 +16,8 @@ import (
 	insights "github.com/hanzoai/insights-go"
 	"github.com/spf13/cobra"
 
-	kmsSdk "github.com/infisical/go-sdk"
-	kmsSdkModels "github.com/infisical/go-sdk/packages/models"
+	kmsSdk "github.com/hanzokms/go-sdk"
+	kmsSdkModels "github.com/hanzokms/go-sdk/packages/models"
 )
 
 var dynamicSecretCmd = &cobra.Command{
@@ -101,7 +101,7 @@ func getDynamicSecretList(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "Unable to get custom headers")
 	}
 
-	kmsClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
+	kmsClient := kmsSdk.NewClient(context.Background(), kmsSdk.Config{
 		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
@@ -238,7 +238,7 @@ func createDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "Unable to get custom headers")
 	}
 
-	kmsClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
+	kmsClient := kmsSdk.NewClient(context.Background(), kmsSdk.Config{
 		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
@@ -405,7 +405,7 @@ func renewDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "Unable to get custom headers")
 	}
 
-	kmsClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
+	kmsClient := kmsSdk.NewClient(context.Background(), kmsSdk.Config{
 		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
@@ -535,7 +535,7 @@ func revokeDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "Unable to get custom headers")
 	}
 
-	kmsClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
+	kmsClient := kmsSdk.NewClient(context.Background(), kmsSdk.Config{
 		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
@@ -662,7 +662,7 @@ func listDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "Unable to get custom headers")
 	}
 
-	kmsClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
+	kmsClient := kmsSdk.NewClient(context.Background(), kmsSdk.Config{
 		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,

@@ -36,7 +36,7 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 
-	kmsSdk "github.com/infisical/go-sdk"
+	kmsSdk "github.com/hanzokms/go-sdk"
 )
 
 func formatAuthMethod(authMethod string) string {
@@ -99,7 +99,7 @@ var loginCmd = &cobra.Command{
 			util.HandleError(err, "Unable to get custom headers")
 		}
 
-		kmsClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
+		kmsClient := kmsSdk.NewClient(context.Background(), kmsSdk.Config{
 			SiteUrl:          config.KMS_URL,
 			UserAgent:        api.USER_AGENT,
 			AutoTokenRefresh: false,
