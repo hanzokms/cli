@@ -17,7 +17,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/pion/dtls/v3"
 	"github.com/pion/logging"
-	"github.com/pion/turn/v4"
+	"github.com/hanzokms/turn/v4"
 	"github.com/rs/zerolog/log"
 
 	"github.com/quic-go/quic-go"

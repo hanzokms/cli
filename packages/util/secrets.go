@@ -14,7 +14,7 @@ import (
 	"github.com/hanzokms/cli/packages/crypto"
 	"github.com/hanzokms/cli/packages/models"
 	"github.com/rs/zerolog/log"
-	"github.com/zalando/go-keyring"
+	"github.com/hanzokms/go-keyring"
 	"gopkg.in/yaml.v3"
 )
 

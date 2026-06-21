@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/rs/zerolog/log"
-	"github.com/zalando/go-keyring"
+	"github.com/hanzokms/go-keyring"
 )
 
 const MAIN_KEYRING_SERVICE = "hanzo-kms-cli"

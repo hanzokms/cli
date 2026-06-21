@@ -9,7 +9,7 @@ import (
 	"github.com/hanzokms/cli/packages/api"
 	"github.com/hanzokms/cli/packages/config"
 	"github.com/hanzokms/cli/packages/models"
-	"github.com/zalando/go-keyring"
+	"github.com/hanzokms/go-keyring"
 )
 
 type LoggedInUserDetails struct {

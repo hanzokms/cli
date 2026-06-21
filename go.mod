@@ -17,8 +17,10 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/h2non/filetype v1.1.3
 	github.com/hanzoai/insights-go v1.12.0
+	github.com/hanzokms/go-keyring v1.1.0
 	github.com/hanzokms/go-sdk v1.0.0
 	github.com/hanzokms/kmip v0.4.0
+	github.com/hanzokms/turn/v4 v4.1.0
 	github.com/jackc/pgx/v5 v5.7.6
 	github.com/mattn/go-isatty v0.0.20
 	github.com/muesli/ansi v0.0.0-20221106050444-61f0cd9a192a
@@ -27,7 +29,6 @@ require (
 	github.com/muesli/roff v0.1.0
 	github.com/pion/dtls/v3 v3.0.4
 	github.com/pion/logging v0.2.3
-	github.com/pion/turn/v4 v4.0.0
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/pkg/errors v0.9.1
 	github.com/quic-go/quic-go v0.54.1
@@ -78,7 +79,7 @@ require (
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/chzyer/readline v1.5.1 // indirect
-	github.com/danieljoos/wincred v1.2.0 // indirect
+	github.com/danieljoos/wincred v1.2.2 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dgraph-io/ristretto v0.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
@@ -201,9 +202,4 @@ require (
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/manifoldco/promptui v0.9.0
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/zalando/go-keyring v0.2.6
 )
-
-replace github.com/zalando/go-keyring => github.com/hanzokms/go-keyring v1.0.3
-
-replace github.com/pion/turn/v4 => github.com/hanzokms/turn/v4 v4.0.2

@@ -118,7 +118,7 @@ func (a *SdkAuthenticator) HandleUniversalAuthLogin() (credential kmsSdk.Machine
 	}
 
 	// We are not providing an environment variable because kms go sdk will check for the environment variable when value is emtpy
-	// Refer: https://github.com/Infisical/go-sdk/blob/main/packages/util/constants.go#L10
+	// Refer: github.com/hanzokms/go-sdk packages/util/constants.go
 	organizationSlug, err := GetCmdFlagOrEnvWithDefaultValue(a.cmd, "organization-slug", []string{}, "")
 	if err != nil {
 		return kmsSdk.MachineIdentityCredential{}, err
