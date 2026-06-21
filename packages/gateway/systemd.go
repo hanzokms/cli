@@ -17,8 +17,8 @@ After=network.target
 [Service]
 Type=notify
 NotifyAccess=all
-EnvironmentFile=/etc/infisical/gateway.conf
-ExecStart=infisical gateway
+EnvironmentFile=/etc/kms/gateway.conf
+ExecStart=kms gateway
 Restart=on-failure
 InaccessibleDirectories=/home
 PrivateTmp=yes
@@ -43,7 +43,7 @@ func InstallGatewaySystemdService(token string, domain string) error {
 		return nil
 	}
 
-	configDir := "/etc/infisical"
+	configDir := "/etc/kms"
 	if err := os.MkdirAll(configDir, 0755); err != nil {
 		return fmt.Errorf("failed to create config directory: %v", err)
 	}
@@ -105,7 +105,7 @@ func UninstallGatewaySystemdService() error {
 	}
 
 	// Remove the configuration file
-	configPath := "/etc/infisical/gateway.conf"
+	configPath := "/etc/kms/gateway.conf"
 	if err := os.Remove(configPath); err != nil && !os.IsNotExist(err) {
 		return fmt.Errorf("failed to remove config file: %v", err)
 	}

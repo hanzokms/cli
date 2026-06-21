@@ -16,8 +16,8 @@ import (
 	insights "github.com/hanzoai/insights-go"
 	"github.com/spf13/cobra"
 
-	infisicalSdk "github.com/infisical/go-sdk"
-	infisicalSdkModels "github.com/infisical/go-sdk/packages/models"
+	kmsSdk "github.com/infisical/go-sdk"
+	kmsSdkModels "github.com/infisical/go-sdk/packages/models"
 )
 
 var dynamicSecretCmd = &cobra.Command{
@@ -38,7 +38,7 @@ func getDynamicSecretList(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	token, err := util.GetInfisicalToken(cmd)
+	token, err := util.GetKMSToken(cmd)
 	if err != nil {
 		util.HandleError(err, "Unable to parse flag")
 	}
@@ -63,7 +63,7 @@ func getDynamicSecretList(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "Unable to parse flag")
 	}
 
-	var infisicalToken string
+	var kmsToken string
 	httpClient, err := util.GetRestyClientWithCustomHeaders()
 	if err != nil {
 		util.HandleError(err, "Unable to get resty client with custom headers")
@@ -78,7 +78,7 @@ func getDynamicSecretList(cmd *cobra.Command, args []string) {
 	}
 
 	if token != nil && (token.Type == util.SERVICE_TOKEN_IDENTIFIER || token.Type == util.UNIVERSAL_AUTH_TOKEN_IDENTIFIER) {
-		infisicalToken = token.Token
+		kmsToken = token.Token
 	} else {
 		util.RequireLogin()
 
@@ -91,23 +91,23 @@ func getDynamicSecretList(cmd *cobra.Command, args []string) {
 			loggedInUserDetails = util.EstablishUserLoginSession()
 		}
 
-		infisicalToken = loggedInUserDetails.UserCredentials.JTWToken
+		kmsToken = loggedInUserDetails.UserCredentials.JTWToken
 	}
 
-	httpClient.SetAuthToken(infisicalToken)
+	httpClient.SetAuthToken(kmsToken)
 
-	customHeaders, err := util.GetInfisicalCustomHeadersMap()
+	customHeaders, err := util.GetKMSCustomHeadersMap()
 	if err != nil {
 		util.HandleError(err, "Unable to get custom headers")
 	}
 
-	infisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
+	kmsClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
 		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
 		CustomHeaders:    customHeaders,
 	})
-	infisicalClient.Auth().SetAccessToken(infisicalToken)
+	kmsClient.Auth().SetAccessToken(kmsToken)
 
 	if projectSlug == "" {
 		projectDetails, err := api.CallGetProjectById(httpClient, projectId)
@@ -117,7 +117,7 @@ func getDynamicSecretList(cmd *cobra.Command, args []string) {
 		projectSlug = projectDetails.Slug
 	}
 
-	dynamicSecretRootCredentials, err := infisicalClient.DynamicSecrets().List(infisicalSdk.ListDynamicSecretsRootCredentialsOptions{
+	dynamicSecretRootCredentials, err := kmsClient.DynamicSecrets().List(kmsSdk.ListDynamicSecretsRootCredentialsOptions{
 		ProjectSlug:     projectSlug,
 		SecretPath:      secretsPath,
 		EnvironmentSlug: environmentName,
@@ -166,7 +166,7 @@ func createDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	token, err := util.GetInfisicalToken(cmd)
+	token, err := util.GetKMSToken(cmd)
 	if err != nil {
 		util.HandleError(err, "Unable to parse flag")
 	}
@@ -201,7 +201,7 @@ func createDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "Unable to parse flag")
 	}
 
-	var infisicalToken string
+	var kmsToken string
 	httpClient, err := util.GetRestyClientWithCustomHeaders()
 	if err != nil {
 		util.HandleError(err, "Unable to get resty client with custom headers")
@@ -216,7 +216,7 @@ func createDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 	}
 
 	if token != nil && (token.Type == util.SERVICE_TOKEN_IDENTIFIER || token.Type == util.UNIVERSAL_AUTH_TOKEN_IDENTIFIER) {
-		infisicalToken = token.Token
+		kmsToken = token.Token
 	} else {
 		util.RequireLogin()
 
@@ -228,23 +228,23 @@ func createDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		if loggedInUserDetails.LoginExpired {
 			loggedInUserDetails = util.EstablishUserLoginSession()
 		}
-		infisicalToken = loggedInUserDetails.UserCredentials.JTWToken
+		kmsToken = loggedInUserDetails.UserCredentials.JTWToken
 	}
 
-	httpClient.SetAuthToken(infisicalToken)
+	httpClient.SetAuthToken(kmsToken)
 
-	customHeaders, err := util.GetInfisicalCustomHeadersMap()
+	customHeaders, err := util.GetKMSCustomHeadersMap()
 	if err != nil {
 		util.HandleError(err, "Unable to get custom headers")
 	}
 
-	infisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
+	kmsClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
 		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
 		CustomHeaders:    customHeaders,
 	})
-	infisicalClient.Auth().SetAccessToken(infisicalToken)
+	kmsClient.Auth().SetAccessToken(kmsToken)
 
 	if projectSlug == "" {
 		projectDetails, err := api.CallGetProjectById(httpClient, projectId)
@@ -254,7 +254,7 @@ func createDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		projectSlug = projectDetails.Slug
 	}
 
-	dynamicSecretRootCredential, err := infisicalClient.DynamicSecrets().GetByName(infisicalSdk.GetDynamicSecretRootCredentialByNameOptions{
+	dynamicSecretRootCredential, err := kmsClient.DynamicSecrets().GetByName(kmsSdk.GetDynamicSecretRootCredentialByNameOptions{
 		DynamicSecretName: dynamicSecretRootCredentialName,
 		ProjectSlug:       projectSlug,
 		SecretPath:        secretsPath,
@@ -276,7 +276,7 @@ func createDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		config["namespace"] = kubernetesNamespace
 	}
 
-	leaseCredentials, _, leaseDetails, err := infisicalClient.DynamicSecrets().Leases().Create(infisicalSdk.CreateDynamicSecretLeaseOptions{
+	leaseCredentials, _, leaseDetails, err := kmsClient.DynamicSecrets().Leases().Create(kmsSdk.CreateDynamicSecretLeaseOptions{
 		DynamicSecretName: dynamicSecretRootCredential.Name,
 		ProjectSlug:       projectSlug,
 		TTL:               ttl,
@@ -337,7 +337,7 @@ func renewDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	token, err := util.GetInfisicalToken(cmd)
+	token, err := util.GetKMSToken(cmd)
 	if err != nil {
 		util.HandleError(err, "Unable to parse flag")
 	}
@@ -367,7 +367,7 @@ func renewDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "Unable to parse flag")
 	}
 
-	var infisicalToken string
+	var kmsToken string
 	httpClient, err := util.GetRestyClientWithCustomHeaders()
 	if err != nil {
 		util.HandleError(err, "Unable to get resty client with custom headers")
@@ -382,7 +382,7 @@ func renewDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 	}
 
 	if token != nil && (token.Type == util.SERVICE_TOKEN_IDENTIFIER || token.Type == util.UNIVERSAL_AUTH_TOKEN_IDENTIFIER) {
-		infisicalToken = token.Token
+		kmsToken = token.Token
 	} else {
 		util.RequireLogin()
 
@@ -395,23 +395,23 @@ func renewDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 			loggedInUserDetails = util.EstablishUserLoginSession()
 		}
 
-		infisicalToken = loggedInUserDetails.UserCredentials.JTWToken
+		kmsToken = loggedInUserDetails.UserCredentials.JTWToken
 	}
 
-	httpClient.SetAuthToken(infisicalToken)
+	httpClient.SetAuthToken(kmsToken)
 
-	customHeaders, err := util.GetInfisicalCustomHeadersMap()
+	customHeaders, err := util.GetKMSCustomHeadersMap()
 	if err != nil {
 		util.HandleError(err, "Unable to get custom headers")
 	}
 
-	infisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
+	kmsClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
 		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
 		CustomHeaders:    customHeaders,
 	})
-	infisicalClient.Auth().SetAccessToken(infisicalToken)
+	kmsClient.Auth().SetAccessToken(kmsToken)
 
 	if projectSlug == "" {
 		projectDetails, err := api.CallGetProjectById(httpClient, projectId)
@@ -425,7 +425,7 @@ func renewDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "To fetch dynamic secret root credentials details")
 	}
 
-	leaseDetails, err := infisicalClient.DynamicSecrets().Leases().RenewById(infisicalSdk.RenewDynamicSecretLeaseOptions{
+	leaseDetails, err := kmsClient.DynamicSecrets().Leases().RenewById(kmsSdk.RenewDynamicSecretLeaseOptions{
 		ProjectSlug:     projectSlug,
 		TTL:             ttl,
 		SecretPath:      secretsPath,
@@ -446,7 +446,7 @@ func renewDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 	} else {
 
 		util.PrintlnStderr("Successfully renewed dynamic secret lease")
-		visualize.PrintAllDynamicSecretLeases([]infisicalSdkModels.DynamicSecretLease{leaseDetails})
+		visualize.PrintAllDynamicSecretLeases([]kmsSdkModels.DynamicSecretLease{leaseDetails})
 	}
 
 	Telemetry.CaptureEvent("cli-command:dynamic-secrets lease renew", insights.NewProperties().Set("version", util.CLI_VERSION))
@@ -472,7 +472,7 @@ func revokeDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	token, err := util.GetInfisicalToken(cmd)
+	token, err := util.GetKMSToken(cmd)
 	if err != nil {
 		util.HandleError(err, "Unable to parse flag")
 	}
@@ -497,7 +497,7 @@ func revokeDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "Unable to parse flag")
 	}
 
-	var infisicalToken string
+	var kmsToken string
 	httpClient, err := util.GetRestyClientWithCustomHeaders()
 	if err != nil {
 		util.HandleError(err, "Unable to get resty client with custom headers")
@@ -512,7 +512,7 @@ func revokeDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 	}
 
 	if token != nil && (token.Type == util.SERVICE_TOKEN_IDENTIFIER || token.Type == util.UNIVERSAL_AUTH_TOKEN_IDENTIFIER) {
-		infisicalToken = token.Token
+		kmsToken = token.Token
 	} else {
 		util.RequireLogin()
 
@@ -525,23 +525,23 @@ func revokeDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 			loggedInUserDetails = util.EstablishUserLoginSession()
 		}
 
-		infisicalToken = loggedInUserDetails.UserCredentials.JTWToken
+		kmsToken = loggedInUserDetails.UserCredentials.JTWToken
 	}
 
-	httpClient.SetAuthToken(infisicalToken)
+	httpClient.SetAuthToken(kmsToken)
 
-	customHeaders, err := util.GetInfisicalCustomHeadersMap()
+	customHeaders, err := util.GetKMSCustomHeadersMap()
 	if err != nil {
 		util.HandleError(err, "Unable to get custom headers")
 	}
 
-	infisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
+	kmsClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
 		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
 		CustomHeaders:    customHeaders,
 	})
-	infisicalClient.Auth().SetAccessToken(infisicalToken)
+	kmsClient.Auth().SetAccessToken(kmsToken)
 
 	if projectSlug == "" {
 		projectDetails, err := api.CallGetProjectById(httpClient, projectId)
@@ -555,7 +555,7 @@ func revokeDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "To fetch dynamic secret root credentials details")
 	}
 
-	leaseDetails, err := infisicalClient.DynamicSecrets().Leases().DeleteById(infisicalSdk.DeleteDynamicSecretLeaseOptions{
+	leaseDetails, err := kmsClient.DynamicSecrets().Leases().DeleteById(kmsSdk.DeleteDynamicSecretLeaseOptions{
 		ProjectSlug:     projectSlug,
 		SecretPath:      secretsPath,
 		EnvironmentSlug: environmentName,
@@ -574,7 +574,7 @@ func revokeDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 	} else {
 
 		util.PrintlnStderr("Successfully revoked dynamic secret lease")
-		visualize.PrintAllDynamicSecretLeases([]infisicalSdkModels.DynamicSecretLease{leaseDetails})
+		visualize.PrintAllDynamicSecretLeases([]kmsSdkModels.DynamicSecretLease{leaseDetails})
 	}
 
 	Telemetry.CaptureEvent("cli-command:dynamic-secrets lease revoke", insights.NewProperties().Set("version", util.CLI_VERSION))
@@ -600,7 +600,7 @@ func listDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	token, err := util.GetInfisicalToken(cmd)
+	token, err := util.GetKMSToken(cmd)
 	if err != nil {
 		util.HandleError(err, "Unable to parse flag")
 	}
@@ -625,7 +625,7 @@ func listDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "Unable to parse flag")
 	}
 
-	var infisicalToken string
+	var kmsToken string
 	httpClient, err := util.GetRestyClientWithCustomHeaders()
 	if err != nil {
 		util.HandleError(err, "Unable to get resty client with custom headers")
@@ -640,7 +640,7 @@ func listDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 	}
 
 	if token != nil && (token.Type == util.SERVICE_TOKEN_IDENTIFIER || token.Type == util.UNIVERSAL_AUTH_TOKEN_IDENTIFIER) {
-		infisicalToken = token.Token
+		kmsToken = token.Token
 	} else {
 		util.RequireLogin()
 
@@ -652,23 +652,23 @@ func listDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		if loggedInUserDetails.LoginExpired {
 			loggedInUserDetails = util.EstablishUserLoginSession()
 		}
-		infisicalToken = loggedInUserDetails.UserCredentials.JTWToken
+		kmsToken = loggedInUserDetails.UserCredentials.JTWToken
 	}
 
-	httpClient.SetAuthToken(infisicalToken)
+	httpClient.SetAuthToken(kmsToken)
 
-	customHeaders, err := util.GetInfisicalCustomHeadersMap()
+	customHeaders, err := util.GetKMSCustomHeadersMap()
 	if err != nil {
 		util.HandleError(err, "Unable to get custom headers")
 	}
 
-	infisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
+	kmsClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
 		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
 		CustomHeaders:    customHeaders,
 	})
-	infisicalClient.Auth().SetAccessToken(infisicalToken)
+	kmsClient.Auth().SetAccessToken(kmsToken)
 
 	if projectSlug == "" {
 		projectDetails, err := api.CallGetProjectById(httpClient, projectId)
@@ -678,7 +678,7 @@ func listDynamicSecretLeaseByName(cmd *cobra.Command, args []string) {
 		projectSlug = projectDetails.Slug
 	}
 
-	dynamicSecretLeases, err := infisicalClient.DynamicSecrets().Leases().List(infisicalSdk.ListDynamicSecretLeasesOptions{
+	dynamicSecretLeases, err := kmsClient.DynamicSecrets().Leases().List(kmsSdk.ListDynamicSecretLeasesOptions{
 		DynamicSecretName: dynamicSecretRootCredentialName,
 		ProjectSlug:       projectSlug,
 		SecretPath:        secretsPath,

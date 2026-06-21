@@ -276,7 +276,7 @@ func GetAllEnvironmentVariables(params models.GetAllSecretsParameters, projectCo
 	// var serviceTokenDetails api.GetServiceTokenDetailsResponse
 	var errorToReturn error
 
-	if params.InfisicalToken == "" && params.UniversalAuthAccessToken == "" {
+	if params.KMSToken == "" && params.UniversalAuthAccessToken == "" {
 		if params.WorkspaceId == "" {
 			if projectConfigFilePath == "" {
 				_, err := GetWorkSpaceFromFile()
@@ -293,7 +293,7 @@ func GetAllEnvironmentVariables(params models.GetAllSecretsParameters, projectCo
 		log.Debug().Msg("GetAllEnvironmentVariables: Trying to fetch secrets using logged in details")
 
 		loggedInUserDetails, err := GetCurrentLoggedInUserDetails(true)
-		isConnected := ValidateInfisicalAPIConnection()
+		isConnected := ValidateKMSAPIConnection()
 
 		if isConnected {
 			log.Debug().Msg("GetAllEnvironmentVariables: Connected to Hanzo KMS instance, checking logged in creds")
@@ -308,7 +308,7 @@ func GetAllEnvironmentVariables(params models.GetAllSecretsParameters, projectCo
 		}
 
 		if params.WorkspaceId == "" {
-			var infisicalDotJson models.WorkspaceConfigFile
+			var kmsDotJson models.WorkspaceConfigFile
 
 			if projectConfigFilePath == "" {
 				projectConfig, err := GetWorkSpaceFromFile()
@@ -316,16 +316,16 @@ func GetAllEnvironmentVariables(params models.GetAllSecretsParameters, projectCo
 					PrintErrorMessageAndExit("Please either run kms init to connect to a project or pass in project id with --projectId flag")
 				}
 
-				infisicalDotJson = projectConfig
+				kmsDotJson = projectConfig
 			} else {
 				projectConfig, err := GetWorkSpaceFromFilePath(projectConfigFilePath)
 				if err != nil {
 					return nil, err
 				}
 
-				infisicalDotJson = projectConfig
+				kmsDotJson = projectConfig
 			}
-			params.WorkspaceId = infisicalDotJson.WorkspaceId
+			params.WorkspaceId = kmsDotJson.WorkspaceId
 		}
 
 		res, err := GetPlainTextSecretsV3(loggedInUserDetails.UserCredentials.JTWToken, params.WorkspaceId,
@@ -356,9 +356,9 @@ func GetAllEnvironmentVariables(params models.GetAllSecretsParameters, projectCo
 		}
 
 	} else {
-		if params.InfisicalToken != "" {
+		if params.KMSToken != "" {
 			log.Debug().Msg("Trying to fetch secrets using service token")
-			secretsToReturn, errorToReturn = GetPlainTextSecretsViaServiceToken(params.InfisicalToken, params.Environment, params.SecretsPath, params.IncludeImport, params.Recursive, params.TagSlugs, params.ExpandSecretReferences)
+			secretsToReturn, errorToReturn = GetPlainTextSecretsViaServiceToken(params.KMSToken, params.Environment, params.SecretsPath, params.IncludeImport, params.Recursive, params.TagSlugs, params.ExpandSecretReferences)
 		} else if params.UniversalAuthAccessToken != "" {
 
 			if params.WorkspaceId == "" {
@@ -672,7 +672,7 @@ func SetRawSecrets(secretArgs []string, secretType string, environmentName strin
 	}
 
 	if tokenDetails.Type == SERVICE_TOKEN_IDENTIFIER {
-		getAllEnvironmentVariablesRequest.InfisicalToken = tokenDetails.Token
+		getAllEnvironmentVariablesRequest.KMSToken = tokenDetails.Token
 	}
 
 	httpClient, err := GetRestyClientWithCustomHeaders()

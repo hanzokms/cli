@@ -22,7 +22,7 @@ import (
 	"github.com/compose-spec/compose-go/v2/types"
 	"github.com/go-faker/faker/v4"
 	"github.com/hanzokms/cli/e2e-tests/packages/client"
-	"github.com/hanzokms/cli/e2e-tests/packages/infisical"
+	"github.com/hanzokms/cli/e2e-tests/packages/kms"
 	"github.com/oapi-codegen/oapi-codegen/v2/pkg/securityprovider"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -30,24 +30,24 @@ import (
 	dockercompose "github.com/testcontainers/testcontainers-go/modules/compose"
 )
 
-type InfisicalService struct {
-	Stack           *infisical.Stack
+type KMSService struct {
+	Stack           *kms.Stack
 	apiClient       client.ClientWithResponsesInterface
 	provisionResult *client.ProvisionResult
 }
 
-func NewInfisicalService() *InfisicalService {
-	return &InfisicalService{Stack: infisical.NewStack(infisical.WithDefaultStackFromEnv())}
+func NewKMSService() *KMSService {
+	return &KMSService{Stack: kms.NewStack(kms.WithDefaultStackFromEnv())}
 }
 
-func (s *InfisicalService) WithBackendEnvironment(environment types.MappingWithEquals) *InfisicalService {
+func (s *KMSService) WithBackendEnvironment(environment types.MappingWithEquals) *KMSService {
 	backend := s.Stack.Project.Services["backend"]
 	backend.Environment = backend.Environment.OverrideBy(environment)
 	fmt.Print(s.Stack.Project.Services["backend"].Environment)
 	return s
 }
 
-func (s *InfisicalService) Up(t *testing.T, ctx context.Context) *InfisicalService {
+func (s *KMSService) Up(t *testing.T, ctx context.Context) *KMSService {
 	t.Cleanup(func() {
 		// Only clean up if CLI_E2E_REMOVE_COMPOSE is set to "1"
 		if os.Getenv("CLI_E2E_REMOVE_COMPOSE") == "1" {
@@ -57,7 +57,7 @@ func (s *InfisicalService) Up(t *testing.T, ctx context.Context) *InfisicalServi
 				dockercompose.RemoveVolumes(true),
 			)
 			if err != nil {
-				slog.Error("Failed to clean up Infisical service", "err", err)
+				slog.Error("Failed to clean up KMS service", "err", err)
 			}
 		}
 	})
@@ -69,16 +69,16 @@ func (s *InfisicalService) Up(t *testing.T, ctx context.Context) *InfisicalServi
 	return s
 }
 
-func (s *InfisicalService) Bootstrap(ctx context.Context, t *testing.T) {
+func (s *KMSService) Bootstrap(ctx context.Context, t *testing.T) {
 	apiUrl, err := s.Stack.ApiUrl(ctx)
 	require.NoError(t, err)
-	slog.Info("Bootstrapping Infisical service", "apiUrl", apiUrl)
+	slog.Info("Bootstrapping KMS service", "apiUrl", apiUrl)
 	hc := http.Client{}
 	provisioningClient, err := client.NewClientWithResponses(apiUrl, client.WithHTTPClient(&hc))
 	provisioner := client.NewProvisioner(client.WithClient(provisioningClient))
 	result, err := provisioner.Bootstrap(ctx)
 	require.NoError(t, err)
-	slog.Info("Infisical service bootstrapped successfully", "result", result)
+	slog.Info("KMS service bootstrapped successfully", "result", result)
 	s.provisionResult = result
 
 	bearerAuth, err := securityprovider.NewSecurityProviderBearerToken(result.Token)
@@ -90,33 +90,33 @@ func (s *InfisicalService) Bootstrap(ctx context.Context, t *testing.T) {
 	require.NoError(t, err)
 }
 
-func (s *InfisicalService) Compose() dockercompose.ComposeStack {
+func (s *KMSService) Compose() dockercompose.ComposeStack {
 	return s.Stack.Compose()
 }
 
-func (s *InfisicalService) DownWithForce(ctx context.Context) error {
+func (s *KMSService) DownWithForce(ctx context.Context) error {
 	return s.Stack.DownWithForce(ctx, true)
 }
 
-func (s *InfisicalService) ApiClient() client.ClientWithResponsesInterface {
+func (s *KMSService) ApiClient() client.ClientWithResponsesInterface {
 	return s.apiClient
 }
 
-func (s *InfisicalService) Reset(ctx context.Context, t *testing.T) {
-	err := infisical.Reset(ctx, s.Compose())
+func (s *KMSService) Reset(ctx context.Context, t *testing.T) {
+	err := kms.Reset(ctx, s.Compose())
 	require.NoError(t, err)
 }
 
-func (s *InfisicalService) ResetAndBootstrap(ctx context.Context, t *testing.T) {
+func (s *KMSService) ResetAndBootstrap(ctx context.Context, t *testing.T) {
 	s.Reset(ctx, t)
 	s.Bootstrap(ctx, t)
 }
 
-func (s *InfisicalService) ProvisionResult() *client.ProvisionResult {
+func (s *KMSService) ProvisionResult() *client.ProvisionResult {
 	return s.provisionResult
 }
 
-func (s *InfisicalService) ApiUrl(t *testing.T) string {
+func (s *KMSService) ApiUrl(t *testing.T) string {
 	apiUrl, err := s.Stack.ApiUrl(context.Background())
 	require.NoError(t, err)
 	return apiUrl
@@ -127,9 +127,9 @@ type MachineIdentity struct {
 	TokenAuthToken *string
 }
 
-type MachineIdentityOption func(*testing.T, context.Context, *InfisicalService, *MachineIdentity)
+type MachineIdentityOption func(*testing.T, context.Context, *KMSService, *MachineIdentity)
 
-func (s *InfisicalService) CreateMachineIdentity(t *testing.T, ctx context.Context, options ...MachineIdentityOption) MachineIdentity {
+func (s *KMSService) CreateMachineIdentity(t *testing.T, ctx context.Context, options ...MachineIdentityOption) MachineIdentity {
 	c := s.apiClient
 
 	role := "member"
@@ -149,7 +149,7 @@ func (s *InfisicalService) CreateMachineIdentity(t *testing.T, ctx context.Conte
 }
 
 func WithTokenAuth() MachineIdentityOption {
-	return func(t *testing.T, ctx context.Context, s *InfisicalService, i *MachineIdentity) {
+	return func(t *testing.T, ctx context.Context, s *KMSService, i *MachineIdentity) {
 		c := s.apiClient
 
 		// Update the identity to allow token auth
@@ -217,24 +217,24 @@ type Command struct {
 }
 
 func findExecutable(t *testing.T) string {
-	// First, check for INFISICAL_CLI_EXECUTABLE environment variable
-	envExec := os.Getenv("INFISICAL_CLI_EXECUTABLE")
+	// First, check for KMS_CLI_EXECUTABLE environment variable
+	envExec := os.Getenv("KMS_CLI_EXECUTABLE")
 	if envExec != "" {
 		if err := validateExecutable(envExec); err != nil {
-			t.Fatalf("INFISICAL_CLI_EXECUTABLE is set to '%s' but the executable cannot be found or is not executable: %v\n"+
+			t.Fatalf("KMS_CLI_EXECUTABLE is set to '%s' but the executable cannot be found or is not executable: %v\n"+
 				"Please ensure the path is correct and the file has execute permissions.", envExec, err)
 		}
 		return envExec
 	}
 
 	// Fall back to default path
-	defaultPath := "./infisical-merge"
+	defaultPath := "./kms-merge"
 	if err := validateExecutable(defaultPath); err != nil {
 		t.Fatalf("Cannot find executable at default path '%s': %v\n"+
 			"Please either:\n"+
-			"  1. Build the executable and place it at './infisical-merge', or\n"+
-			"  2. Set the INFISICAL_CLI_EXECUTABLE environment variable to the correct path.\n"+
-			"     Example: export INFISICAL_CLI_EXECUTABLE=/path/to/infisical-merge", defaultPath, err)
+			"  1. Build the executable and place it at './kms-merge', or\n"+
+			"  2. Set the KMS_CLI_EXECUTABLE environment variable to the correct path.\n"+
+			"     Example: export KMS_CLI_EXECUTABLE=/path/to/kms-merge", defaultPath, err)
 	}
 	return defaultPath
 }
@@ -364,7 +364,7 @@ func (c *Command) Start(ctx context.Context) {
 		log.Logger = log.Output(cmd.GetLoggerConfig(c.stderrFile))
 
 		os.Args = make([]string, 0, len(c.Args)+1)
-		os.Args = append(os.Args, "infisical")
+		os.Args = append(os.Args, "kms")
 		os.Args = append(os.Args, c.Args...)
 		for k, v := range env {
 			t.Setenv(k, v)

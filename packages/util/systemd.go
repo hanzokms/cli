@@ -14,9 +14,9 @@ import (
 func WriteSystemdServiceFile(
 	serviceLogFilePath string,
 	environmentFilePath string,
-	serviceName string, // service name (e.g. infisical-relay)
+	serviceName string, // service name (e.g. kms-relay)
 	serviceType string, // service type (e.g. relay, gateway)
-	description string, // service description (e.g. Infisical Relay Service)
+	description string, // service description (e.g. Hanzo KMS Relay Service)
 ) error {
 
 	data := map[string]string{
@@ -70,7 +70,7 @@ func WriteSystemdServiceFile(
 
 func WriteLogrotateFile(
 	serviceLogFilePath string,
-	serviceName string, // service name (e.g. infisical-relay)
+	serviceName string, // service name (e.g. kms-relay)
 ) error {
 
 	if serviceLogFilePath == "" {

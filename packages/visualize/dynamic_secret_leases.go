@@ -1,6 +1,6 @@
 package visualize
 
-import infisicalModels "github.com/infisical/go-sdk/packages/models"
+import kmsModels "github.com/infisical/go-sdk/packages/models"
 
 func PrintAllDyamicSecretLeaseCredentials(leaseCredentials map[string]any) {
 	rows := [][]string{}
@@ -15,7 +15,7 @@ func PrintAllDyamicSecretLeaseCredentials(leaseCredentials map[string]any) {
 	GenericTable(headers, rows)
 }
 
-func PrintAllDynamicRootCredentials(dynamicRootCredentials []infisicalModels.DynamicSecret) {
+func PrintAllDynamicRootCredentials(dynamicRootCredentials []kmsModels.DynamicSecret) {
 	rows := [][]string{}
 	for _, el := range dynamicRootCredentials {
 		rows = append(rows, []string{el.Name, el.Type, el.DefaultTTL, el.MaxTTL})
@@ -26,7 +26,7 @@ func PrintAllDynamicRootCredentials(dynamicRootCredentials []infisicalModels.Dyn
 	GenericTable(headers, rows)
 }
 
-func PrintAllDynamicSecretLeases(dynamicSecretLeases []infisicalModels.DynamicSecretLease) {
+func PrintAllDynamicSecretLeases(dynamicSecretLeases []kmsModels.DynamicSecretLease) {
 	rows := [][]string{}
 	const timeformat = "02-Jan-2006 03:04:05 PM"
 	for _, el := range dynamicSecretLeases {

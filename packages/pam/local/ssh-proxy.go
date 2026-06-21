@@ -296,7 +296,7 @@ func (p *SSHProxyServer) handleConnection(clientConn net.Conn) {
 	defer relayConn.Close()
 
 	// Connect to gateway (SSH proxy will handle the SSH protocol)
-	gatewayConn, err := p.CreateGatewayConnection(relayConn, ALPNInfisicalPAMProxy)
+	gatewayConn, err := p.CreateGatewayConnection(relayConn, ALPNKMSPAMProxy)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to connect to gateway")
 		return

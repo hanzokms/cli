@@ -57,7 +57,7 @@ var exportCmd = &cobra.Command{
 			util.HandleError(err)
 		}
 
-		token, err := util.GetInfisicalToken(cmd)
+		token, err := util.GetKMSToken(cmd)
 		if err != nil {
 			util.HandleError(err, "Unable to parse flag")
 		}
@@ -102,7 +102,7 @@ var exportCmd = &cobra.Command{
 		}
 
 		if token != nil && token.Type == util.SERVICE_TOKEN_IDENTIFIER {
-			request.InfisicalToken = token.Token
+			request.KMSToken = token.Token
 		} else if token != nil && token.Type == util.UNIVERSAL_AUTH_TOKEN_IDENTIFIER {
 			request.UniversalAuthAccessToken = token.Token
 		}

@@ -94,7 +94,7 @@ func init() {
 		loggedInDetails, err := util.GetCurrentLoggedInUserDetails(false)
 
 		if !silent && err == nil && loggedInDetails.IsUserLoggedIn && !loggedInDetails.LoginExpired {
-			token, err := util.GetInfisicalToken(cmd)
+			token, err := util.GetKMSToken(cmd)
 
 			if err == nil && token != nil {
 				util.PrintWarningWithWriter(fmt.Sprintf("Your logged-in session is being overwritten by the token provided from the %s.", token.Source), cmd.ErrOrStderr())
@@ -106,8 +106,8 @@ func init() {
 	// if config.KMS_URL is set to the default value, check if KMS_URL is set in the environment
 	// this is used to allow overrides of the default value
 	if !RootCmd.Flag("domain").Changed {
-		if envInfisicalBackendUrl, ok := os.LookupEnv("KMS_API_URL"); ok {
-			config.KMS_URL = util.AppendAPIEndpoint(envInfisicalBackendUrl)
+		if envKMSBackendUrl, ok := os.LookupEnv("KMS_API_URL"); ok {
+			config.KMS_URL = util.AppendAPIEndpoint(envKMSBackendUrl)
 		}
 	}
 

@@ -110,7 +110,7 @@ func StartKubernetesLocalProxy(accessToken string, accessParams PAMAccessParams,
 	}
 
 	// Build cluster name for kubeconfig context
-	clusterName := fmt.Sprintf("infisical-k8s-pam/%s/%s", accessParams.ResourceName, accessParams.AccountName)
+	clusterName := fmt.Sprintf("kms-k8s-pam/%s/%s", accessParams.ResourceName, accessParams.AccountName)
 
 	config.Clusters[clusterName] = &k8sapi.Cluster{
 		Server: fmt.Sprintf("http://localhost:%d", proxy.port),
@@ -292,7 +292,7 @@ func (p *KubernetesProxyServer) handleConnection(clientConn net.Conn) {
 	}
 	defer relayConn.Close()
 
-	gatewayConn, err := p.CreateGatewayConnection(relayConn, ALPNInfisicalPAMProxy)
+	gatewayConn, err := p.CreateGatewayConnection(relayConn, ALPNKMSPAMProxy)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to connect to gateway")
 		return

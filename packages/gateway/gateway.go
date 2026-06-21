@@ -27,7 +27,7 @@ type GatewayConfig struct {
 	TurnServerUsername string
 	TurnServerPassword string
 	TurnServerAddress  string
-	InfisicalStaticIp  string
+	KMSStaticIp  string
 	SerialNumber       string
 	PrivateKey         string
 	Certificate        string
@@ -115,7 +115,7 @@ func (g *Gateway) ConnectWithRelay() error {
 		TurnServerUsername: relayDetails.TurnServerUsername,
 		TurnServerPassword: relayDetails.TurnServerPassword,
 		TurnServerAddress:  relayDetails.TurnServerAddress,
-		InfisicalStaticIp:  relayDetails.InfisicalStaticIp,
+		KMSStaticIp:  relayDetails.KMSStaticIp,
 	}
 
 	g.client = client
@@ -161,7 +161,7 @@ func (g *Gateway) Listen(ctx context.Context) error {
 	errCh := make(chan error, 1)
 	shutdownCh := make(chan bool, 1)
 
-	if err = g.createPermissionForStaticIps(g.config.InfisicalStaticIp); err != nil {
+	if err = g.createPermissionForStaticIps(g.config.KMSStaticIp); err != nil {
 		return err
 	}
 
@@ -305,7 +305,7 @@ func (g *Gateway) registerHeartBeat(ctx context.Context, errCh chan error) {
 
 func (g *Gateway) createPermissionForStaticIps(staticIps string) error {
 	if staticIps == "" {
-		return fmt.Errorf("missing Infisical static ips for permission")
+		return fmt.Errorf("missing Hanzo KMS static ips for permission")
 	}
 
 	splittedIps := strings.Split(staticIps, ",")
@@ -350,7 +350,7 @@ func (g *Gateway) registerRelayIsActive(ctx context.Context, errCh chan error) e
 				return
 			case <-ticker.C:
 				log.Debug().Msg("Performing relay connection health check")
-				err := g.createPermissionForStaticIps(g.config.InfisicalStaticIp)
+				err := g.createPermissionForStaticIps(g.config.KMSStaticIp)
 				// try again error message from server happens to avoid congestion
 				// https://github.com/pion/turn/blob/master/internal/client/udp_conn.go#L382
 				if err != nil && !strings.Contains(err.Error(), "try again") {

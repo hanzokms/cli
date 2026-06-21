@@ -28,33 +28,33 @@ func TestGateway_RegistersAGateway(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	t.Cleanup(cancel)
 
-	infisical := helpers.NewInfisicalService().
+	kms := helpers.NewKMSService().
 		WithBackendEnvironment(types.NewMappingWithEquals([]string{
 			// This is needed for the private ip (current host) to be accepted for the relay server
 			"ALLOW_INTERNAL_IP_CONNECTIONS=true",
 		})).
 		Up(t, ctx)
 
-	c := infisical.ApiClient()
-	identity := infisical.CreateMachineIdentity(t, ctx, helpers.WithTokenAuth())
+	c := kms.ApiClient()
+	identity := kms.CreateMachineIdentity(t, ctx, helpers.WithTokenAuth())
 	require.NotNil(t, identity)
 
 	relayName := helpers.RandomSlug(2)
 	relayCmd := helpers.Command{
 		Test: t,
-		Args: []string{"relay", "start", "--domain", infisical.ApiUrl(t)},
+		Args: []string{"relay", "start", "--domain", kms.ApiUrl(t)},
 		Env: map[string]string{
-			"INFISICAL_API_URL":    infisical.ApiUrl(t),
-			"INFISICAL_RELAY_NAME": relayName,
-			"INFISICAL_RELAY_HOST": "host.docker.internal",
-			"INFISICAL_TOKEN":      *identity.TokenAuthToken,
+			"KMS_API_URL":    kms.ApiUrl(t),
+			"KMS_RELAY_NAME": relayName,
+			"KMS_RELAY_HOST": "host.docker.internal",
+			"KMS_TOKEN":      *identity.TokenAuthToken,
 		},
 	}
 	relayCmd.Start(ctx)
 	t.Cleanup(relayCmd.Stop)
 	result := helpers.WaitForStderr(t, helpers.WaitForStderrOptions{
 		EnsureCmdRunning: &relayCmd,
-		ExpectedString:   "Relay is reachable by Infisical",
+		ExpectedString:   "Relay is reachable by KMS",
 	})
 	require.Equal(t, helpers.WaitSuccess, result)
 
@@ -69,8 +69,8 @@ func TestGateway_RegistersAGateway(t *testing.T) {
 			fmt.Sprintf("--pam-session-recording-path=%s", sessionRecordingPath),
 		},
 		Env: map[string]string{
-			"INFISICAL_API_URL": infisical.ApiUrl(t),
-			"INFISICAL_TOKEN":   *identity.TokenAuthToken,
+			"KMS_API_URL": kms.ApiUrl(t),
+			"KMS_TOKEN":   *identity.TokenAuthToken,
 		},
 	}
 	gatewayCmd.Start(ctx)
@@ -112,7 +112,7 @@ func TestGateway_RegistersAGateway(t *testing.T) {
 
 	result = helpers.WaitForStderr(t, helpers.WaitForStderrOptions{
 		EnsureCmdRunning: &gatewayCmd,
-		ExpectedString:   "Gateway is reachable by Infisical",
+		ExpectedString:   "Gateway is reachable by KMS",
 	})
 	assert.Equal(t, helpers.WaitSuccess, result)
 }
@@ -121,32 +121,32 @@ func TestGateway_RelayGatewayConnectivity(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	t.Cleanup(cancel)
 
-	infisical := helpers.NewInfisicalService().
+	kms := helpers.NewKMSService().
 		WithBackendEnvironment(types.NewMappingWithEquals([]string{
 			// This is needed for the private ip (current host) to be accepted for the relay server
 			"ALLOW_INTERNAL_IP_CONNECTIONS=true",
 		})).
 		Up(t, ctx)
 
-	identity := infisical.CreateMachineIdentity(t, ctx, helpers.WithTokenAuth())
+	identity := kms.CreateMachineIdentity(t, ctx, helpers.WithTokenAuth())
 	require.NotNil(t, identity)
 
 	relayName := helpers.RandomSlug(2)
 	relayCmd := helpers.Command{
 		Test: t,
-		Args: []string{"relay", "start", "--domain", infisical.ApiUrl(t)},
+		Args: []string{"relay", "start", "--domain", kms.ApiUrl(t)},
 		Env: map[string]string{
-			"INFISICAL_API_URL":    infisical.ApiUrl(t),
-			"INFISICAL_RELAY_NAME": relayName,
-			"INFISICAL_RELAY_HOST": "host.docker.internal",
-			"INFISICAL_TOKEN":      *identity.TokenAuthToken,
+			"KMS_API_URL":    kms.ApiUrl(t),
+			"KMS_RELAY_NAME": relayName,
+			"KMS_RELAY_HOST": "host.docker.internal",
+			"KMS_TOKEN":      *identity.TokenAuthToken,
 		},
 	}
 	relayCmd.Start(ctx)
 	t.Cleanup(relayCmd.Stop)
 	result := helpers.WaitForStderr(t, helpers.WaitForStderrOptions{
 		EnsureCmdRunning: &relayCmd,
-		ExpectedString:   "Relay is reachable by Infisical",
+		ExpectedString:   "Relay is reachable by KMS",
 	})
 	require.Equal(t, helpers.WaitSuccess, result)
 
@@ -161,19 +161,19 @@ func TestGateway_RelayGatewayConnectivity(t *testing.T) {
 			fmt.Sprintf("--pam-session-recording-path=%s", sessionRecordingPath),
 		},
 		Env: map[string]string{
-			"INFISICAL_API_URL": infisical.ApiUrl(t),
-			"INFISICAL_TOKEN":   *identity.TokenAuthToken,
+			"KMS_API_URL": kms.ApiUrl(t),
+			"KMS_TOKEN":   *identity.TokenAuthToken,
 		},
 	}
 	gatewayCmd.Start(ctx)
 	t.Cleanup(gatewayCmd.Stop)
 	result = helpers.WaitForStderr(t, helpers.WaitForStderrOptions{
 		EnsureCmdRunning: &gatewayCmd,
-		ExpectedString:   "Gateway is reachable by Infisical",
+		ExpectedString:   "Gateway is reachable by KMS",
 	})
 	assert.Equal(t, helpers.WaitSuccess, result)
 
-	c := infisical.ApiClient()
+	c := kms.ApiClient()
 	var gatewayId openapitypes.UUID
 	resp, err := c.ListGatewaysWithResponse(ctx)
 	require.NoError(t, err)

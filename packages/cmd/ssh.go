@@ -16,8 +16,8 @@ import (
 	"github.com/hanzokms/cli/packages/api"
 	"github.com/hanzokms/cli/packages/config"
 	"github.com/hanzokms/cli/packages/util"
-	infisicalSdk "github.com/infisical/go-sdk"
-	infisicalSdkUtil "github.com/infisical/go-sdk/packages/util"
+	kmsSdk "github.com/infisical/go-sdk"
+	kmsSdkUtil "github.com/infisical/go-sdk/packages/util"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh"
@@ -62,21 +62,21 @@ var sshAddHostCmd = &cobra.Command{
 	Run:   sshAddHost,
 }
 
-var algoToFileName = map[infisicalSdkUtil.CertKeyAlgorithm]string{
-	infisicalSdkUtil.RSA2048:   "id_rsa_2048",
-	infisicalSdkUtil.RSA4096:   "id_rsa_4096",
-	infisicalSdkUtil.ECDSAP256: "id_ecdsa_p256",
-	infisicalSdkUtil.ECDSAP384: "id_ecdsa_p384",
+var algoToFileName = map[kmsSdkUtil.CertKeyAlgorithm]string{
+	kmsSdkUtil.RSA2048:   "id_rsa_2048",
+	kmsSdkUtil.RSA4096:   "id_rsa_4096",
+	kmsSdkUtil.ECDSAP256: "id_ecdsa_p256",
+	kmsSdkUtil.ECDSAP384: "id_ecdsa_p384",
 }
 
-func isValidKeyAlgorithm(algo infisicalSdkUtil.CertKeyAlgorithm) bool {
+func isValidKeyAlgorithm(algo kmsSdkUtil.CertKeyAlgorithm) bool {
 	_, exists := algoToFileName[algo]
 	return exists
 }
 
-func isValidCertType(certType infisicalSdkUtil.SshCertType) bool {
+func isValidCertType(certType kmsSdkUtil.SshCertType) bool {
 	switch certType {
-	case infisicalSdkUtil.UserCert, infisicalSdkUtil.HostCert:
+	case kmsSdkUtil.UserCert, kmsSdkUtil.HostCert:
 		return true
 	default:
 		return false
@@ -166,15 +166,15 @@ func addCredentialsToAgent(privateKeyContent, certContent string) error {
 
 func issueCredentials(cmd *cobra.Command, args []string) {
 
-	token, err := util.GetInfisicalToken(cmd)
+	token, err := util.GetKMSToken(cmd)
 	if err != nil {
 		util.HandleError(err, "Unable to parse flag")
 	}
 
-	var infisicalToken string
+	var kmsToken string
 
 	if token != nil && (token.Type == util.SERVICE_TOKEN_IDENTIFIER || token.Type == util.UNIVERSAL_AUTH_TOKEN_IDENTIFIER) {
-		infisicalToken = token.Token
+		kmsToken = token.Token
 	} else {
 		util.RequireLogin()
 
@@ -186,7 +186,7 @@ func issueCredentials(cmd *cobra.Command, args []string) {
 		if loggedInUserDetails.LoginExpired {
 			loggedInUserDetails = util.EstablishUserLoginSession()
 		}
-		infisicalToken = loggedInUserDetails.UserCredentials.JTWToken
+		kmsToken = loggedInUserDetails.UserCredentials.JTWToken
 	}
 
 	certificateTemplateId, err := cmd.Flags().GetString("certificateTemplateId")
@@ -218,7 +218,7 @@ func issueCredentials(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "Unable to parse keyAlgorithm flag")
 	}
 
-	if !isValidKeyAlgorithm(infisicalSdkUtil.CertKeyAlgorithm(keyAlgorithm)) {
+	if !isValidKeyAlgorithm(kmsSdkUtil.CertKeyAlgorithm(keyAlgorithm)) {
 		util.HandleError(fmt.Errorf("invalid keyAlgorithm: %s", keyAlgorithm),
 			"Valid values: RSA_2048, RSA_4096, EC_prime256v1, EC_secp384r1")
 	}
@@ -228,7 +228,7 @@ func issueCredentials(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "Unable to parse flag")
 	}
 
-	if !isValidCertType(infisicalSdkUtil.SshCertType(certType)) {
+	if !isValidCertType(kmsSdkUtil.SshCertType(certType)) {
 		util.HandleError(fmt.Errorf("invalid certType: %s", certType),
 			"Valid values: user, host")
 	}
@@ -308,7 +308,7 @@ func issueCredentials(cmd *cobra.Command, args []string) {
 	}
 
 	// Define file names based on key algorithm
-	fileName := algoToFileName[infisicalSdkUtil.CertKeyAlgorithm(keyAlgorithm)]
+	fileName := algoToFileName[kmsSdkUtil.CertKeyAlgorithm(keyAlgorithm)]
 
 	// Define file paths
 	privateKeyPath = filepath.Join(outputDir, fileName)
@@ -328,24 +328,24 @@ func issueCredentials(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	customHeaders, err := util.GetInfisicalCustomHeadersMap()
+	customHeaders, err := util.GetKMSCustomHeadersMap()
 	if err != nil {
 		util.HandleError(err, "Unable to get custom headers")
 	}
 
-	infisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
+	kmsClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
 		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
 		CustomHeaders:    customHeaders,
 	})
-	infisicalClient.Auth().SetAccessToken(infisicalToken)
+	kmsClient.Auth().SetAccessToken(kmsToken)
 
-	creds, err := infisicalClient.Ssh().IssueCredentials(infisicalSdk.IssueSshCredsOptions{
+	creds, err := kmsClient.Ssh().IssueCredentials(kmsSdk.IssueSshCredsOptions{
 		CertificateTemplateID: certificateTemplateId,
 		Principals:            principals,
-		KeyAlgorithm:          infisicalSdkUtil.CertKeyAlgorithm(keyAlgorithm),
-		CertType:              infisicalSdkUtil.SshCertType(certType),
+		KeyAlgorithm:          kmsSdkUtil.CertKeyAlgorithm(keyAlgorithm),
+		CertType:              kmsSdkUtil.SshCertType(certType),
 		TTL:                   ttl,
 		KeyID:                 keyId,
 	})
@@ -357,12 +357,12 @@ func issueCredentials(cmd *cobra.Command, args []string) {
 	if outFilePath != "" {
 		// If signedKeyPath wasn't set in the directory scenario, set it now
 		if signedKeyPath == "" {
-			fileName := algoToFileName[infisicalSdkUtil.CertKeyAlgorithm(keyAlgorithm)]
+			fileName := algoToFileName[kmsSdkUtil.CertKeyAlgorithm(keyAlgorithm)]
 			signedKeyPath = filepath.Join(outputDir, fileName+"-cert.pub")
 		}
 
 		if privateKeyPath == "" {
-			privateKeyPath = filepath.Join(outputDir, algoToFileName[infisicalSdkUtil.CertKeyAlgorithm(keyAlgorithm)])
+			privateKeyPath = filepath.Join(outputDir, algoToFileName[kmsSdkUtil.CertKeyAlgorithm(keyAlgorithm)])
 		}
 		err = writeToFile(privateKeyPath, creds.PrivateKey, 0600)
 		if err != nil {
@@ -399,15 +399,15 @@ func issueCredentials(cmd *cobra.Command, args []string) {
 
 func signKey(cmd *cobra.Command, args []string) {
 
-	token, err := util.GetInfisicalToken(cmd)
+	token, err := util.GetKMSToken(cmd)
 	if err != nil {
 		util.HandleError(err, "Unable to parse flag")
 	}
 
-	var infisicalToken string
+	var kmsToken string
 
 	if token != nil && (token.Type == util.SERVICE_TOKEN_IDENTIFIER || token.Type == util.UNIVERSAL_AUTH_TOKEN_IDENTIFIER) {
-		infisicalToken = token.Token
+		kmsToken = token.Token
 	} else {
 		util.RequireLogin()
 
@@ -419,7 +419,7 @@ func signKey(cmd *cobra.Command, args []string) {
 		if loggedInUserDetails.LoginExpired {
 			loggedInUserDetails = util.EstablishUserLoginSession()
 		}
-		infisicalToken = loggedInUserDetails.UserCredentials.JTWToken
+		kmsToken = loggedInUserDetails.UserCredentials.JTWToken
 	}
 
 	certificateTemplateId, err := cmd.Flags().GetString("certificateTemplateId")
@@ -496,7 +496,7 @@ func signKey(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "Unable to parse flag")
 	}
 
-	if !isValidCertType(infisicalSdkUtil.SshCertType(certType)) {
+	if !isValidCertType(kmsSdkUtil.SshCertType(certType)) {
 		util.HandleError(fmt.Errorf("invalid certType: %s", certType),
 			"Valid values: user, host")
 	}
@@ -573,24 +573,24 @@ func signKey(cmd *cobra.Command, args []string) {
 		signedKeyPath = outFilePath
 	}
 
-	customHeaders, err := util.GetInfisicalCustomHeadersMap()
+	customHeaders, err := util.GetKMSCustomHeadersMap()
 	if err != nil {
 		util.HandleError(err, "Unable to get custom headers")
 	}
 
-	infisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
+	kmsClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
 		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
 		CustomHeaders:    customHeaders,
 	})
-	infisicalClient.Auth().SetAccessToken(infisicalToken)
+	kmsClient.Auth().SetAccessToken(kmsToken)
 
-	creds, err := infisicalClient.Ssh().SignKey(infisicalSdk.SignSshPublicKeyOptions{
+	creds, err := kmsClient.Ssh().SignKey(kmsSdk.SignSshPublicKeyOptions{
 		CertificateTemplateID: certificateTemplateId,
 		PublicKey:             publicKey,
 		Principals:            principals,
-		CertType:              infisicalSdkUtil.SshCertType(certType),
+		CertType:              kmsSdkUtil.SshCertType(certType),
 		TTL:                   ttl,
 		KeyID:                 keyId,
 	})
@@ -608,15 +608,15 @@ func signKey(cmd *cobra.Command, args []string) {
 }
 
 func sshConnect(cmd *cobra.Command, args []string) {
-	token, err := util.GetInfisicalToken(cmd)
+	token, err := util.GetKMSToken(cmd)
 	if err != nil {
 		util.HandleError(err, "Unable to parse flag")
 	}
 
-	var infisicalToken string
+	var kmsToken string
 
 	if token != nil && (token.Type == util.SERVICE_TOKEN_IDENTIFIER || token.Type == util.UNIVERSAL_AUTH_TOKEN_IDENTIFIER) {
-		infisicalToken = token.Token
+		kmsToken = token.Token
 	} else {
 		util.RequireLogin()
 
@@ -628,7 +628,7 @@ func sshConnect(cmd *cobra.Command, args []string) {
 		if loggedInUserDetails.LoginExpired {
 			loggedInUserDetails = util.EstablishUserLoginSession()
 		}
-		infisicalToken = loggedInUserDetails.UserCredentials.JTWToken
+		kmsToken = loggedInUserDetails.UserCredentials.JTWToken
 	}
 
 	writeHostCaToFile, err := cmd.Flags().GetBool("write-host-ca-to-file")
@@ -684,21 +684,21 @@ func sshConnect(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	customHeaders, err := util.GetInfisicalCustomHeadersMap()
+	customHeaders, err := util.GetKMSCustomHeadersMap()
 	if err != nil {
 		util.HandleError(err, "Unable to get custom headers")
 	}
 
-	infisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
+	kmsClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
 		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
 		CustomHeaders:    customHeaders,
 	})
-	infisicalClient.Auth().SetAccessToken(infisicalToken)
+	kmsClient.Auth().SetAccessToken(kmsToken)
 
 	// Fetch SSH Hosts
-	hosts, err := infisicalClient.Ssh().GetSshHosts(infisicalSdk.GetSshHostsOptions{})
+	hosts, err := kmsClient.Ssh().GetSshHosts(kmsSdk.GetSshHostsOptions{})
 	if err != nil {
 		util.HandleError(err, "Failed to fetch SSH hosts")
 	}
@@ -777,7 +777,7 @@ func sshConnect(cmd *cobra.Command, args []string) {
 	}
 
 	// Issue SSH creds for host
-	creds, err := infisicalClient.Ssh().IssueSshHostUserCert(selectedHost.ID, infisicalSdk.IssueSshHostUserCertOptions{
+	creds, err := kmsClient.Ssh().IssueSshHostUserCert(selectedHost.ID, kmsSdk.IssueSshHostUserCertOptions{
 		LoginUser: selectedLoginUser,
 	})
 	if err != nil {
@@ -786,7 +786,7 @@ func sshConnect(cmd *cobra.Command, args []string) {
 
 	// Write Host CA public key to known_hosts if enabled
 	if writeHostCaToFile {
-		hostCaPublicKey, err := infisicalClient.Ssh().GetSshHostHostCaPublicKey(selectedHost.ID)
+		hostCaPublicKey, err := kmsClient.Ssh().GetSshHostHostCaPublicKey(selectedHost.ID)
 		if err != nil {
 			util.HandleError(err, "Failed to fetch Host CA public key")
 		}
@@ -863,14 +863,14 @@ func sshConnect(cmd *cobra.Command, args []string) {
 
 func sshAddHost(cmd *cobra.Command, args []string) {
 
-	token, err := util.GetInfisicalToken(cmd)
+	token, err := util.GetKMSToken(cmd)
 	if err != nil {
 		util.HandleError(err, "Unable to parse token")
 	}
 
-	var infisicalToken string
+	var kmsToken string
 	if token != nil && (token.Type == util.SERVICE_TOKEN_IDENTIFIER || token.Type == util.UNIVERSAL_AUTH_TOKEN_IDENTIFIER) {
-		infisicalToken = token.Token
+		kmsToken = token.Token
 	} else {
 		util.RequireLogin()
 
@@ -881,7 +881,7 @@ func sshAddHost(cmd *cobra.Command, args []string) {
 		if loggedInUserDetails.LoginExpired {
 			loggedInUserDetails = util.EstablishUserLoginSession()
 		}
-		infisicalToken = loggedInUserDetails.UserCredentials.JTWToken
+		kmsToken = loggedInUserDetails.UserCredentials.JTWToken
 	}
 
 	projectId, err := cmd.Flags().GetString("projectId")
@@ -998,20 +998,20 @@ func sshAddHost(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	customHeaders, err := util.GetInfisicalCustomHeadersMap()
+	customHeaders, err := util.GetKMSCustomHeadersMap()
 	if err != nil {
 		util.HandleError(err, "Unable to get custom headers")
 	}
 
-	client := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
+	client := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
 		SiteUrl:          config.KMS_URL,
 		UserAgent:        api.USER_AGENT,
 		AutoTokenRefresh: false,
 		CustomHeaders:    customHeaders,
 	})
-	client.Auth().SetAccessToken(infisicalToken)
+	client.Auth().SetAccessToken(kmsToken)
 
-	host, err := client.Ssh().AddSshHost(infisicalSdk.AddSshHostOptions{
+	host, err := client.Ssh().AddSshHost(kmsSdk.AddSshHostOptions{
 		ProjectID: projectId,
 		Hostname:  hostname,
 		Alias:     alias,
@@ -1040,7 +1040,7 @@ func sshAddHost(cmd *cobra.Command, args []string) {
 		if err != nil {
 			util.HandleError(err, "Failed to read SSH host public key")
 		}
-		res, err := client.Ssh().IssueSshHostHostCert(host.ID, infisicalSdk.IssueSshHostHostCertOptions{
+		res, err := client.Ssh().IssueSshHostHostCert(host.ID, kmsSdk.IssueSshHostHostCertOptions{
 			PublicKey: string(pubKeyBytes),
 		})
 		if err != nil {
@@ -1103,7 +1103,7 @@ func init() {
 	sshSignKeyCmd.Flags().String("publicKeyFilePath", "", "The file path to the public key file to sign")
 	sshSignKeyCmd.Flags().String("outFilePath", "", "The path to write the SSH certificate to such as ~/.ssh/id_rsa-cert.pub. If not provided, the credentials will be saved to the directory of the specified public key file path or the current working directory")
 	sshSignKeyCmd.Flags().String("principals", "", "The principals that the certificate should be signed for")
-	sshSignKeyCmd.Flags().String("certType", string(infisicalSdkUtil.UserCert), "The cert type for the created certificate")
+	sshSignKeyCmd.Flags().String("certType", string(kmsSdkUtil.UserCert), "The cert type for the created certificate")
 	sshSignKeyCmd.Flags().String("ttl", "", "The ttl for the created certificate")
 	sshSignKeyCmd.Flags().String("keyId", "", "The keyId that the created certificate should have")
 	sshCmd.AddCommand(sshSignKeyCmd)
@@ -1111,8 +1111,8 @@ func init() {
 	sshIssueCredentialsCmd.Flags().String("token", "", "Issue SSH credentials using machine identity access token")
 	sshIssueCredentialsCmd.Flags().String("certificateTemplateId", "", "The ID of the SSH certificate template to issue SSH credentials for")
 	sshIssueCredentialsCmd.Flags().String("principals", "", "The principals to issue SSH credentials for")
-	sshIssueCredentialsCmd.Flags().String("keyAlgorithm", string(infisicalSdkUtil.RSA2048), "The key algorithm to issue SSH credentials for")
-	sshIssueCredentialsCmd.Flags().String("certType", string(infisicalSdkUtil.UserCert), "The cert type to issue SSH credentials for")
+	sshIssueCredentialsCmd.Flags().String("keyAlgorithm", string(kmsSdkUtil.RSA2048), "The key algorithm to issue SSH credentials for")
+	sshIssueCredentialsCmd.Flags().String("certType", string(kmsSdkUtil.UserCert), "The cert type to issue SSH credentials for")
 	sshIssueCredentialsCmd.Flags().String("ttl", "", "The ttl to issue SSH credentials for")
 	sshIssueCredentialsCmd.Flags().String("keyId", "", "The keyId to issue SSH credentials for")
 	sshIssueCredentialsCmd.Flags().String("outFilePath", "", "The path to write the SSH credentials to such as ~/.ssh, ./some_folder, ./some_folder/id_rsa-cert.pub. If not provided, the credentials will be saved to the current working directory")
@@ -1130,8 +1130,8 @@ func init() {
 	sshAddHostCmd.Flags().String("projectId", "", "Project ID the host belongs to (required)")
 	sshAddHostCmd.Flags().String("hostname", "", "Hostname of the SSH host (required)")
 	sshAddHostCmd.Flags().String("alias", "", "Alias for the SSH host")
-	sshAddHostCmd.Flags().Bool("write-user-ca-to-file", false, "Write User CA public key to /etc/ssh/infisical_user_ca.pub")
-	sshAddHostCmd.Flags().String("user-ca-out-file-path", "/etc/ssh/infisical_user_ca.pub", "Custom file path to write the User CA public key")
+	sshAddHostCmd.Flags().Bool("write-user-ca-to-file", false, "Write User CA public key to /etc/ssh/kms_user_ca.pub")
+	sshAddHostCmd.Flags().String("user-ca-out-file-path", "/etc/ssh/kms_user_ca.pub", "Custom file path to write the User CA public key")
 	sshAddHostCmd.Flags().Bool("write-host-cert-to-file", false, "Write SSH host certificate to /etc/ssh/ssh_host_<type>_key-cert.pub")
 	sshAddHostCmd.Flags().Bool("configure-sshd", false, "Update `TrustedUserCAKeys`, `HostKey`, and `HostCertificate` in the `/etc/ssh/sshd_config` file")
 	sshAddHostCmd.Flags().Bool("force", false, "Force overwrite of existing certificate files as part of `--write-user-ca-to-file` and `--write-host-cert-to-file`")

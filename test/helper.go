@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	CLI_NAME = "infisical-merge"
+	CLI_NAME = "kms-merge"
 )
 
 var (

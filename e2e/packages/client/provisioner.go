@@ -94,7 +94,7 @@ func (p *Provisioner) Bootstrap(ctx context.Context) (*ProvisionResult, error) {
 		ctx,
 		orgBearerAuth.Intercept,
 		// Notice: we need to pass in cookies from sign-up for the token creation to work
-		// ref: https://github.com/Infisical/infisical/blob/c39673e25a5914ad914b08da68ac621fb7c1a0f8/backend/src/server/routes/v1/auth-router.ts#L89
+		// ref: https://github.com/KMS/kms/blob/c39673e25a5914ad914b08da68ac621fb7c1a0f8/backend/src/server/routes/v1/auth-router.ts#L89
 		WithCookies(selectOrgResp.HTTPResponse.Cookies()...),
 	)
 	if err != nil {

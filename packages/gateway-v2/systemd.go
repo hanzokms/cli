@@ -22,7 +22,7 @@ func InstallGatewaySystemdService(token string, domain string, name string, rela
 		return nil
 	}
 
-	configDir := "/etc/infisical"
+	configDir := "/etc/kms"
 	if err := os.MkdirAll(configDir, 0755); err != nil {
 		return fmt.Errorf("failed to create config directory: %v", err)
 	}
@@ -94,7 +94,7 @@ func UninstallGatewaySystemdService() error {
 	}
 
 	// Remove the configuration file
-	configPath := "/etc/infisical/gateway.conf"
+	configPath := "/etc/kms/gateway.conf"
 	if err := os.Remove(configPath); err != nil && !os.IsNotExist(err) {
 		return fmt.Errorf("failed to remove config file: %v", err)
 	}

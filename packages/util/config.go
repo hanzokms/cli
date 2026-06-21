@@ -196,7 +196,7 @@ func GetWorkspaceConfigByPath(path string) (workspaceConfig models.WorkspaceConf
 	return workspaceConfigFile, nil
 }
 
-// Get the infisical config file and if it doesn't exist, return empty config model, otherwise raise error
+// Get the kms config file and if it doesn't exist, return empty config model, otherwise raise error
 func GetConfigFile() (models.ConfigFile, error) {
 	fullConfigFilePath, _, err := GetFullConfigFilePath()
 	if err != nil {
@@ -223,7 +223,7 @@ func GetConfigFile() (models.ConfigFile, error) {
 		if err != nil {
 			return models.ConfigFile{}, fmt.Errorf("GetConfigFile: Unable to decode base64 passphrase [err=%s]", err)
 		}
-		os.Setenv("KMS_VAULT_FILE_PASSPHRASE", string(decodedPassphrase))
+		os.Setenv("INFISICAL_VAULT_FILE_PASSPHRASE", string(decodedPassphrase))
 	}
 
 	return configFile, nil

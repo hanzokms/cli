@@ -31,7 +31,7 @@ import (
 	"github.com/awnumar/memguard"
 	"github.com/dgraph-io/badger/v3"
 	"github.com/go-resty/resty/v2"
-	infisicalSdk "github.com/infisical/go-sdk"
+	kmsSdk "github.com/infisical/go-sdk"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/yaml.v2"
@@ -93,7 +93,7 @@ type RetryConfig struct {
 
 type Config struct {
 	Version      string                   `yaml:"version,omitempty"`
-	Infisical    InfisicalConfig          `yaml:"infisical"`
+	KMS    KMSConfig          `yaml:"kms"`
 	Auth         AuthConfig               `yaml:"auth"`
 	Sinks        []Sink                   `yaml:"sinks"`
 	Cache        CacheConfig              `yaml:"cache,omitempty"`
@@ -125,7 +125,7 @@ type CertificateState struct {
 	LastRetry            time.Time `json:"last_retry,omitempty"`
 }
 
-type InfisicalConfig struct {
+type KMSConfig struct {
 	Address                     string       `yaml:"address"`
 	ExitAfterAuth               bool         `yaml:"exit-after-auth"`
 	RevokeCredentialsOnShutdown bool         `yaml:"revoke-credentials-on-shutdown"`
@@ -373,7 +373,7 @@ type DynamicSecretLeaseManager struct {
 	leases       []DynamicSecretLeaseWithTTL
 	mutex        sync.Mutex
 	cacheManager *CacheManager
-	retryConfig  *infisicalSdk.RetryRequestsConfig
+	retryConfig  *kmsSdk.RetryRequestsConfig
 }
 
 func (d *DynamicSecretLeaseManager) WriteLeaseToCache(lease *DynamicSecretLeaseWithTTL, requestedLeaseTTL string) {
@@ -714,7 +714,7 @@ func (d *DynamicSecretLeaseManager) GetFirstExpiringLeaseTime() (time.Time, bool
 	return firstExpiry, true
 }
 
-func NewDynamicSecretLeaseManager(cacheManager *CacheManager, retryConfig *infisicalSdk.RetryRequestsConfig) *DynamicSecretLeaseManager {
+func NewDynamicSecretLeaseManager(cacheManager *CacheManager, retryConfig *kmsSdk.RetryRequestsConfig) *DynamicSecretLeaseManager {
 	manager := &DynamicSecretLeaseManager{
 		cacheManager: cacheManager,
 		retryConfig:  retryConfig,
@@ -841,8 +841,8 @@ func parseAgentConfigWithMode(configFile []byte, isCertManagerMode bool) (*Confi
 	}
 
 	// Set defaults
-	if rawConfig.Infisical.Address == "" {
-		rawConfig.Infisical.Address = DEFAULT_KMS_CLOUD_URL
+	if rawConfig.KMS.Address == "" {
+		rawConfig.KMS.Address = DEFAULT_KMS_CLOUD_URL
 	}
 
 	if rawConfig.Cache.Persistent != nil && rawConfig.Cache.Persistent.Type == CACHE_TYPE_KUBERNETES {
@@ -851,9 +851,9 @@ func parseAgentConfigWithMode(configFile []byte, isCertManagerMode bool) (*Confi
 		}
 	}
 
-	config.KMS_URL = util.AppendAPIEndpoint(rawConfig.Infisical.Address)
+	config.KMS_URL = util.AppendAPIEndpoint(rawConfig.KMS.Address)
 
-	log.Info().Msgf("Hanzo KMS instance address set to %s", rawConfig.Infisical.Address)
+	log.Info().Msgf("Hanzo KMS instance address set to %s", rawConfig.KMS.Address)
 
 	if err := validateAgentConfigVersionCompatibilityWithMode(&rawConfig, isCertManagerMode); err != nil {
 		return nil, err
@@ -947,17 +947,17 @@ func dynamicSecretTemplateFunction(accessToken string, dynamicSecretManager *Dyn
 			return dynamicSecretData.Data, nil
 		}
 
-		temporaryInfisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
+		temporaryKMSClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
 			SiteUrl:             config.KMS_URL,
 			UserAgent:           api.USER_AGENT,
 			AutoTokenRefresh:    false,
 			RetryRequestsConfig: agentManager.SdkRetryConfig(),
 		})
-		temporaryInfisicalClient.Auth().SetAccessToken(accessToken)
+		temporaryKMSClient.Auth().SetAccessToken(accessToken)
 
 		// if there's no lease (either in memory or in cache), we create a new lease
 
-		leaseData, _, res, err := temporaryInfisicalClient.DynamicSecrets().Leases().Create(infisicalSdk.CreateDynamicSecretLeaseOptions{
+		leaseData, _, res, err := temporaryKMSClient.DynamicSecrets().Leases().Create(kmsSdk.CreateDynamicSecretLeaseOptions{
 			DynamicSecretName: slug,
 			ProjectSlug:       projectSlug,
 			EnvironmentSlug:   envSlug,
@@ -1086,7 +1086,7 @@ type AgentManager struct {
 
 	isShuttingDown bool
 
-	infisicalClient infisicalSdk.InfisicalClientInterface
+	kmsClient kmsSdk.InfisicalClientInterface
 	cancelContext   context.CancelFunc
 }
 
@@ -1105,7 +1105,7 @@ type NewAgentMangerOptions struct {
 }
 
 func NewAgentManager(options NewAgentMangerOptions) *AgentManager {
-	customHeaders, err := util.GetInfisicalCustomHeadersMap()
+	customHeaders, err := util.GetKMSCustomHeadersMap()
 	if err != nil {
 		util.HandleError(err, "Unable to get custom headers")
 	}
@@ -1149,7 +1149,7 @@ func NewAgentManager(options NewAgentMangerOptions) *AgentManager {
 
 	ctx, cancelContext := context.WithCancel(context.Background())
 
-	agentManager.infisicalClient = infisicalSdk.NewInfisicalClient(ctx, infisicalSdk.Config{
+	agentManager.kmsClient = kmsSdk.NewInfisicalClient(ctx, kmsSdk.Config{
 		SiteUrl:             config.KMS_URL,
 		UserAgent:           api.USER_AGENT, // ? Should we perhaps use a different user agent for the Agent for better analytics?
 		AutoTokenRefresh:    true,
@@ -1184,22 +1184,22 @@ func (tm *AgentManager) getTokenUnsafe() string {
 	return tm.accessToken
 }
 
-func (tm *AgentManager) FetchUniversalAuthAccessToken() (credential infisicalSdk.MachineIdentityCredential, e error) {
+func (tm *AgentManager) FetchUniversalAuthAccessToken() (credential kmsSdk.MachineIdentityCredential, e error) {
 
 	var universalAuthConfig UniversalAuth
 	if err := ParseAuthConfig(tm.authConfigBytes, &universalAuthConfig); err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
+		return kmsSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
 	}
 
 	clientID, err := util.GetEnvVarOrFileContent(util.KMS_UNIVERSAL_AUTH_CLIENT_ID_NAME, universalAuthConfig.ClientIDPath)
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get client id: %v", err)
+		return kmsSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get client id: %v", err)
 	}
 
 	clientSecret, err := util.GetEnvVarOrFileContent("KMS_UNIVERSAL_CLIENT_SECRET", universalAuthConfig.ClientSecretPath)
 	if err != nil {
 		if len(tm.cachedUniversalAuthClientSecret) == 0 {
-			return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get client secret: %v", err)
+			return kmsSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get client secret: %v", err)
 		}
 		clientSecret = tm.cachedUniversalAuthClientSecret
 	}
@@ -1210,25 +1210,25 @@ func (tm *AgentManager) FetchUniversalAuthAccessToken() (credential infisicalSdk
 	}
 
 	log.Debug().Msgf("calling UniversalAuthLogin with clientID: %s", clientID)
-	result, err := tm.infisicalClient.Auth().UniversalAuthLogin(clientID, clientSecret)
+	result, err := tm.kmsClient.Auth().UniversalAuthLogin(clientID, clientSecret)
 	if err != nil {
 		log.Error().Msgf("UniversalAuthLogin failed: %v", err)
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 	log.Debug().Msg("UniversalAuthLogin succeeded")
 	return result, nil
 }
 
-func (tm *AgentManager) FetchKubernetesAuthAccessToken() (credential infisicalSdk.MachineIdentityCredential, err error) {
+func (tm *AgentManager) FetchKubernetesAuthAccessToken() (credential kmsSdk.MachineIdentityCredential, err error) {
 
 	var kubernetesAuthConfig KubernetesAuth
 	if err := ParseAuthConfig(tm.authConfigBytes, &kubernetesAuthConfig); err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
+		return kmsSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
 	}
 
 	identityId, err := util.GetEnvVarOrFileContent(util.KMS_MACHINE_IDENTITY_ID_NAME, kubernetesAuthConfig.IdentityID)
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get identity id: %v", err)
+		return kmsSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get identity id: %v", err)
 	}
 
 	serviceAccountTokenPath := os.Getenv(util.KMS_KUBERNETES_SERVICE_ACCOUNT_TOKEN_NAME)
@@ -1239,52 +1239,52 @@ func (tm *AgentManager) FetchKubernetesAuthAccessToken() (credential infisicalSd
 		}
 	}
 
-	return tm.infisicalClient.Auth().KubernetesAuthLogin(identityId, serviceAccountTokenPath)
+	return tm.kmsClient.Auth().KubernetesAuthLogin(identityId, serviceAccountTokenPath)
 
 }
 
-func (tm *AgentManager) FetchAzureAuthAccessToken() (credential infisicalSdk.MachineIdentityCredential, err error) {
+func (tm *AgentManager) FetchAzureAuthAccessToken() (credential kmsSdk.MachineIdentityCredential, err error) {
 
 	var azureAuthConfig AzureAuth
 	if err := ParseAuthConfig(tm.authConfigBytes, &azureAuthConfig); err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
+		return kmsSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
 	}
 
 	identityId, err := util.GetEnvVarOrFileContent(util.KMS_MACHINE_IDENTITY_ID_NAME, azureAuthConfig.IdentityID)
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get identity id: %v", err)
+		return kmsSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get identity id: %v", err)
 	}
 
-	return tm.infisicalClient.Auth().AzureAuthLogin(identityId, "")
+	return tm.kmsClient.Auth().AzureAuthLogin(identityId, "")
 
 }
 
-func (tm *AgentManager) FetchGcpIdTokenAuthAccessToken() (credential infisicalSdk.MachineIdentityCredential, err error) {
+func (tm *AgentManager) FetchGcpIdTokenAuthAccessToken() (credential kmsSdk.MachineIdentityCredential, err error) {
 
 	var gcpIdTokenAuthConfig GcpIdTokenAuth
 	if err := ParseAuthConfig(tm.authConfigBytes, &gcpIdTokenAuthConfig); err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
+		return kmsSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
 	}
 
 	identityId, err := util.GetEnvVarOrFileContent(util.KMS_MACHINE_IDENTITY_ID_NAME, gcpIdTokenAuthConfig.IdentityID)
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get identity id: %v", err)
+		return kmsSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get identity id: %v", err)
 	}
 
-	return tm.infisicalClient.Auth().GcpIdTokenAuthLogin(identityId)
+	return tm.kmsClient.Auth().GcpIdTokenAuthLogin(identityId)
 
 }
 
-func (tm *AgentManager) FetchGcpIamAuthAccessToken() (credential infisicalSdk.MachineIdentityCredential, err error) {
+func (tm *AgentManager) FetchGcpIamAuthAccessToken() (credential kmsSdk.MachineIdentityCredential, err error) {
 
 	var gcpIamAuthConfig GcpIamAuth
 	if err := ParseAuthConfig(tm.authConfigBytes, &gcpIamAuthConfig); err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
+		return kmsSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
 	}
 
 	identityId, err := util.GetEnvVarOrFileContent(util.KMS_MACHINE_IDENTITY_ID_NAME, gcpIamAuthConfig.IdentityID)
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get identity id: %v", err)
+		return kmsSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get identity id: %v", err)
 	}
 
 	serviceAccountKeyPath := os.Getenv(util.KMS_GCP_IAM_SERVICE_ACCOUNT_KEY_FILE_PATH_NAME)
@@ -1292,63 +1292,63 @@ func (tm *AgentManager) FetchGcpIamAuthAccessToken() (credential infisicalSdk.Ma
 		// we don't need to read this file, because the service account key path is directly read inside the sdk
 		serviceAccountKeyPath = gcpIamAuthConfig.ServiceAccountKey
 		if serviceAccountKeyPath == "" {
-			return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("gcp service account key path not found")
+			return kmsSdk.MachineIdentityCredential{}, fmt.Errorf("gcp service account key path not found")
 		}
 	}
 
-	return tm.infisicalClient.Auth().GcpIamAuthLogin(identityId, serviceAccountKeyPath)
+	return tm.kmsClient.Auth().GcpIamAuthLogin(identityId, serviceAccountKeyPath)
 
 }
 
-func (tm *AgentManager) FetchAwsIamAuthAccessToken() (credential infisicalSdk.MachineIdentityCredential, err error) {
+func (tm *AgentManager) FetchAwsIamAuthAccessToken() (credential kmsSdk.MachineIdentityCredential, err error) {
 
 	var awsIamAuthConfig AwsIamAuth
 	if err := ParseAuthConfig(tm.authConfigBytes, &awsIamAuthConfig); err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
+		return kmsSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
 	}
 
 	identityId, err := util.GetEnvVarOrFileContent(util.KMS_MACHINE_IDENTITY_ID_NAME, awsIamAuthConfig.IdentityID)
 
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get identity id: %v", err)
+		return kmsSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get identity id: %v", err)
 	}
 
-	return tm.infisicalClient.Auth().AwsIamAuthLogin(identityId)
+	return tm.kmsClient.Auth().AwsIamAuthLogin(identityId)
 
 }
 
-func (tm *AgentManager) FetchLdapAuthAccessToken() (credential infisicalSdk.MachineIdentityCredential, err error) {
+func (tm *AgentManager) FetchLdapAuthAccessToken() (credential kmsSdk.MachineIdentityCredential, err error) {
 	var ldapAuthConfig LdapAuth
 	if err := ParseAuthConfig(tm.authConfigBytes, &ldapAuthConfig); err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
+		return kmsSdk.MachineIdentityCredential{}, fmt.Errorf("unable to parse auth config due to error: %v", err)
 	}
 
 	identityId, err := util.GetEnvVarOrFileContent(util.KMS_MACHINE_IDENTITY_ID_NAME, ldapAuthConfig.IdentityID)
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get identity id: %v", err)
+		return kmsSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get identity id: %v", err)
 	}
 
 	username, err := util.GetEnvVarOrFileContent(util.KMS_LDAP_USERNAME, ldapAuthConfig.LdapUsername)
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get ldap username: %v", err)
+		return kmsSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get ldap username: %v", err)
 	}
 
 	password, err := util.GetEnvVarOrFileContent(util.KMS_LDAP_PASSWORD, ldapAuthConfig.LdapPassword)
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get ldap password: %v", err)
+		return kmsSdk.MachineIdentityCredential{}, fmt.Errorf("unable to get ldap password: %v", err)
 	}
 
 	if ldapAuthConfig.RemovePasswordOnRead {
 		defer os.Remove(ldapAuthConfig.LdapPassword)
 	}
 
-	return tm.infisicalClient.Auth().LdapAuthLogin(identityId, username, password)
+	return tm.kmsClient.Auth().LdapAuthLogin(identityId, username, password)
 }
 
 // Fetches a new access token using client credentials
 func (tm *AgentManager) FetchNewAccessToken() error {
 	log.Debug().Msgf("FetchNewAccessToken: starting with auth strategy %s", tm.authStrategy)
-	authStrategies := map[util.AuthStrategyType]func() (credential infisicalSdk.MachineIdentityCredential, e error){
+	authStrategies := map[util.AuthStrategyType]func() (credential kmsSdk.MachineIdentityCredential, e error){
 		util.AuthStrategy.UNIVERSAL_AUTH:    tm.FetchUniversalAuthAccessToken,
 		util.AuthStrategy.KUBERNETES_AUTH:   tm.FetchKubernetesAuthAccessToken,
 		util.AuthStrategy.AZURE_AUTH:        tm.FetchAzureAuthAccessToken,
@@ -1387,9 +1387,9 @@ func (tm *AgentManager) FetchNewAccessToken() error {
 	return nil
 }
 
-func (tm *AgentManager) SdkRetryConfig() *infisicalSdk.RetryRequestsConfig {
-	retryConfig := &infisicalSdk.RetryRequestsConfig{
-		ExponentialBackoff: &infisicalSdk.ExponentialBackoffStrategy{
+func (tm *AgentManager) SdkRetryConfig() *kmsSdk.RetryRequestsConfig {
+	retryConfig := &kmsSdk.RetryRequestsConfig{
+		ExponentialBackoff: &kmsSdk.ExponentialBackoffStrategy{
 			BaseDelay:  200 * time.Millisecond,
 			MaxDelay:   5 * time.Second,
 			MaxRetries: 3,
@@ -1448,13 +1448,13 @@ func (tm *AgentManager) SdkRetryConfig() *infisicalSdk.RetryRequestsConfig {
 	return retryConfig
 }
 
-func revokeDynamicSecretLease(accessToken, projectSlug, environment, secretPath, leaseID string, retryConfig *infisicalSdk.RetryRequestsConfig) error {
-	customHeaders, err := util.GetInfisicalCustomHeadersMap()
+func revokeDynamicSecretLease(accessToken, projectSlug, environment, secretPath, leaseID string, retryConfig *kmsSdk.RetryRequestsConfig) error {
+	customHeaders, err := util.GetKMSCustomHeadersMap()
 	if err != nil {
 		return fmt.Errorf("unable to get custom headers: %v", err)
 	}
 
-	temporaryInfisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
+	temporaryKMSClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
 		SiteUrl:             config.KMS_URL,
 		UserAgent:           api.USER_AGENT,
 		AutoTokenRefresh:    false,
@@ -1462,9 +1462,9 @@ func revokeDynamicSecretLease(accessToken, projectSlug, environment, secretPath,
 		RetryRequestsConfig: retryConfig,
 	})
 
-	temporaryInfisicalClient.Auth().SetAccessToken(accessToken)
+	temporaryKMSClient.Auth().SetAccessToken(accessToken)
 
-	_, err = temporaryInfisicalClient.DynamicSecrets().Leases().DeleteById(infisicalSdk.DeleteDynamicSecretLeaseOptions{
+	_, err = temporaryKMSClient.DynamicSecrets().Leases().DeleteById(kmsSdk.DeleteDynamicSecretLeaseOptions{
 		LeaseId:         leaseID,
 		ProjectSlug:     projectSlug,
 		SecretPath:      secretPath,
@@ -1494,7 +1494,7 @@ func (tm *AgentManager) RevokeCredentials() error {
 
 	dynamicSecretLeases := tm.dynamicSecretLeases.leases
 
-	customHeaders, err := util.GetInfisicalCustomHeadersMap()
+	customHeaders, err := util.GetKMSCustomHeadersMap()
 	if err != nil {
 		return fmt.Errorf("unable to get custom headers: %v", err)
 	}
@@ -1577,15 +1577,15 @@ func (tm *AgentManager) RevokeCredentials() error {
 			if token != "" {
 				log.Info().Msgf("revoking token from file '%s'", sink.Config.Path)
 
-				temporaryInfisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
+				temporaryKMSClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
 					SiteUrl:          config.KMS_URL,
 					UserAgent:        api.USER_AGENT,
 					AutoTokenRefresh: false,
 					CustomHeaders:    customHeaders,
 				})
 
-				temporaryInfisicalClient.Auth().SetAccessToken(token)
-				err := temporaryInfisicalClient.Auth().RevokeAccessToken()
+				temporaryKMSClient.Auth().SetAccessToken(token)
+				err := temporaryKMSClient.Auth().RevokeAccessToken()
 				if err != nil {
 					log.Error().Msgf("unable to revoke access token from file '%s' because %v", sink.Config.Path, err)
 					continue
@@ -1607,14 +1607,14 @@ func (tm *AgentManager) RevokeCredentials() error {
 
 	// check to see if the active token was already deleted, if not, delete it
 	if !slices.Contains(deletedTokens, token) {
-		temporaryInfisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
+		temporaryKMSClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
 			SiteUrl:          config.KMS_URL,
 			UserAgent:        api.USER_AGENT,
 			AutoTokenRefresh: false,
 			CustomHeaders:    customHeaders,
 		})
-		temporaryInfisicalClient.Auth().SetAccessToken(token)
-		err := temporaryInfisicalClient.Auth().RevokeAccessToken()
+		temporaryKMSClient.Auth().SetAccessToken(token)
+		err := temporaryKMSClient.Auth().RevokeAccessToken()
 		if err != nil {
 			log.Error().Msgf("unable to revoke token because %v", err)
 		}
@@ -2558,14 +2558,14 @@ func (tm *AgentManager) CheckCertificateRenewals() {
 	}
 }
 
-func (tm *AgentManager) CheckCertificateStatus(certificateId int, infisicalCertId string) error {
+func (tm *AgentManager) CheckCertificateStatus(certificateId int, kmsCertId string) error {
 	httpClient, err := util.GetRestyClientWithCustomHeaders()
 	if err != nil {
 		return fmt.Errorf("failed to create HTTP client: %v", err)
 	}
 	httpClient.SetAuthToken(tm.getTokenUnsafe())
 
-	response, err := api.CallRetrieveCertificate(httpClient, infisicalCertId)
+	response, err := api.CallRetrieveCertificate(httpClient, kmsCertId)
 	if err != nil {
 		return fmt.Errorf("failed to retrieve certificate status: %v", err)
 	}
@@ -3070,10 +3070,10 @@ var agentCmd = &cobra.Command{
 			Certificates:                   certificates,
 			AuthConfigBytes:                configBytes,
 			NewAccessTokenNotificationChan: tokenRefreshNotifier,
-			ExitAfterAuth:                  agentConfig.Infisical.ExitAfterAuth,
+			ExitAfterAuth:                  agentConfig.KMS.ExitAfterAuth,
 			AuthStrategy:                   authStrategy,
-			RevokeCredentialsOnShutdown:    agentConfig.Infisical.RevokeCredentialsOnShutdown,
-			RetryConfig:                    agentConfig.Infisical.RetryConfig,
+			RevokeCredentialsOnShutdown:    agentConfig.KMS.RevokeCredentialsOnShutdown,
+			RetryConfig:                    agentConfig.KMS.RetryConfig,
 		})
 
 		tm.cacheManager, err = NewCacheManager(ctx, &agentConfig.Cache)
@@ -3237,7 +3237,7 @@ var certManagerCmd = &cobra.Command{
 
 var certManagerAgentCmd = &cobra.Command{
 	Example: `
-	infisical cert-manager agent --config certificate-agent-config.yaml
+	kms cert-manager agent --config certificate-agent-config.yaml
 	`,
 	Use:                   "agent",
 	Short:                 "Launch certificate management agent",
@@ -3341,10 +3341,10 @@ var certManagerAgentCmd = &cobra.Command{
 			Certificates:                   agentConfig.Certificates,
 			AuthConfigBytes:                configBytes,
 			NewAccessTokenNotificationChan: tokenRefreshNotifier,
-			ExitAfterAuth:                  agentConfig.Infisical.ExitAfterAuth,
+			ExitAfterAuth:                  agentConfig.KMS.ExitAfterAuth,
 			AuthStrategy:                   authStrategy,
-			RevokeCredentialsOnShutdown:    agentConfig.Infisical.RevokeCredentialsOnShutdown,
-			RetryConfig:                    agentConfig.Infisical.RetryConfig,
+			RevokeCredentialsOnShutdown:    agentConfig.KMS.RevokeCredentialsOnShutdown,
+			RetryConfig:                    agentConfig.KMS.RetryConfig,
 		})
 
 		tm.cacheManager, err = NewCacheManager(ctx, &agentConfig.Cache)

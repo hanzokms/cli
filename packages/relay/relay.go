@@ -107,7 +107,7 @@ func (r *Relay) registerHeartBeat(ctx context.Context, errCh chan error) {
 			}
 			return err
 		} else {
-			log.Info().Msg("Relay is reachable by Infisical")
+			log.Info().Msg("Relay is reachable by KMS")
 			return nil
 		}
 	}

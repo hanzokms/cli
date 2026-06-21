@@ -69,14 +69,14 @@ var relayStartCmd = &cobra.Command{
 
 			relayInstance.SetToken(relayAuthSecret)
 		} else {
-			infisicalClient, cancelSdk, err := getInfisicalSdkInstance(cmd)
+			kmsClient, cancelSdk, err := getKMSSdkInstance(cmd)
 			if err != nil {
 				util.HandleError(err, "unable to get KMS client")
 			}
 			defer cancelSdk()
 
 			var accessToken atomic.Value
-			accessToken.Store(infisicalClient.Auth().GetAccessToken())
+			accessToken.Store(kmsClient.Auth().GetAccessToken())
 
 			if accessToken.Load().(string) == "" {
 				util.HandleError(errors.New("no access token found"))
@@ -119,7 +119,7 @@ var relayStartCmd = &cobra.Command{
 							return
 						}
 
-						newToken := infisicalClient.Auth().GetAccessToken()
+						newToken := kmsClient.Auth().GetAccessToken()
 						if newToken != "" && newToken != accessToken.Load().(string) {
 							accessToken.Store(newToken)
 							relayInstance.SetToken(newToken)
@@ -223,13 +223,13 @@ var relaySystemdInstallCmd = &cobra.Command{
 			util.HandleError(err, "Failed to install relay systemd service")
 		}
 
-		enableCmd := exec.Command("systemctl", "enable", "infisical-relay")
+		enableCmd := exec.Command("systemctl", "enable", "kms-relay")
 		if err := enableCmd.Run(); err != nil {
 			util.HandleError(err, "Failed to enable relay systemd service")
 		}
 
-		log.Info().Msg("Successfully installed and enabled infisical-relay service")
-		log.Info().Msg("To start the service, run: sudo systemctl start infisical-relay")
+		log.Info().Msg("Successfully installed and enabled kms-relay service")
+		log.Info().Msg("To start the service, run: sudo systemctl start kms-relay")
 	},
 }
 

@@ -38,7 +38,7 @@ var getCmd = &cobra.Command{
 			util.HandleError(err, "Unable to parse flag")
 		}
 
-		token, err := util.GetInfisicalToken(cmd)
+		token, err := util.GetKMSToken(cmd)
 		if err != nil {
 			util.HandleError(err, "Unable to parse flag")
 		}
@@ -58,7 +58,7 @@ var getCmd = &cobra.Command{
 		}
 
 		if token != nil && token.Type == util.SERVICE_TOKEN_IDENTIFIER {
-			request.InfisicalToken = token.Token
+			request.KMSToken = token.Token
 		} else if token != nil && token.Type == util.UNIVERSAL_AUTH_TOKEN_IDENTIFIER {
 			request.UniversalAuthAccessToken = token.Token
 		}
@@ -105,7 +105,7 @@ var createCmd = &cobra.Command{
 			}
 		}
 
-		token, err := util.GetInfisicalToken(cmd)
+		token, err := util.GetKMSToken(cmd)
 		if err != nil {
 			util.HandleError(err, "Unable to parse flag")
 		}
@@ -155,7 +155,7 @@ var createCmd = &cobra.Command{
 		}
 
 		if token != nil && (token.Type == util.SERVICE_TOKEN_IDENTIFIER || token.Type == util.UNIVERSAL_AUTH_TOKEN_IDENTIFIER) {
-			params.InfisicalToken = token.Token
+			params.KMSToken = token.Token
 		}
 
 		folder, err := util.CreateFolder(params)
@@ -197,7 +197,7 @@ var deleteCmd = &cobra.Command{
 			}
 		}
 
-		token, err := util.GetInfisicalToken(cmd)
+		token, err := util.GetKMSToken(cmd)
 		if err != nil {
 			util.HandleError(err, "Unable to parse flag")
 		}
@@ -243,7 +243,7 @@ var deleteCmd = &cobra.Command{
 		}
 
 		if token != nil && (token.Type == util.SERVICE_TOKEN_IDENTIFIER || token.Type == util.UNIVERSAL_AUTH_TOKEN_IDENTIFIER) {
-			params.InfisicalToken = token.Token
+			params.KMSToken = token.Token
 		}
 
 		_, err = util.DeleteFolder(params)

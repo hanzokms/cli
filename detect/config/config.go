@@ -35,7 +35,7 @@ import (
 	"github.com/hanzokms/cli/detect/regexp"
 )
 
-const DefaultScanConfigFileName = ".infisical-scan.toml"
+const DefaultScanConfigFileName = ".kms-scan.toml"
 const DefaultScanConfigEnvName = "KMS_SCAN_CONFIG"
 const DefaultKmsIgnoreFileName = ".kmsignore"
 

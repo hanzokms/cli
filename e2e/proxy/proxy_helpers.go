@@ -18,7 +18,7 @@ import (
 type ProxyTestHelper struct {
 	T           *testing.T
 	ProxyClient client.ClientWithResponsesInterface // client pointing to proxy
-	ApiClient   client.ClientWithResponsesInterface // client pointing to Infisical directly
+	ApiClient   client.ClientWithResponsesInterface // client pointing to KMS directly
 	ProjectID   string
 	Environment string
 }
@@ -29,7 +29,7 @@ type Secret struct {
 }
 
 // NewProxyTestHelper creates a new test helper with clients for both proxy and direct API access
-func NewProxyTestHelper(t *testing.T, proxyURL, infisicalURL, identityToken, projectID string) *ProxyTestHelper {
+func NewProxyTestHelper(t *testing.T, proxyURL, kmsURL, identityToken, projectID string) *ProxyTestHelper {
 	bearerAuth, err := securityprovider.NewSecurityProviderBearerToken(identityToken)
 	require.NoError(t, err)
 
@@ -43,7 +43,7 @@ func NewProxyTestHelper(t *testing.T, proxyURL, infisicalURL, identityToken, pro
 
 	// client for direct API access
 	apiClient, err := client.NewClientWithResponses(
-		infisicalURL,
+		kmsURL,
 		client.WithHTTPClient(&http.Client{Timeout: 30 * time.Second}),
 		client.WithRequestEditorFn(bearerAuth.Intercept),
 	)
@@ -58,7 +58,7 @@ func NewProxyTestHelper(t *testing.T, proxyURL, infisicalURL, identityToken, pro
 	}
 }
 
-// CreateSecretWithApi creates a secret directly through Infisical API (not through proxy)
+// CreateSecretWithApi creates a secret directly through KMS API (not through proxy)
 func (h *ProxyTestHelper) CreateSecretWithApi(ctx context.Context, secret Secret) {
 	secretPath := "/"
 	resp, err := h.ApiClient.CreateSecretV4WithResponse(ctx, secret.SecretKey, client.CreateSecretV4JSONRequestBody{
@@ -72,7 +72,7 @@ func (h *ProxyTestHelper) CreateSecretWithApi(ctx context.Context, secret Secret
 	slog.Info("Created secret", "name", secret.SecretKey, "value", secret.SecretValue)
 }
 
-// UpdateSecretWithApi updates a secret directly through Infisical API (not through proxy)
+// UpdateSecretWithApi updates a secret directly through KMS API (not through proxy)
 func (h *ProxyTestHelper) UpdateSecretWithApi(ctx context.Context, secret Secret) {
 	secretPath := "/"
 	resp, err := h.ApiClient.UpdateSecretV4WithResponse(ctx, secret.SecretKey, client.UpdateSecretV4JSONRequestBody{

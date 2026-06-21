@@ -13,7 +13,7 @@ func GetAllFolders(params models.GetAllFoldersParameters) ([]models.SingleFolder
 
 	var foldersToReturn []models.SingleFolder
 	var folderErr error
-	if params.InfisicalToken == "" && params.UniversalAuthAccessToken == "" {
+	if params.KMSToken == "" && params.UniversalAuthAccessToken == "" {
 		RequireLogin()
 
 		log.Debug().Msg("GetAllFolders: Trying to fetch folders using logged in details")
@@ -38,11 +38,11 @@ func GetAllFolders(params models.GetAllFoldersParameters) ([]models.SingleFolder
 		folders, err := GetFoldersViaJTW(loggedInUserDetails.UserCredentials.JTWToken, params.WorkspaceId, params.Environment, params.FoldersPath)
 		folderErr = err
 		foldersToReturn = folders
-	} else if params.InfisicalToken != "" {
+	} else if params.KMSToken != "" {
 		log.Debug().Msg("GetAllFolders: Trying to fetch folders using service token")
 
 		// get folders via service token
-		folders, err := GetFoldersViaServiceToken(params.InfisicalToken, params.WorkspaceId, params.Environment, params.FoldersPath)
+		folders, err := GetFoldersViaServiceToken(params.KMSToken, params.WorkspaceId, params.Environment, params.FoldersPath)
 		folderErr = err
 		foldersToReturn = folders
 	} else if params.UniversalAuthAccessToken != "" {
@@ -178,11 +178,11 @@ func GetFoldersViaMachineIdentity(accessToken string, workspaceId string, envSlu
 	return folders, nil
 }
 
-// CreateFolder creates a folder in Infisical
+// CreateFolder creates a folder in KMS
 func CreateFolder(params models.CreateFolderParameters) (models.SingleFolder, error) {
 
 	// If no token is provided, we will try to get the token from the current logged in user
-	if params.InfisicalToken == "" {
+	if params.KMSToken == "" {
 		RequireLogin()
 		loggedInUserDetails, err := GetCurrentLoggedInUserDetails(true)
 
@@ -194,7 +194,7 @@ func CreateFolder(params models.CreateFolderParameters) (models.SingleFolder, er
 			loggedInUserDetails = EstablishUserLoginSession()
 		}
 
-		params.InfisicalToken = loggedInUserDetails.UserCredentials.JTWToken
+		params.KMSToken = loggedInUserDetails.UserCredentials.JTWToken
 	}
 
 	// set up resty client
@@ -203,7 +203,7 @@ func CreateFolder(params models.CreateFolderParameters) (models.SingleFolder, er
 		return models.SingleFolder{}, err
 	}
 
-	httpClient.SetAuthToken(params.InfisicalToken).
+	httpClient.SetAuthToken(params.KMSToken).
 		SetHeader("Accept", "application/json").
 		SetHeader("Content-Type", "application/json")
 
@@ -230,7 +230,7 @@ func CreateFolder(params models.CreateFolderParameters) (models.SingleFolder, er
 func DeleteFolder(params models.DeleteFolderParameters) ([]models.SingleFolder, error) {
 
 	// If no token is provided, we will try to get the token from the current logged in user
-	if params.InfisicalToken == "" {
+	if params.KMSToken == "" {
 		RequireLogin()
 
 		loggedInUserDetails, err := GetCurrentLoggedInUserDetails(true)
@@ -243,7 +243,7 @@ func DeleteFolder(params models.DeleteFolderParameters) ([]models.SingleFolder, 
 			loggedInUserDetails = EstablishUserLoginSession()
 		}
 
-		params.InfisicalToken = loggedInUserDetails.UserCredentials.JTWToken
+		params.KMSToken = loggedInUserDetails.UserCredentials.JTWToken
 	}
 
 	// set up resty client
@@ -252,7 +252,7 @@ func DeleteFolder(params models.DeleteFolderParameters) ([]models.SingleFolder, 
 		return nil, err
 	}
 
-	httpClient.SetAuthToken(params.InfisicalToken).
+	httpClient.SetAuthToken(params.KMSToken).
 		SetHeader("Accept", "application/json").
 		SetHeader("Content-Type", "application/json")
 

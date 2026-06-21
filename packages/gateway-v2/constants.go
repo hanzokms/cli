@@ -15,7 +15,7 @@ const (
 	RELAY_AUTH_SECRET_ENV_NAME = "KMS_RELAY_AUTH_SECRET"
 	KMS_TOKEN_ENV_NAME   = "KMS_TOKEN"
 
-	KMS_HTTP_PROXY_ACTION_HEADER = "x-infisical-action"
+	KMS_HTTP_PROXY_ACTION_HEADER = "x-kms-action"
 )
 
 type HttpProxyAction string

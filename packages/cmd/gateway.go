@@ -17,22 +17,22 @@ import (
 	gatewayv2 "github.com/hanzokms/cli/packages/gateway-v2"
 	"github.com/hanzokms/cli/packages/pam/session"
 	"github.com/hanzokms/cli/packages/util"
-	infisicalSdk "github.com/infisical/go-sdk"
+	kmsSdk "github.com/infisical/go-sdk"
 	"github.com/pkg/errors"
 	insights "github.com/hanzoai/insights-go"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
-func getInfisicalSdkInstance(cmd *cobra.Command) (infisicalSdk.InfisicalClientInterface, context.CancelFunc, error) {
+func getKMSSdkInstance(cmd *cobra.Command) (kmsSdk.InfisicalClientInterface, context.CancelFunc, error) {
 
 	ctx, cancel := context.WithCancel(cmd.Context())
-	infisicalClient := infisicalSdk.NewInfisicalClient(ctx, infisicalSdk.Config{
+	kmsClient := kmsSdk.NewInfisicalClient(ctx, kmsSdk.Config{
 		SiteUrl:   config.KMS_URL,
 		UserAgent: api.USER_AGENT,
 	})
 
-	token, err := util.GetInfisicalToken(cmd)
+	token, err := util.GetKMSToken(cmd)
 	if err != nil {
 		cancel()
 		return nil, nil, err
@@ -40,8 +40,8 @@ func getInfisicalSdkInstance(cmd *cobra.Command) (infisicalSdk.InfisicalClientIn
 
 	// if the --token param is set, we use it directly for authentication
 	if token != nil {
-		infisicalClient.Auth().SetAccessToken(token.Token)
-		return infisicalClient, cancel, nil
+		kmsClient.Auth().SetAccessToken(token.Token)
+		return kmsClient, cancel, nil
 	}
 
 	// if the --token param is not set, we use the auth-method flag to determine the authentication method, and perform the appropriate login flow based on that
@@ -57,9 +57,9 @@ func getInfisicalSdkInstance(cmd *cobra.Command) (infisicalSdk.InfisicalClientIn
 		util.PrintErrorMessageAndExit(fmt.Sprintf("Invalid login method: %s", authMethod))
 	}
 
-	sdkAuthenticator := util.NewSdkAuthenticator(infisicalClient, cmd)
+	sdkAuthenticator := util.NewSdkAuthenticator(kmsClient, cmd)
 
-	authStrategies := map[util.AuthStrategyType]func() (credential infisicalSdk.MachineIdentityCredential, e error){
+	authStrategies := map[util.AuthStrategyType]func() (credential kmsSdk.MachineIdentityCredential, e error){
 		util.AuthStrategy.UNIVERSAL_AUTH:    sdkAuthenticator.HandleUniversalAuthLogin,
 		util.AuthStrategy.KUBERNETES_AUTH:   sdkAuthenticator.HandleKubernetesAuthLogin,
 		util.AuthStrategy.AZURE_AUTH:        sdkAuthenticator.HandleAzureAuthLogin,
@@ -77,7 +77,7 @@ func getInfisicalSdkInstance(cmd *cobra.Command) (infisicalSdk.InfisicalClientIn
 		return nil, nil, err
 	}
 
-	return infisicalClient, cancel, nil
+	return kmsClient, cancel, nil
 }
 
 var gatewayCmd = &cobra.Command{
@@ -91,14 +91,14 @@ var gatewayCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info().Msg("DEPRECATION NOTICE: The 'kms gateway' command will be deprecated in a future version. Please use 'kms gateway start'.\nNOTE: This requires manually updating your existing resources to point to the new gateway.")
 
-		infisicalClient, cancelSdk, err := getInfisicalSdkInstance(cmd)
+		kmsClient, cancelSdk, err := getKMSSdkInstance(cmd)
 		if err != nil {
 			util.HandleError(err, "unable to get KMS client")
 		}
 		defer cancelSdk()
 
 		var accessToken atomic.Value
-		accessToken.Store(infisicalClient.Auth().GetAccessToken())
+		accessToken.Store(kmsClient.Auth().GetAccessToken())
 
 		if accessToken.Load().(string) == "" {
 			util.HandleError(errors.New("no access token found"))
@@ -139,7 +139,7 @@ var gatewayCmd = &cobra.Command{
 						return
 					}
 
-					newToken := infisicalClient.Auth().GetAccessToken()
+					newToken := kmsClient.Auth().GetAccessToken()
 					if newToken != "" && newToken != accessToken.Load().(string) {
 						accessToken.Store(newToken)
 						if gatewayInstance != nil {
@@ -220,14 +220,14 @@ var gatewayStartCmd = &cobra.Command{
 			session.SetSessionRecordingPath(pamSessionRecordingPath)
 		}
 
-		infisicalClient, cancelSdk, err := getInfisicalSdkInstance(cmd)
+		kmsClient, cancelSdk, err := getKMSSdkInstance(cmd)
 		if err != nil {
 			util.HandleError(err, "unable to get KMS client")
 		}
 		defer cancelSdk()
 
 		var accessToken atomic.Value
-		accessToken.Store(infisicalClient.Auth().GetAccessToken())
+		accessToken.Store(kmsClient.Auth().GetAccessToken())
 
 		if accessToken.Load().(string) == "" {
 			util.HandleError(errors.New("no access token found"))
@@ -287,7 +287,7 @@ var gatewayStartCmd = &cobra.Command{
 						return
 					}
 
-					newToken := infisicalClient.Auth().GetAccessToken()
+					newToken := kmsClient.Auth().GetAccessToken()
 					if newToken != "" && newToken != accessToken.Load().(string) {
 						accessToken.Store(newToken)
 						gatewayInstance.SetToken(newToken)
@@ -322,7 +322,7 @@ var gatewayInstallCmd = &cobra.Command{
 			util.HandleError(fmt.Errorf("systemd service installation requires root/sudo privileges"))
 		}
 
-		token, err := util.GetInfisicalToken(cmd)
+		token, err := util.GetKMSToken(cmd)
 		if err != nil {
 			util.HandleError(err, "Unable to parse flag")
 		}
@@ -398,7 +398,7 @@ var gatewaySystemdInstallCmd = &cobra.Command{
 			util.HandleError(fmt.Errorf("systemd service installation requires root/sudo privileges"))
 		}
 
-		token, err := util.GetInfisicalToken(cmd)
+		token, err := util.GetKMSToken(cmd)
 		if err != nil {
 			util.HandleError(err, "Unable to parse flag")
 		}

@@ -26,9 +26,9 @@ type DatabaseConfig struct {
 // DefaultDatabaseConfig returns the default database configuration
 func DefaultDatabaseConfig() DatabaseConfig {
 	return DatabaseConfig{
-		User:     "infisical",
-		Password: "infisical",
-		Database: "infisical",
+		User:     "kms",
+		Password: "kms",
+		Database: "kms",
 		Host:     "localhost",
 		Port:     "5432",
 	}
@@ -44,8 +44,8 @@ type ResetDBOptions struct {
 func DefaultResetDBOptions() ResetDBOptions {
 	return ResetDBOptions{
 		SkipTables: map[string]struct{}{
-			"public.infisical_migrations":      {},
-			"public.infisical_migrations_lock": {},
+			"public.kms_migrations":      {},
+			"public.kms_migrations_lock": {},
 		},
 		DBConfig: DefaultDatabaseConfig(),
 	}

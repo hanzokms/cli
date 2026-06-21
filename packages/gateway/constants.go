@@ -6,7 +6,7 @@ const (
 	KUBERNETES_SERVICE_ACCOUNT_CA_CERT_PATH = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 	KUBERNETES_SERVICE_ACCOUNT_TOKEN_PATH   = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 
-	KMS_HTTP_PROXY_ACTION_HEADER = "x-infisical-action"
+	KMS_HTTP_PROXY_ACTION_HEADER = "x-kms-action"
 )
 
 type HttpProxyAction string

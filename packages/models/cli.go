@@ -9,7 +9,7 @@ type UserCredentials struct {
 	RefreshToken string `json:"RefreshToken"`
 }
 
-// The file struct for Infisical config file
+// The file struct for KMS config file
 type ConfigFile struct {
 	LoggedInUserEmail      string         `json:"loggedInUserEmail"`
 	LoggedInUserDomain     string         `json:"LoggedInUserDomain,omitempty"`
@@ -116,7 +116,7 @@ type SymmetricEncryptionResult struct {
 type GetAllSecretsParameters struct {
 	Environment              string
 	EnvironmentPassedViaFlag bool
-	InfisicalToken           string
+	KMSToken           string
 	UniversalAuthAccessToken string
 	TagSlugs                 string
 	WorkspaceId              string
@@ -136,7 +136,7 @@ type GetAllFoldersParameters struct {
 	WorkspaceId              string
 	Environment              string
 	FoldersPath              string
-	InfisicalToken           string
+	KMSToken           string
 	UniversalAuthAccessToken string
 }
 
@@ -145,7 +145,7 @@ type CreateFolderParameters struct {
 	WorkspaceId    string
 	Environment    string
 	FolderPath     string
-	InfisicalToken string
+	KMSToken string
 }
 
 type DeleteFolderParameters struct {
@@ -153,11 +153,11 @@ type DeleteFolderParameters struct {
 	WorkspaceId    string
 	Environment    string
 	FolderPath     string
-	InfisicalToken string
+	KMSToken string
 }
 
 type ExpandSecretsAuthentication struct {
-	InfisicalToken           string
+	KMSToken           string
 	UniversalAuthAccessToken string
 }
 

@@ -27,7 +27,7 @@ func IsProcessRunning(p *os.Process) bool {
 	return err == nil
 }
 
-// For "infisical run -- COMMAND"
+// For "kms run -- COMMAND"
 func RunCommandFromArgs(args []string, env []string, waitForExit bool) (*exec.Cmd, error) {
 	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stdin = os.Stdin
@@ -69,7 +69,7 @@ func execCommand(cmd *exec.Cmd, waitForExit bool) error {
 	return nil
 }
 
-// For "infisical run --command=COMMAND"
+// For "kms run --command=COMMAND"
 func RunCommandFromString(command string, env []string, waitForExit bool) (*exec.Cmd, error) {
 	shell := [2]string{"sh", "-c"}
 	if runtime.GOOS == "windows" {

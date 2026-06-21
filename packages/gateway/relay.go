@@ -67,7 +67,7 @@ func NewGatewayRelay(configFilePath string) (*GatewayRelay, error) {
 	}
 
 	if cfg.Realm == "" {
-		cfg.Realm = "infisical.org"
+		cfg.Realm = "kms.org"
 	}
 
 	if cfg.RelayMinPort == 0 {

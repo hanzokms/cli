@@ -27,10 +27,10 @@ func UserInitCmd() {
 			n, err := ptmx.Read(buf)
 			if n > 0 {
 				terminalOut := string(buf)
-				if strings.Contains(terminalOut, "Which Infisical organization would you like to select a project from?") && step < 0  {
+				if strings.Contains(terminalOut, "Which KMS organization would you like to select a project from?") && step < 0  {
 					step += 1
 					stepChan <- step
-				} else if strings.Contains(terminalOut, "Which of your Infisical projects would you like to connect this project to?") && step < 1 {
+				} else if strings.Contains(terminalOut, "Which of your KMS projects would you like to connect this project to?") && step < 1 {
 					step += 1;
 					stepChan <- step
 				}
@@ -77,7 +77,7 @@ func UserLoginCmd() {
 			n, err := ptmx.Read(buf)
 			if n > 0 {
 				terminalOut := string(buf)
-				if strings.Contains(terminalOut, "Infisical Cloud") && step < 0 {
+				if strings.Contains(terminalOut, "KMS Cloud") && step < 0 {
 					step += 1;
 					stepChan <- step
 				} else if strings.Contains(terminalOut, "Email") && step < 1 {
@@ -86,7 +86,7 @@ func UserLoginCmd() {
 				} else if strings.Contains(terminalOut, "Password") && step < 2 {
 					step += 1;
 					stepChan <- step
-				} else if strings.Contains(terminalOut, "Infisical organization") && step < 3 {
+				} else if strings.Contains(terminalOut, "KMS organization") && step < 3 {
 					step += 1;
 					stepChan <- step
 				} else if strings.Contains(terminalOut, "Enter passphrase") && step < 4 {

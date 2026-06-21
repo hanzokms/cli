@@ -33,7 +33,7 @@ var secretsCmd = &cobra.Command{
 			}
 		}
 
-		token, err := util.GetInfisicalToken(cmd)
+		token, err := util.GetKMSToken(cmd)
 		if err != nil {
 			util.HandleError(err, "Unable to parse flag")
 		}
@@ -94,7 +94,7 @@ var secretsCmd = &cobra.Command{
 		}
 
 		if token != nil && token.Type == util.SERVICE_TOKEN_IDENTIFIER {
-			request.InfisicalToken = token.Token
+			request.KMSToken = token.Token
 		} else if token != nil && token.Type == util.UNIVERSAL_AUTH_TOKEN_IDENTIFIER {
 			request.UniversalAuthAccessToken = token.Token
 		}
@@ -178,7 +178,7 @@ var secretsSetCmd = &cobra.Command{
 		return cobra.MinimumNArgs(1)(cmd, args)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		token, err := util.GetInfisicalToken(cmd)
+		token, err := util.GetKMSToken(cmd)
 		if err != nil {
 			util.HandleError(err, "Unable to parse flag")
 		}
@@ -336,7 +336,7 @@ var secretsDeleteCmd = &cobra.Command{
 			}
 		}
 
-		token, err := util.GetInfisicalToken(cmd)
+		token, err := util.GetKMSToken(cmd)
 		if err != nil {
 			util.HandleError(err, "Unable to parse flag")
 		}
@@ -439,7 +439,7 @@ func getSecretsByNames(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	token, err := util.GetInfisicalToken(cmd)
+	token, err := util.GetKMSToken(cmd)
 	if err != nil {
 		util.HandleError(err, "Unable to parse flag")
 	}
@@ -510,7 +510,7 @@ func getSecretsByNames(cmd *cobra.Command, args []string) {
 	}
 
 	if token != nil && token.Type == util.SERVICE_TOKEN_IDENTIFIER {
-		request.InfisicalToken = token.Token
+		request.KMSToken = token.Token
 	} else if token != nil && token.Type == util.UNIVERSAL_AUTH_TOKEN_IDENTIFIER {
 		request.UniversalAuthAccessToken = token.Token
 	}
@@ -592,7 +592,7 @@ func generateExampleEnv(cmd *cobra.Command, args []string) {
 		util.HandleError(err, "Unable to parse flag")
 	}
 
-	token, err := util.GetInfisicalToken(cmd)
+	token, err := util.GetKMSToken(cmd)
 	if err != nil {
 		util.HandleError(err, "Unable to parse flag")
 	}
@@ -616,7 +616,7 @@ func generateExampleEnv(cmd *cobra.Command, args []string) {
 	}
 
 	if token != nil && token.Type == util.SERVICE_TOKEN_IDENTIFIER {
-		request.InfisicalToken = token.Token
+		request.KMSToken = token.Token
 	} else if token != nil && token.Type == util.UNIVERSAL_AUTH_TOKEN_IDENTIFIER {
 		request.UniversalAuthAccessToken = token.Token
 	}

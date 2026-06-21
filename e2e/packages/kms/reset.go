@@ -1,4 +1,4 @@
-package infisical
+package kms
 
 import (
 	"context"
@@ -28,7 +28,7 @@ func (p *composePortProvider) GetServicePort(ctx context.Context, serviceName st
 	return port.Port(), nil
 }
 
-// Reset resets the whole instance of Infisical backend service to its original state after first time booting up
+// Reset resets the whole instance of KMS backend service to its original state after first time booting up
 func Reset(ctx context.Context, stack compose.ComposeStack) error {
 	// Create port provider to get service ports
 	portProvider := &composePortProvider{stack: stack}
@@ -47,9 +47,9 @@ func Reset(ctx context.Context, stack compose.ComposeStack) error {
 
 	// Reset PostgreSQL database
 	if err := client.ResetDB(ctx, client.WithDatabaseConfig(client.DatabaseConfig{
-		User:     "infisical",
-		Password: "infisical",
-		Database: "infisical",
+		User:     "kms",
+		Password: "kms",
+		Database: "kms",
 		Host:     "localhost",
 		Port:     dbPort,
 	})); err != nil {

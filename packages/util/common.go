@@ -40,7 +40,7 @@ func WriteToFile(fileName string, dataToWrite []byte, filePerm os.FileMode) erro
 	return nil
 }
 
-func ValidateInfisicalAPIConnection() (ok bool) {
+func ValidateKMSAPIConnection() (ok bool) {
 	_, err := http.Get(fmt.Sprintf("%v/status", config.KMS_URL))
 	return err == nil
 }
@@ -49,7 +49,7 @@ func GetRestyClientWithCustomHeaders() (*resty.Client, error) {
 	httpClient := resty.New()
 	customHeaders := os.Getenv("KMS_CUSTOM_HEADERS")
 	if customHeaders != "" {
-		headers, err := GetInfisicalCustomHeadersMap()
+		headers, err := GetKMSCustomHeadersMap()
 		if err != nil {
 			return nil, err
 		}
@@ -59,7 +59,7 @@ func GetRestyClientWithCustomHeaders() (*resty.Client, error) {
 	return httpClient, nil
 }
 
-func GetInfisicalCustomHeadersMap() (map[string]string, error) {
+func GetKMSCustomHeadersMap() (map[string]string, error) {
 	customHeaders := os.Getenv("KMS_CUSTOM_HEADERS")
 	if customHeaders == "" {
 		return nil, nil

@@ -67,7 +67,7 @@ var runCmd = &cobra.Command{
 			}
 		}
 
-		token, err := util.GetInfisicalToken(cmd)
+		token, err := util.GetKMSToken(cmd)
 		if err != nil {
 			util.HandleError(err, "Unable to parse flag")
 		}
@@ -442,7 +442,7 @@ func executeCommandWithWatchMode(commandFlag string, args []string, watchModeInt
 func fetchAndFormatSecretsForShell(request models.GetAllSecretsParameters, projectConfigDir string, secretOverriding bool, token *models.TokenDetails) (models.InjectableEnvironmentResult, error) {
 
 	if token != nil && token.Type == util.SERVICE_TOKEN_IDENTIFIER {
-		request.InfisicalToken = token.Token
+		request.KMSToken = token.Token
 	} else if token != nil && token.Type == util.UNIVERSAL_AUTH_TOKEN_IDENTIFIER {
 		request.UniversalAuthAccessToken = token.Token
 	}

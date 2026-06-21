@@ -279,8 +279,8 @@ func IsSecretTypeValid(s string) bool {
 	return false
 }
 
-func GetInfisicalToken(cmd *cobra.Command) (token *models.TokenDetails, err error) {
-	infisicalToken, err := cmd.Flags().GetString("token")
+func GetKMSToken(cmd *cobra.Command) (token *models.TokenDetails, err error) {
+	kmsToken, err := cmd.Flags().GetString("token")
 
 	if err != nil {
 		return nil, err
@@ -288,36 +288,36 @@ func GetInfisicalToken(cmd *cobra.Command) (token *models.TokenDetails, err erro
 
 	var source = "--token flag"
 
-	if infisicalToken == "" { // If no flag is passed, we first check for the universal auth access token env variable.
-		infisicalToken = os.Getenv(KMS_UNIVERSAL_AUTH_ACCESS_TOKEN_NAME)
+	if kmsToken == "" { // If no flag is passed, we first check for the universal auth access token env variable.
+		kmsToken = os.Getenv(KMS_UNIVERSAL_AUTH_ACCESS_TOKEN_NAME)
 		source = fmt.Sprintf("%s environment variable", KMS_UNIVERSAL_AUTH_ACCESS_TOKEN_NAME)
 
-		if infisicalToken == "" { // If it's still empty after the first env check, we check for the service token env variable.
-			infisicalToken = os.Getenv(KMS_TOKEN_NAME)
+		if kmsToken == "" { // If it's still empty after the first env check, we check for the service token env variable.
+			kmsToken = os.Getenv(KMS_TOKEN_NAME)
 			source = fmt.Sprintf("%s environment variable", KMS_TOKEN_NAME)
 		}
 
-		if infisicalToken == "" { // if its still empty, check for the `TOKEN` environment variable (for gateway helm)
-			infisicalToken = os.Getenv(KMS_GATEWAY_TOKEN_NAME_LEGACY)
+		if kmsToken == "" { // if its still empty, check for the `TOKEN` environment variable (for gateway helm)
+			kmsToken = os.Getenv(KMS_GATEWAY_TOKEN_NAME_LEGACY)
 			source = fmt.Sprintf("%s environment variable", KMS_GATEWAY_TOKEN_NAME_LEGACY)
 		}
 	}
 
-	if infisicalToken == "" { // If it's empty, we return nothing at all.
+	if kmsToken == "" { // If it's empty, we return nothing at all.
 		return nil, nil
 	}
 
-	if strings.HasPrefix(infisicalToken, "st.") {
+	if strings.HasPrefix(kmsToken, "st.") {
 		return &models.TokenDetails{
 			Type:   SERVICE_TOKEN_IDENTIFIER,
-			Token:  infisicalToken,
+			Token:  kmsToken,
 			Source: source,
 		}, nil
 	}
 
 	return &models.TokenDetails{
 		Type:   UNIVERSAL_AUTH_TOKEN_IDENTIFIER,
-		Token:  infisicalToken,
+		Token:  kmsToken,
 		Source: source,
 	}, nil
 
@@ -403,7 +403,7 @@ func RequireLocalWorkspaceFile() {
 
 	workspaceFile, err := GetWorkSpaceFromFile()
 	if err != nil {
-		HandleError(err, "Unable to read your project configuration, please try initializing this project again.", "Run [infisical init]")
+		HandleError(err, "Unable to read your project configuration, please try initializing this project again.", "Run [kms init]")
 	}
 
 	if workspaceFile.WorkspaceId == "" {
@@ -564,9 +564,9 @@ func IsDevelopmentMode() bool {
 }
 
 // HandleMFASession opens a browser for MFA verification and polls until completion
-func HandleMFASession(httpClient *resty.Client, mfaSessionId string, mfaMethod string, infisicalURL string) error {
+func HandleMFASession(httpClient *resty.Client, mfaSessionId string, mfaMethod string, kmsURL string) error {
 	// Construct MFA URL
-	mfaURL := fmt.Sprintf("%s/mfa-session/%s", strings.TrimSuffix(infisicalURL, "/api"), mfaSessionId)
+	mfaURL := fmt.Sprintf("%s/mfa-session/%s", strings.TrimSuffix(kmsURL, "/api"), mfaSessionId)
 
 	// Display MFA message
 	PrintfStderr("\n🔐 MFA Verification Required (%s)\n", mfaMethod)

@@ -151,7 +151,7 @@ func (g *Gateway) registerHeartBeat(ctx context.Context, errCh chan error) {
 			}
 			return err
 		} else {
-			log.Info().Msg("Gateway is reachable by Infisical")
+			log.Info().Msg("Gateway is reachable by KMS")
 			return nil
 		}
 	}
@@ -444,7 +444,7 @@ func (g *Gateway) setupTLSConfig() error {
 		ClientCAs:  clientCAPool,
 		ClientAuth: tls.RequireAndVerifyClientCert,
 		MinVersion: tls.VersionTLS12,
-		NextProtos: []string{"infisical-http-proxy", "infisical-tcp-proxy", "infisical-ping", "infisical-pam-proxy", "infisical-pam-session-cancellation", "infisical-pam-capabilities"},
+		NextProtos: []string{"kms-http-proxy", "kms-tcp-proxy", "kms-ping", "kms-pam-proxy", "kms-pam-session-cancellation", "kms-pam-capabilities"},
 	}
 
 	return nil
@@ -655,7 +655,7 @@ func (g *Gateway) parseForwardConfigFromALPN(tlsConn *tls.Conn, reader *bufio.Re
 
 	// Map ALPN protocol to ForwardMode
 	switch negotiatedProtocol {
-	case "infisical-http-proxy":
+	case "kms-http-proxy":
 		config.Mode = ForwardModeHTTP
 		// For HTTP proxy, read additional parameters from the connection
 		if err := g.parseHTTPParametersFromConnection(reader, config); err != nil {
@@ -663,23 +663,23 @@ func (g *Gateway) parseForwardConfigFromALPN(tlsConn *tls.Conn, reader *bufio.Re
 		}
 		return config, nil
 
-	case "infisical-tcp-proxy":
+	case "kms-tcp-proxy":
 		config.Mode = ForwardModeTCP
 		return config, nil
 
-	case "infisical-pam-proxy":
+	case "kms-pam-proxy":
 		config.Mode = ForwardModePAM
 		return config, nil
 
-	case "infisical-pam-session-cancellation":
+	case "kms-pam-session-cancellation":
 		config.Mode = ForwardModePAMCancellation
 		return config, nil
 
-	case "infisical-pam-capabilities":
+	case "kms-pam-capabilities":
 		config.Mode = ForwardModePAMCapabilities
 		return config, nil
 
-	case "infisical-ping":
+	case "kms-ping":
 		config.Mode = ForwardModePing
 		return config, nil
 

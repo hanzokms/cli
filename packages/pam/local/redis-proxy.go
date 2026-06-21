@@ -238,7 +238,7 @@ func (p *RedisProxyServer) handleConnection(clientConn net.Conn) {
 	}
 	defer relayConn.Close()
 
-	gatewayConn, err := p.CreateGatewayConnection(relayConn, ALPNInfisicalPAMProxy)
+	gatewayConn, err := p.CreateGatewayConnection(relayConn, ALPNKMSPAMProxy)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to connect to gateway")
 		return

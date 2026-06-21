@@ -12,7 +12,7 @@ func TestMain(m *testing.M) {
 	SetupCli()
 	fmt.Println("Performing user login...")
 	UserLoginCmd()
-	fmt.Println("Performing infisical init...")
+	fmt.Println("Performing kms init...")
 	UserInitCmd()
 
     // Run the tests

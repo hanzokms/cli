@@ -133,7 +133,7 @@ func (b *BaseProxyServer) FetchGatewayCapabilities() (*pam.PAMCapabilitiesRespon
 	}
 	defer relayConn.Close()
 
-	gatewayConn, err := b.CreateGatewayConnection(relayConn, ALPNInfisicalPAMCapabilities)
+	gatewayConn, err := b.CreateGatewayConnection(relayConn, ALPNKMSPAMCapabilities)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to gateway: %w", err)
 	}
@@ -241,7 +241,7 @@ func (b *BaseProxyServer) NotifySessionTermination() {
 	}
 	defer relayConn.Close()
 
-	gatewayConn, err := b.CreateGatewayConnection(relayConn, ALPNInfisicalPAMCancellation)
+	gatewayConn, err := b.CreateGatewayConnection(relayConn, ALPNKMSPAMCancellation)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to connect to gateway for termination notification")
 		// Fallback to API call if gateway connection fails

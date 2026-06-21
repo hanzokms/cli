@@ -26,7 +26,7 @@ func InstallRelaySystemdService(token string, domain string, name string, host s
 		return nil
 	}
 
-	configDir := "/etc/infisical"
+	configDir := "/etc/kms"
 	if err := os.MkdirAll(configDir, 0755); err != nil {
 		return fmt.Errorf("failed to create config directory: %v", err)
 	}
@@ -59,9 +59,9 @@ func InstallRelaySystemdService(token string, domain string, name string, host s
 		return fmt.Errorf("failed to write environment file: %v", err)
 	}
 
-	serviceName := "infisical-relay"
+	serviceName := "kms-relay"
 
-	if err := util.WriteSystemdServiceFile(serviceLogFile, environmentFilePath, serviceName, "relay", "Infisical Relay Service"); err != nil {
+	if err := util.WriteSystemdServiceFile(serviceLogFile, environmentFilePath, serviceName, "relay", "Hanzo KMS Relay Service"); err != nil {
 		return fmt.Errorf("failed to write systemd service file: %v", err)
 	}
 
@@ -74,9 +74,9 @@ func InstallRelaySystemdService(token string, domain string, name string, host s
 		return fmt.Errorf("failed to reload systemd: %v", err)
 	}
 
-	log.Info().Msg("Successfully installed systemd service for Infisical Relay")
-	log.Info().Msg("To start the service, run: sudo systemctl start infisical-relay")
-	log.Info().Msg("To enable the service on boot, run: sudo systemctl enable infisical-relay")
+	log.Info().Msg("Successfully installed systemd service for Hanzo KMS Relay")
+	log.Info().Msg("To start the service, run: sudo systemctl start kms-relay")
+	log.Info().Msg("To enable the service on boot, run: sudo systemctl enable kms-relay")
 
 	return nil
 }
@@ -93,25 +93,25 @@ func UninstallRelaySystemdService() error {
 	}
 
 	// Stop the service if it's running
-	stopCmd := exec.Command("systemctl", "stop", "infisical-relay")
+	stopCmd := exec.Command("systemctl", "stop", "kms-relay")
 	if err := stopCmd.Run(); err != nil {
 		log.Warn().Msgf("Failed to stop service: %v", err)
 	}
 
 	// Disable the service
-	disableCmd := exec.Command("systemctl", "disable", "infisical-relay")
+	disableCmd := exec.Command("systemctl", "disable", "kms-relay")
 	if err := disableCmd.Run(); err != nil {
 		log.Warn().Msgf("Failed to disable service: %v", err)
 	}
 
 	// Remove the service file
-	servicePath := "/etc/systemd/system/infisical-relay.service"
+	servicePath := "/etc/systemd/system/kms-relay.service"
 	if err := os.Remove(servicePath); err != nil && !os.IsNotExist(err) {
 		return fmt.Errorf("failed to remove systemd service file: %v", err)
 	}
 
 	// Remove the configuration file
-	configPath := "/etc/infisical/relay.conf"
+	configPath := "/etc/kms/relay.conf"
 	if err := os.Remove(configPath); err != nil && !os.IsNotExist(err) {
 		return fmt.Errorf("failed to remove config file: %v", err)
 	}
@@ -122,6 +122,6 @@ func UninstallRelaySystemdService() error {
 		return fmt.Errorf("failed to reload systemd: %v", err)
 	}
 
-	log.Info().Msg("Successfully uninstalled Infisical Relay systemd service")
+	log.Info().Msg("Successfully uninstalled Hanzo KMS Relay systemd service")
 	return nil
 }

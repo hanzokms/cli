@@ -75,7 +75,7 @@ var pamDbAccessCmd = &cobra.Command{
 		log.Debug().Msg("PAM Database Access: Trying to fetch secrets using logged in details")
 
 		loggedInUserDetails, err := util.GetCurrentLoggedInUserDetails(true)
-		isConnected := util.ValidateInfisicalAPIConnection()
+		isConnected := util.ValidateKMSAPIConnection()
 
 		if isConnected {
 			log.Debug().Msg("PAM Database Access: Connected to Hanzo KMS instance, checking logged in creds")
@@ -149,7 +149,7 @@ var pamSshAccessCmd = &cobra.Command{
 		log.Debug().Msg("PAM SSH Access: Trying to fetch credentials using logged in details")
 
 		loggedInUserDetails, err := util.GetCurrentLoggedInUserDetails(true)
-		isConnected := util.ValidateInfisicalAPIConnection()
+		isConnected := util.ValidateKMSAPIConnection()
 
 		if isConnected {
 			log.Debug().Msg("PAM SSH Access: Connected to Hanzo KMS instance, checking logged in creds")
@@ -229,7 +229,7 @@ var pamKubernetesAccessCmd = &cobra.Command{
 		log.Debug().Msg("PAM Kubernetes Access: Trying to fetch credentials using logged in details")
 
 		loggedInUserDetails, err := util.GetCurrentLoggedInUserDetails(true)
-		isConnected := util.ValidateInfisicalAPIConnection()
+		isConnected := util.ValidateKMSAPIConnection()
 
 		if isConnected {
 			log.Debug().Msg("PAM Kubernetes Access: Connected to Hanzo KMS instance, checking logged in creds")
@@ -308,7 +308,7 @@ var pamRedisAccessCmd = &cobra.Command{
 		log.Debug().Msg("PAM Redis Access: Trying to fetch secrets using logged in details")
 
 		loggedInUserDetails, err := util.GetCurrentLoggedInUserDetails(true)
-		isConnected := util.ValidateInfisicalAPIConnection()
+		isConnected := util.ValidateKMSAPIConnection()
 
 		if isConnected {
 			log.Debug().Msg("PAM Redis Access: Connected to Hanzo KMS instance, checking logged in creds")

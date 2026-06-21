@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/exec"
 
-	infisicalSdk "github.com/infisical/go-sdk"
+	kmsSdk "github.com/infisical/go-sdk"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -70,7 +70,7 @@ func EstablishUserLoginSession() LoggedInUserDetails {
 		PrintErrorMessageAndExit(fmt.Sprintf("Failed to determine executable path: %v", err))
 	}
 
-	// Spawn infisical login command
+	// Spawn kms login command
 	loginCmd := exec.Command(exePath, "login", "--silent")
 	loginCmd.Stdin = os.Stdin
 	loginCmd.Stdout = os.Stdout
@@ -94,184 +94,184 @@ func EstablishUserLoginSession() LoggedInUserDetails {
 }
 
 type SdkAuthenticator struct {
-	infisicalClient infisicalSdk.InfisicalClientInterface
+	kmsClient kmsSdk.InfisicalClientInterface
 	cmd             *cobra.Command
 }
 
-func NewSdkAuthenticator(infisicalClient infisicalSdk.InfisicalClientInterface, cmd *cobra.Command) *SdkAuthenticator {
+func NewSdkAuthenticator(kmsClient kmsSdk.InfisicalClientInterface, cmd *cobra.Command) *SdkAuthenticator {
 	return &SdkAuthenticator{
-		infisicalClient: infisicalClient,
+		kmsClient: kmsClient,
 		cmd:             cmd,
 	}
 }
-func (a *SdkAuthenticator) HandleUniversalAuthLogin() (credential infisicalSdk.MachineIdentityCredential, e error) {
+func (a *SdkAuthenticator) HandleUniversalAuthLogin() (credential kmsSdk.MachineIdentityCredential, e error) {
 
 	clientId, err := GetCmdFlagOrEnv(a.cmd, "client-id", []string{KMS_UNIVERSAL_AUTH_CLIENT_ID_NAME})
 
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
 	clientSecret, err := GetCmdFlagOrEnv(a.cmd, "client-secret", []string{KMS_UNIVERSAL_AUTH_CLIENT_SECRET_NAME})
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
-	// We are not providing an environment variable because infisical go sdk will check for the environment variable when value is emtpy
+	// We are not providing an environment variable because kms go sdk will check for the environment variable when value is emtpy
 	// Refer: https://github.com/Infisical/go-sdk/blob/main/packages/util/constants.go#L10
 	organizationSlug, err := GetCmdFlagOrEnvWithDefaultValue(a.cmd, "organization-slug", []string{}, "")
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
-	return a.infisicalClient.Auth().WithOrganizationSlug(organizationSlug).UniversalAuthLogin(clientId, clientSecret)
+	return a.kmsClient.Auth().WithOrganizationSlug(organizationSlug).UniversalAuthLogin(clientId, clientSecret)
 }
 
-func (a *SdkAuthenticator) HandleJwtAuthLogin() (credential infisicalSdk.MachineIdentityCredential, e error) {
+func (a *SdkAuthenticator) HandleJwtAuthLogin() (credential kmsSdk.MachineIdentityCredential, e error) {
 
 	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{KMS_MACHINE_IDENTITY_ID_NAME})
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
 	jwt, err := GetCmdFlagOrEnv(a.cmd, "jwt", []string{KMS_JWT_NAME})
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
 	organizationSlug, err := GetCmdFlagOrEnvWithDefaultValue(a.cmd, "organization-slug", []string{}, "")
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
-	return a.infisicalClient.Auth().WithOrganizationSlug(organizationSlug).JwtAuthLogin(identityId, jwt)
+	return a.kmsClient.Auth().WithOrganizationSlug(organizationSlug).JwtAuthLogin(identityId, jwt)
 }
 
-func (a *SdkAuthenticator) HandleKubernetesAuthLogin() (credential infisicalSdk.MachineIdentityCredential, e error) {
+func (a *SdkAuthenticator) HandleKubernetesAuthLogin() (credential kmsSdk.MachineIdentityCredential, e error) {
 
 	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{KMS_MACHINE_IDENTITY_ID_NAME})
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
 	serviceAccountTokenPath, err := GetCmdFlagOrEnv(a.cmd, "service-account-token-path", []string{KMS_KUBERNETES_SERVICE_ACCOUNT_TOKEN_NAME})
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
 	organizationSlug, err := GetCmdFlagOrEnvWithDefaultValue(a.cmd, "organization-slug", []string{}, "")
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
-	return a.infisicalClient.Auth().WithOrganizationSlug(organizationSlug).KubernetesAuthLogin(identityId, serviceAccountTokenPath)
+	return a.kmsClient.Auth().WithOrganizationSlug(organizationSlug).KubernetesAuthLogin(identityId, serviceAccountTokenPath)
 }
 
-func (a *SdkAuthenticator) HandleAzureAuthLogin() (credential infisicalSdk.MachineIdentityCredential, e error) {
+func (a *SdkAuthenticator) HandleAzureAuthLogin() (credential kmsSdk.MachineIdentityCredential, e error) {
 
 	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{KMS_MACHINE_IDENTITY_ID_NAME})
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
 	organizationSlug, err := GetCmdFlagOrEnvWithDefaultValue(a.cmd, "organization-slug", []string{}, "")
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
-	return a.infisicalClient.Auth().WithOrganizationSlug(organizationSlug).AzureAuthLogin(identityId, "")
+	return a.kmsClient.Auth().WithOrganizationSlug(organizationSlug).AzureAuthLogin(identityId, "")
 }
 
-func (a *SdkAuthenticator) HandleGcpIdTokenAuthLogin() (credential infisicalSdk.MachineIdentityCredential, e error) {
+func (a *SdkAuthenticator) HandleGcpIdTokenAuthLogin() (credential kmsSdk.MachineIdentityCredential, e error) {
 
 	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{KMS_MACHINE_IDENTITY_ID_NAME})
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
 	organizationSlug, err := GetCmdFlagOrEnvWithDefaultValue(a.cmd, "organization-slug", []string{}, "")
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
-	return a.infisicalClient.Auth().WithOrganizationSlug(organizationSlug).GcpIdTokenAuthLogin(identityId)
+	return a.kmsClient.Auth().WithOrganizationSlug(organizationSlug).GcpIdTokenAuthLogin(identityId)
 }
 
-func (a *SdkAuthenticator) HandleGcpIamAuthLogin() (credential infisicalSdk.MachineIdentityCredential, e error) {
+func (a *SdkAuthenticator) HandleGcpIamAuthLogin() (credential kmsSdk.MachineIdentityCredential, e error) {
 
 	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{KMS_MACHINE_IDENTITY_ID_NAME})
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
 	serviceAccountKeyFilePath, err := GetCmdFlagOrEnv(a.cmd, "service-account-key-file-path", []string{KMS_GCP_IAM_SERVICE_ACCOUNT_KEY_FILE_PATH_NAME})
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
 	organizationSlug, err := GetCmdFlagOrEnvWithDefaultValue(a.cmd, "organization-slug", []string{}, "")
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
-	return a.infisicalClient.Auth().WithOrganizationSlug(organizationSlug).GcpIamAuthLogin(identityId, serviceAccountKeyFilePath)
+	return a.kmsClient.Auth().WithOrganizationSlug(organizationSlug).GcpIamAuthLogin(identityId, serviceAccountKeyFilePath)
 }
 
-func (a *SdkAuthenticator) HandleAwsIamAuthLogin() (credential infisicalSdk.MachineIdentityCredential, e error) {
+func (a *SdkAuthenticator) HandleAwsIamAuthLogin() (credential kmsSdk.MachineIdentityCredential, e error) {
 
 	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{KMS_MACHINE_IDENTITY_ID_NAME})
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
 	organizationSlug, err := GetCmdFlagOrEnvWithDefaultValue(a.cmd, "organization-slug", []string{}, "")
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
-	return a.infisicalClient.Auth().WithOrganizationSlug(organizationSlug).AwsIamAuthLogin(identityId)
+	return a.kmsClient.Auth().WithOrganizationSlug(organizationSlug).AwsIamAuthLogin(identityId)
 }
 
-func (a *SdkAuthenticator) HandleOidcAuthLogin() (credential infisicalSdk.MachineIdentityCredential, e error) {
+func (a *SdkAuthenticator) HandleOidcAuthLogin() (credential kmsSdk.MachineIdentityCredential, e error) {
 
 	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{KMS_MACHINE_IDENTITY_ID_NAME})
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
 	jwt, err := GetCmdFlagOrEnv(a.cmd, "jwt", []string{KMS_JWT_NAME, KMS_OIDC_AUTH_JWT_NAME})
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
 	organizationSlug, err := GetCmdFlagOrEnvWithDefaultValue(a.cmd, "organization-slug", []string{}, "")
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
-	return a.infisicalClient.Auth().WithOrganizationSlug(organizationSlug).OidcAuthLogin(identityId, jwt)
+	return a.kmsClient.Auth().WithOrganizationSlug(organizationSlug).OidcAuthLogin(identityId, jwt)
 }
 
-func (a *SdkAuthenticator) HandleLdapAuthLogin() (credential infisicalSdk.MachineIdentityCredential, e error) {
+func (a *SdkAuthenticator) HandleLdapAuthLogin() (credential kmsSdk.MachineIdentityCredential, e error) {
 	identityId, err := GetCmdFlagOrEnv(a.cmd, "machine-identity-id", []string{KMS_MACHINE_IDENTITY_ID_NAME})
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
 	ldapUsername, err := GetCmdFlagOrEnv(a.cmd, "ldap-username", []string{KMS_LDAP_USERNAME})
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
 	ldapPassword, err := GetCmdFlagOrEnv(a.cmd, "ldap-password", []string{KMS_LDAP_PASSWORD})
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
 	organizationSlug, err := GetCmdFlagOrEnvWithDefaultValue(a.cmd, "organization-slug", []string{}, "")
 	if err != nil {
-		return infisicalSdk.MachineIdentityCredential{}, err
+		return kmsSdk.MachineIdentityCredential{}, err
 	}
 
-	return a.infisicalClient.Auth().WithOrganizationSlug(organizationSlug).LdapAuthLogin(identityId, ldapUsername, ldapPassword)
+	return a.kmsClient.Auth().WithOrganizationSlug(organizationSlug).LdapAuthLogin(identityId, ldapUsername, ldapPassword)
 }

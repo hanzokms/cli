@@ -1,4 +1,4 @@
-package infisical
+package kms
 
 import (
 	"bytes"
@@ -106,7 +106,7 @@ func (s *Stack) Up(ctx context.Context) error {
 	}
 	hashBytes := sha1.Sum(data)
 	hashHex := hex.EncodeToString(hashBytes[:])
-	uniqueName := fmt.Sprintf("infisical-cli-bdd-%s", hashHex)
+	uniqueName := fmt.Sprintf("kms-cli-bdd-%s", hashHex)
 
 	// Skip cache lookup if CLI_E2E_DISABLE_COMPOSE_CACHE is set
 	if os.Getenv("CLI_E2E_DISABLE_COMPOSE_CACHE") == "1" {
@@ -180,11 +180,11 @@ func (s *Stack) ApiUrl(ctx context.Context) (string, error) {
 }
 
 func BackendOptionsFromEnv() BackendOptions {
-	backendDir, found := os.LookupEnv("INFISICAL_BACKEND_DIR")
+	backendDir, found := os.LookupEnv("KMS_BACKEND_DIR")
 	if !found {
-		panic("INFISICAL_BACKEND_DIR not set, in order fo the e2e tests to work, you need to set the INFISICAL_BACKEND_DIR environment variable to the path of the backend directory, e.g. /Users/your-username/code/infisical/backend")
+		panic("KMS_BACKEND_DIR not set, in order fo the e2e tests to work, you need to set the KMS_BACKEND_DIR environment variable to the path of the backend directory, e.g. /Users/your-username/code/kms/backend")
 	}
-	dockerfile, found := os.LookupEnv("INFISICAL_BACKEND_DOCKERFILE")
+	dockerfile, found := os.LookupEnv("KMS_BACKEND_DOCKERFILE")
 	if !found {
 		dockerfile = "Dockerfile"
 	}
@@ -213,9 +213,9 @@ func WithDbService() StackOption {
 			Image: "postgres:14-alpine",
 			Ports: []types.ServicePortConfig{{Published: "", Target: 5432}},
 			Environment: types.NewMappingWithEquals([]string{
-				"POSTGRES_DB=infisical",
-				"POSTGRES_USER=infisical",
-				"POSTGRES_PASSWORD=infisical",
+				"POSTGRES_DB=kms",
+				"POSTGRES_USER=kms",
+				"POSTGRES_PASSWORD=kms",
 			}),
 		}
 	}
@@ -258,7 +258,7 @@ func WithBackendService(options BackendOptions) StackOption {
 				"NODE_ENV=development",
 				"ENCRYPTION_KEY=6c1fe4e407b8911c104518103505b218",
 				"AUTH_SECRET=5lrMXKKWCVocS/uerPsl7V+TX/aaUaI7iDkgl3tSmLE=",
-				"DB_CONNECTION_URI=postgres://infisical:infisical@db:5432/infisical",
+				"DB_CONNECTION_URI=postgres://kms:kms@db:5432/kms",
 				"REDIS_URL=redis://redis:6379",
 				// TODO: maybe we should generate a random port before passing in so that we can know the port number in
 				// 		 the site url ahead?

@@ -79,7 +79,7 @@ type PullSecretsResponse struct {
 	} `json:"key"`
 }
 
-type PullSecretsByInfisicalTokenResponse struct {
+type PullSecretsByKMSTokenResponse struct {
 	Secrets []struct {
 		ID          string `json:"_id"`
 		Workspace   string `json:"workspace"`
@@ -681,7 +681,7 @@ type GetRelayCredentialsResponseV1 struct {
 	TurnServerPassword string `json:"turnServerPassword"`
 	TurnServerRealm    string `json:"turnServerRealm"`
 	TurnServerAddress  string `json:"turnServerAddress"`
-	InfisicalStaticIp  string `json:"infisicalStaticIp"`
+	KMSStaticIp  string `json:"kmsStaticIp"`
 }
 
 type ExchangeRelayCertRequestV1 struct {

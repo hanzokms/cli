@@ -25,9 +25,9 @@ type DatabaseProxyServer struct {
 type ALPN string
 
 const (
-	ALPNInfisicalPAMProxy        ALPN = "infisical-pam-proxy"
-	ALPNInfisicalPAMCancellation ALPN = "infisical-pam-session-cancellation"
-	ALPNInfisicalPAMCapabilities ALPN = "infisical-pam-capabilities"
+	ALPNKMSPAMProxy        ALPN = "kms-pam-proxy"
+	ALPNKMSPAMCancellation ALPN = "kms-pam-session-cancellation"
+	ALPNKMSPAMCapabilities ALPN = "kms-pam-capabilities"
 )
 
 func StartDatabaseLocalProxy(accessToken string, accessParams PAMAccessParams, projectID string, durationStr string, port int) {
@@ -251,7 +251,7 @@ func (p *DatabaseProxyServer) handleConnection(clientConn net.Conn) {
 	}
 	defer relayConn.Close()
 
-	gatewayConn, err := p.CreateGatewayConnection(relayConn, ALPNInfisicalPAMProxy)
+	gatewayConn, err := p.CreateGatewayConnection(relayConn, ALPNKMSPAMProxy)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to connect to gateway")
 		return

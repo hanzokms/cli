@@ -36,7 +36,7 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 
-	infisicalSdk "github.com/infisical/go-sdk"
+	kmsSdk "github.com/infisical/go-sdk"
 )
 
 func formatAuthMethod(authMethod string) string {
@@ -78,13 +78,13 @@ var loginCmd = &cobra.Command{
 		}
 
 		if clearSelfHostedDomains {
-			infisicalConfig, err := util.GetConfigFile()
+			kmsConfig, err := util.GetConfigFile()
 			if err != nil {
 				util.HandleError(err)
 			}
 
-			infisicalConfig.Domains = []string{}
-			err = util.WriteConfigFile(&infisicalConfig)
+			kmsConfig.Domains = []string{}
+			err = util.WriteConfigFile(&kmsConfig)
 
 			if err != nil {
 				util.HandleError(err)
@@ -94,12 +94,12 @@ var loginCmd = &cobra.Command{
 			return
 		}
 
-		customHeaders, err := util.GetInfisicalCustomHeadersMap()
+		customHeaders, err := util.GetKMSCustomHeadersMap()
 		if err != nil {
 			util.HandleError(err, "Unable to get custom headers")
 		}
 
-		infisicalClient := infisicalSdk.NewInfisicalClient(context.Background(), infisicalSdk.Config{
+		kmsClient := kmsSdk.NewInfisicalClient(context.Background(), kmsSdk.Config{
 			SiteUrl:          config.KMS_URL,
 			UserAgent:        api.USER_AGENT,
 			AutoTokenRefresh: false,
@@ -181,7 +181,7 @@ var loginCmd = &cobra.Command{
 				if isDirectUserLoginFlagsAndEnvsSet {
 					setDomainConfig(strings.TrimSuffix(presetDomain, "/api"))
 				} else if domainQuery {
-					//prompt user to select domain between Infisical cloud and self-hosting
+					//prompt user to select domain between KMS cloud and self-hosting
 					err = askForDomain()
 					if err != nil {
 						util.HandleError(err, "Unable to parse domain url")
@@ -255,11 +255,11 @@ var loginCmd = &cobra.Command{
 			util.PrintlnStderr("- Learn to inject secrets into your application at https://kms.hanzo.ai/docs/cli/usage")
 			util.PrintlnStderr("- Stuck? Join our slack for quick support https://kms.hanzo.ai/slack")
 
-			Telemetry.CaptureEvent("cli-command:login", insights.NewProperties().Set("infisical-backend", config.KMS_URL).Set("version", util.CLI_VERSION))
+			Telemetry.CaptureEvent("cli-command:login", insights.NewProperties().Set("kms-backend", config.KMS_URL).Set("version", util.CLI_VERSION))
 		} else {
-			sdkAuthenticator := util.NewSdkAuthenticator(infisicalClient, cmd)
+			sdkAuthenticator := util.NewSdkAuthenticator(kmsClient, cmd)
 
-			authStrategies := map[util.AuthStrategyType]func() (credential infisicalSdk.MachineIdentityCredential, e error){
+			authStrategies := map[util.AuthStrategyType]func() (credential kmsSdk.MachineIdentityCredential, e error){
 				util.AuthStrategy.UNIVERSAL_AUTH:    sdkAuthenticator.HandleUniversalAuthLogin,
 				util.AuthStrategy.KUBERNETES_AUTH:   sdkAuthenticator.HandleKubernetesAuthLogin,
 				util.AuthStrategy.AZURE_AUTH:        sdkAuthenticator.HandleAzureAuthLogin,
@@ -437,7 +437,7 @@ func DomainOverridePrompt() (bool, error) {
 }
 
 func usePresetDomain(presetDomain string, domainFlagExplicitlySet bool) (bool, error) {
-	infisicalConfig, err := util.GetConfigFile()
+	kmsConfig, err := util.GetConfigFile()
 	if err != nil {
 		return false, fmt.Errorf("askForDomain: unable to get config file because [err=%s]", err)
 	}
@@ -461,9 +461,9 @@ func usePresetDomain(presetDomain string, domainFlagExplicitlySet bool) (bool, e
 
 		// Only save non-cloud domains to the config file
 		if parsedDomain != util.KMS_DEFAULT_US_URL && parsedDomain != util.KMS_DEFAULT_EU_URL {
-			if !slices.Contains(infisicalConfig.Domains, parsedDomain) {
-				infisicalConfig.Domains = append(infisicalConfig.Domains, parsedDomain)
-				err = util.WriteConfigFile(&infisicalConfig)
+			if !slices.Contains(kmsConfig.Domains, parsedDomain) {
+				kmsConfig.Domains = append(kmsConfig.Domains, parsedDomain)
+				err = util.WriteConfigFile(&kmsConfig)
 
 				if err != nil {
 					return false, fmt.Errorf("askForDomain: unable to write domains to config file because [err=%s]", err)
@@ -483,7 +483,7 @@ func usePresetDomain(presetDomain string, domainFlagExplicitlySet bool) (bool, e
 }
 
 func askForDomain() error {
-	// query user to choose between Infisical cloud or self-hosting
+	// query user to choose between KMS cloud or self-hosting
 	const (
 		KMS_CLOUD_US = "Hanzo KMS Cloud (US Region)"
 		KMS_CLOUD_EU = "Hanzo KMS Cloud (EU Region)"
@@ -511,15 +511,15 @@ func askForDomain() error {
 		return nil
 	}
 
-	infisicalConfig, err := util.GetConfigFile()
+	kmsConfig, err := util.GetConfigFile()
 	if err != nil {
 		return fmt.Errorf("askForDomain: unable to get config file because [err=%s]", err)
 	}
 
-	if len(infisicalConfig.Domains) > 0 {
+	if len(kmsConfig.Domains) > 0 {
 		// If domains are present in the config, let the user select from the list or select to add a new domain
 
-		items := append(infisicalConfig.Domains, ADD_NEW_DOMAIN)
+		items := append(kmsConfig.Domains, ADD_NEW_DOMAIN)
 
 		prompt := promptui.Select{
 			Label: "Which domain would you like to use?",
@@ -551,7 +551,7 @@ func askForDomain() error {
 		return err
 	}
 
-	err = trimAndWriteCustomDomainToConfig(domain, &infisicalConfig)
+	err = trimAndWriteCustomDomainToConfig(domain, &kmsConfig)
 	if err != nil {
 		return err
 	}
@@ -821,9 +821,9 @@ func askToPasteJwtToken(success chan models.UserCredentials, failure chan error)
 		os.Exit(1)
 	}
 
-	infisicalPastedToken := strings.TrimSpace(string(bytePassword))
+	kmsPastedToken := strings.TrimSpace(string(bytePassword))
 
-	userCredentials, err := decodePastedBase64Token(infisicalPastedToken)
+	userCredentials, err := decodePastedBase64Token(kmsPastedToken)
 	if err != nil {
 		failure <- err
 		util.PrintlnStderr("Invalid user credentials provided", err)
@@ -1021,16 +1021,16 @@ func validateDirectUserLoginFlagsAndEnvsSet(cmd *cobra.Command, domain string) (
 	return true, fmt.Errorf("missing flags for the user login method: %v.\nPlease set the required flags or environment variables and try again", missingFlagsEnvs)
 }
 
-func trimAndWriteCustomDomainToConfig(domain string, infisicalConfig *models.ConfigFile) error {
+func trimAndWriteCustomDomainToConfig(domain string, kmsConfig *models.ConfigFile) error {
 	// Trimmed the '/' from the end of the self-hosting url, and set the api & login url
 	domain = strings.TrimRight(domain, "/")
 	setDomainConfig(domain)
 
 	// Write the new domain to the config file, to allow the user to select it in the future if needed
 	// First check if infiscialConfig.Domains already includes the domain, if it does, do not add it again
-	if !slices.Contains(infisicalConfig.Domains, domain) {
-		infisicalConfig.Domains = append(infisicalConfig.Domains, domain)
-		err := util.WriteConfigFile(infisicalConfig)
+	if !slices.Contains(kmsConfig.Domains, domain) {
+		kmsConfig.Domains = append(kmsConfig.Domains, domain)
+		err := util.WriteConfigFile(kmsConfig)
 
 		if err != nil {
 			return fmt.Errorf("askForDomain: unable to write domains to config file because [err=%s]", err)

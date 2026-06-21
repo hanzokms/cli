@@ -16,26 +16,26 @@ func TestRelay_RegistersARelay(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	t.Cleanup(cancel)
 
-	infisical := helpers.NewInfisicalService().
+	kms := helpers.NewKMSService().
 		WithBackendEnvironment(types.NewMappingWithEquals([]string{
 			// This is needed for the private ip (current host) to be accepted for the relay server
 			"ALLOW_INTERNAL_IP_CONNECTIONS=true",
 		})).
 		Up(t, ctx)
 
-	c := infisical.ApiClient()
-	identity := infisical.CreateMachineIdentity(t, ctx, helpers.WithTokenAuth())
+	c := kms.ApiClient()
+	identity := kms.CreateMachineIdentity(t, ctx, helpers.WithTokenAuth())
 	require.NotNil(t, identity)
 
 	relayName := helpers.RandomSlug(2)
 	cmd := helpers.Command{
 		Test: t,
-		Args: []string{"relay", "start", "--domain", infisical.ApiUrl(t)},
+		Args: []string{"relay", "start", "--domain", kms.ApiUrl(t)},
 		Env: map[string]string{
-			"INFISICAL_API_URL":    infisical.ApiUrl(t),
-			"INFISICAL_RELAY_NAME": relayName,
-			"INFISICAL_RELAY_HOST": "host.docker.internal",
-			"INFISICAL_TOKEN":      *identity.TokenAuthToken,
+			"KMS_API_URL":    kms.ApiUrl(t),
+			"KMS_RELAY_NAME": relayName,
+			"KMS_RELAY_HOST": "host.docker.internal",
+			"KMS_TOKEN":      *identity.TokenAuthToken,
 		},
 	}
 	cmd.Start(ctx)
@@ -77,7 +77,7 @@ func TestRelay_RegistersARelay(t *testing.T) {
 
 	result = helpers.WaitForStderr(t, helpers.WaitForStderrOptions{
 		EnsureCmdRunning: &cmd,
-		ExpectedString:   "Relay is reachable by Infisical",
+		ExpectedString:   "Relay is reachable by KMS",
 	})
 	assert.Equal(t, helpers.WaitSuccess, result)
 }

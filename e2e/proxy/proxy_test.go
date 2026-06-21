@@ -38,11 +38,11 @@ func DefaultProxyTestConfig() ProxyTestConfig {
 }
 
 // startProxy starts the proxy command and returns it
-func startProxy(t *testing.T, ctx context.Context, infisicalURL string, config ProxyTestConfig, identityToken string) *helpers.Command {
+func startProxy(t *testing.T, ctx context.Context, kmsURL string, config ProxyTestConfig, identityToken string) *helpers.Command {
 	args := []string{
 		"proxy", "start",
 		"--log-level", "debug",
-		"--domain", infisicalURL,
+		"--domain", kmsURL,
 		"--listen-address", config.ListenAddress,
 		fmt.Sprintf("--tls-enabled=%v", config.TLSEnabled),
 		"--access-token-check-interval", config.AccessTokenCheckInterval,
@@ -64,7 +64,7 @@ func startProxy(t *testing.T, ctx context.Context, infisicalURL string, config P
 	// wait for proxy to start listening
 	result := helpers.WaitForStderr(t, helpers.WaitForStderrOptions{
 		EnsureCmdRunning: &proxyCmd,
-		ExpectedString:   "Infisical proxy server starting",
+		ExpectedString:   "KMS proxy server starting",
 		Timeout:          30 * time.Second,
 	})
 	require.Equal(t, helpers.WaitSuccess, result, "Proxy failed to start")
@@ -73,11 +73,11 @@ func startProxy(t *testing.T, ctx context.Context, infisicalURL string, config P
 }
 
 // setupProxyTest sets up the common test
-func setupProxyTest(t *testing.T, ctx context.Context, proxyConfig ProxyTestConfig) (*helpers.InfisicalService, *proxyHelpers.ProxyTestHelper, *helpers.Command) {
-	infisical := helpers.NewInfisicalService().Up(t, ctx)
+func setupProxyTest(t *testing.T, ctx context.Context, proxyConfig ProxyTestConfig) (*helpers.KMSService, *proxyHelpers.ProxyTestHelper, *helpers.Command) {
+	kms := helpers.NewKMSService().Up(t, ctx)
 
 	// create machine identity with token auth
-	identity := infisical.CreateMachineIdentity(t, ctx, helpers.WithTokenAuth())
+	identity := kms.CreateMachineIdentity(t, ctx, helpers.WithTokenAuth())
 	require.NotNil(t, identity.TokenAuthToken)
 	identityToken := *identity.TokenAuthToken
 
@@ -86,7 +86,7 @@ func setupProxyTest(t *testing.T, ctx context.Context, proxyConfig ProxyTestConf
 	require.NoError(t, err)
 
 	identityClient, err := client.NewClientWithResponses(
-		infisical.ApiUrl(t),
+		kms.ApiUrl(t),
 		client.WithHTTPClient(&http.Client{}),
 		client.WithRequestEditorFn(bearerAuth.Intercept),
 	)
@@ -105,7 +105,7 @@ func setupProxyTest(t *testing.T, ctx context.Context, proxyConfig ProxyTestConf
 
 	// start the proxy
 
-	proxyCmd := startProxy(t, ctx, infisical.ApiUrl(t), proxyConfig, identityToken)
+	proxyCmd := startProxy(t, ctx, kms.ApiUrl(t), proxyConfig, identityToken)
 	t.Cleanup(proxyCmd.Stop)
 
 	// build proxy URL
@@ -115,9 +115,9 @@ func setupProxyTest(t *testing.T, ctx context.Context, proxyConfig ProxyTestConf
 	}
 
 	// create test helper with both proxy and direct API clients
-	helper := proxyHelpers.NewProxyTestHelper(t, proxyURL, infisical.ApiUrl(t), identityToken, projectID)
+	helper := proxyHelpers.NewProxyTestHelper(t, proxyURL, kms.ApiUrl(t), identityToken, projectID)
 
-	return infisical, helper, proxyCmd
+	return kms, helper, proxyCmd
 }
 
 func TestProxy_CacheHitMiss(t *testing.T) {
@@ -349,7 +349,7 @@ func TestProxy_HighAvailability(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	t.Cleanup(cancel)
 
-	infisical, helper, proxyCmd := setupProxyTest(t, ctx, DefaultProxyTestConfig())
+	kms, helper, proxyCmd := setupProxyTest(t, ctx, DefaultProxyTestConfig())
 
 	// create and cache a secret
 	secret := helper.GenerateSecret(proxyHelpers.GenerateSecretOptions{
@@ -374,9 +374,9 @@ func TestProxy_HighAvailability(t *testing.T) {
 	})
 	require.Equal(t, helpers.WaitSuccess, cacheHitResult)
 
-	// stop the Infisical backend to simulate unavailability
-	slog.Info("Stopping Infisical backend to simulate unavailability")
-	backendContainer, err := infisical.Compose().ServiceContainer(ctx, "backend")
+	// stop the KMS backend to simulate unavailability
+	slog.Info("Stopping KMS backend to simulate unavailability")
+	backendContainer, err := kms.Compose().ServiceContainer(ctx, "backend")
 	require.NoError(t, err)
 	err = backendContainer.Stop(ctx, nil)
 	require.NoError(t, err)
@@ -414,7 +414,7 @@ func TestProxy_HighAvailability(t *testing.T) {
 	// tear down compose stack so subsequent tests get fresh containers
 	// the DB must be removed, otherwise pg-boss fails with "multiple primary keys for table job"
 	slog.Info("Tearing down compose stack for clean state in subsequent tests")
-	err = infisical.DownWithForce(ctx)
+	err = kms.DownWithForce(ctx)
 	require.NoError(t, err, "Failed to tear down compose stack")
 	slog.Info("Compose stack torn down")
 }
