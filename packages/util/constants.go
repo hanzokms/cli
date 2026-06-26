@@ -5,7 +5,7 @@ const (
 	CONFIG_FOLDER_NAME                         = ".kms"
 	KMS_DEFAULT_US_URL                   = "https://kms.hanzo.ai"
 	KMS_DEFAULT_EU_URL                   = "https://eu.kms.hanzo.ai"
-	KMS_WORKSPACE_CONFIG_FILE_NAME       = ".kms.json"
+	KMS_WORKSPACE_CONFIG_FILE_NAME       = "kms.json"
 	KMS_TOKEN_NAME                       = "KMS_TOKEN"
 	KMS_UNIVERSAL_AUTH_ACCESS_TOKEN_NAME = "KMS_UNIVERSAL_AUTH_ACCESS_TOKEN"
 	KMS_VAULT_FILE_PASSPHRASE_ENV_NAME   = "KMS_VAULT_FILE_PASSPHRASE" // This works because we've forked the keyring package and added support for this env variable. This explains why you won't find any occurrences of it in the CLI codebase.

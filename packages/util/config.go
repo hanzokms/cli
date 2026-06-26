@@ -117,7 +117,7 @@ func GetWorkSpaceFromFile() (models.WorkspaceConfigFile, error) {
 }
 
 func GetWorkSpaceFromFilePath(configFileDir string) (models.WorkspaceConfigFile, error) {
-	configFilePath := filepath.Join(configFileDir, ".kms.json")
+	configFilePath := filepath.Join(configFileDir, KMS_WORKSPACE_CONFIG_FILE_NAME)
 
 	_, configFileStatusError := os.Stat(configFilePath)
 	if os.IsNotExist(configFileStatusError) {
@@ -138,7 +138,7 @@ func GetWorkSpaceFromFilePath(configFileDir string) (models.WorkspaceConfigFile,
 	return workspaceConfigFile, nil
 }
 
-// FindWorkspaceConfigFile searches for a .kms.json file in the current directory and all parent directories.
+// FindWorkspaceConfigFile searches for a kms.json file in the current directory and all parent directories.
 func FindWorkspaceConfigFile() (string, error) {
 	dir, err := os.Getwd()
 	if err != nil {

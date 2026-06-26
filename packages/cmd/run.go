@@ -221,7 +221,7 @@ func init() {
 	runCmd.Flags().StringP("command", "c", "", "chained commands to execute (e.g. \"npm install && npm run dev; echo ...\")")
 	runCmd.Flags().StringP("tags", "t", "", "filter secrets by tag slugs ")
 	runCmd.Flags().String("path", "/", "get secrets within a folder path")
-	runCmd.Flags().String("project-config-dir", "", "explicitly set the directory where the .kms.json resides")
+	runCmd.Flags().String("project-config-dir", "", "explicitly set the directory where the kms.json resides")
 }
 
 // Will execute a single command and pass in the given secrets into the process
